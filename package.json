@@ -10,6 +10,7 @@
   },
   "scripts": {
     "bootstrap": "lerna bootstrap",
+    "test": "echo No test for now",
     "bump-version": "lerna version --no-push"
   }
 }
