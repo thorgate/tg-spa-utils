@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "name": "tg-razzle-plugins",
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "lerna": "3.4.3",
+    "razzle": "^2.4.0"
+  },
+  "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "bump-version": "lerna version --no-push"
+  }
+}

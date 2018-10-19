@@ -1,0 +1,25 @@
+language: node_js
+node_js:
+- '8'
+before_install:
+- curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.10.1
+- export PATH=$HOME/.yarn/bin:$PATH
+before_script:
+- yarn
+- yarn global add "lerna@3.4.3"
+- yarn bootstrap
+cache:
+  yarn: true
+notifications:
+  email: false
+before_deploy:
+  - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > $HOME/.npmrc
+deploy:
+  provider: script
+  script: lerna publish --yes
+  on:
+    tags: true
+    node: '8'
+env:
+  global:
+  - secure: auSIrZW1N+xdPfa6QDJlwrezW8dsB1fyG0yfgb4MjLKOygm3xMQrHBgu9XTgE6a56lVribBCeNvPJTm3fQZW8zRFUGP/odU5Q86ejO9c5R0ti+W5pVV50gfwKQ/LzfiWHYVRE/on+E66HAQF0XdCtjIHYLuu6EvyGNxuV6pAX+51GqfCHmT/9nt0riG2HrvsM4qF4e+AyVfyb413/wjBbe1R+9g3inLaY5/8LRFkxqFfCvCyr6txZ5ZePtTmRGGGYgn4G9YqmR64+9HOVHUXYQfRWV2IFRmo9jp2t8suI7vTANICSXa1UApIDTjAXvW/Q5GBf96QDZ+uB42GVOUCQZLH75GVNSw54j/ayNoUsIr9aPlTAapCXTezxgg3RaDzgisEjs5aRLQJJG0VdnUqdR3J8bHUNxWy1UI5Z+u5AFook9HAhXBwRw5dnYc2IXzKU/reDe/0kuXQBU3QSzVLAih4+Hvtm36XApK60PdmZM++cHgLKw5zRFIgYjE4dtxvED4q1xuFQ0E4BstGZy4X2C5PoGvJXdg8gs+wRKvXPdCl7zmW3rfX1uYITzdfV6pYw7jUS9yGXift8E9P2z12pTcmnGHYZKj5AsuSq+7iw62oCRhyT9N0XoYt6XDb3fVKtDlXJDUzlas9P24iqcYNjIuPhF6cyDpO/+nrwt01+Ek=

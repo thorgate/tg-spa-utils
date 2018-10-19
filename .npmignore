@@ -1,0 +1,10 @@
+.DS_Store
+logs
+*.log
+.release
+tmp
+coverage
+.nyc_output
+.vscode
+.idea
+node_modules

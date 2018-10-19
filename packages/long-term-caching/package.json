@@ -1,0 +1,14 @@
+{
+  "name": "razzle-plugin-long-term-caching",
+  "version": "0.0.0",
+  "description": "Razzle plugin to add runtime and vendors chunks",
+  "main": "index.js",
+   "author": "Thorgate <hi@thorgate.eu>",
+  "contributors": [
+    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "razzle": "^2.4.0"
+  }
+}
