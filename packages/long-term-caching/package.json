@@ -1,6 +1,6 @@
 {
   "name": "razzle-plugin-long-term-caching",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Razzle plugin to add runtime and vendors chunks",
   "main": "index.js",
   "author": "Thorgate <hi@thorgate.eu>",
