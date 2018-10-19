@@ -3,10 +3,23 @@
   "version": "0.0.2",
   "description": "Razzle plugin to add runtime and vendors chunks",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thorgate/tg-razzle-plugins.git"
+  },
+  "keywords": [
+    "razzle",
+    "plugin",
+    "long-term caching"
+  ],
   "author": "Thorgate <hi@thorgate.eu>",
   "contributors": [
     "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
   ],
+  "bugs": {
+    "url": "https://github.com/thorgate/tg-razzle-plugins/issues"
+  },
+  "homepage": "https://github.com/thorgate/tg-razzle-plugins",
   "license": "MIT",
   "peerDependencies": {
     "razzle": "^2.4.0"

@@ -1,12 +1,16 @@
 [![Build Status][travis-image]][travis-url]
 
-# tg-razzle-plugins
-
-Plugins included:
-
 [![NPM version][npm-rpltc-image]][npm-rpltc-url]
 
+
+# tg-razzle-plugins
+
 This is combination of Razzle plugins used at Thorgate
+
+
+## License
+
+MIT © [Thorgate](http://github.com/thorgate)
 
 
 [npm-rpltc-url]: https://npmjs.org/package/razzle-plugin-long-term-caching

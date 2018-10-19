@@ -46,6 +46,11 @@ module.exports = {
 
 Customize runtime chunk behaviour, this is directly provided to Webpack config
 
+## License
+
+MIT © [Thorgate](http://github.com/thorgate)
+
+
 [npm-url]: https://npmjs.org/package/razzle-plugin-long-term-caching
 [npm-image]: https://img.shields.io/npm/v/razzle-plugin-long-term-caching.svg?style=flat-square
 

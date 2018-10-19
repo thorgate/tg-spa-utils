@@ -11,11 +11,15 @@ module.exports = function razzleLongTermCaching(baseConfig, env, webpack, baseOp
 
     // Clone base config & options
     const options = Object.assign({}, baseOptions, defaultOptions);
-    const config = Object.assign({}, baseConfig);
+    const config = Object.assign({optimization: {}}, baseConfig);
 
     // Target only web
     if (target === 'web') {
         config.optimization = {
+            // Copy base values
+            ...config.optimization,
+
+            // And overwrite what we want
             splitChunks: {
                 chunks: 'all',
                 name: false,
@@ -33,8 +37,6 @@ module.exports = function razzleLongTermCaching(baseConfig, env, webpack, baseOp
                     },
                 },
             },
-
-            ...config.optimization,
         };
 
         config.optimization.runtimeChunk = options.runtimeChunk;
