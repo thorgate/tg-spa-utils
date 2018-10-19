@@ -16,7 +16,7 @@ before_deploy:
   - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > $HOME/.npmrc
 deploy:
   provider: script
-  script: lerna publish --yes
+  script: lerna publish --verify-access --skip-git --yes
   on:
     tags: true
     node: '8'

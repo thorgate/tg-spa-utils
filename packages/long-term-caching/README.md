@@ -1,3 +1,6 @@
+[![NPM version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+
 # razzle-plugin-long-term-caching
 
 This package contains a plugin for enabling long-term caching with Razzle
@@ -42,3 +45,9 @@ module.exports = {
 **runtimeChunk: _object_ _string_ _boolean_** (defaults: 'single')
 
 Customize runtime chunk behaviour, this is directly provided to Webpack config
+
+[npm-url]: https://npmjs.org/package/razzle-plugin-long-term-caching
+[npm-image]: https://img.shields.io/npm/v/razzle-plugin-long-term-caching.svg?style=flat-square
+
+[travis-url]: https://travis-ci.com/thorgate/tg-razzle-plugins
+[travis-image]: https://travis-ci.com/thorgate/tg-razzle-plugins.svg?branch=master
