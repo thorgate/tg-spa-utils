@@ -10,5 +10,8 @@
   "license": "MIT",
   "peerDependencies": {
     "razzle": "^2.4.0"
-  }
+  },
+  "files": [
+    "index.js"
+  ]
 }
