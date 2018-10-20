@@ -7,14 +7,18 @@ const defaultOptions = {
 
 
 module.exports = function razzleLongTermCaching(baseConfig, env, webpack, baseOptions) {
-    const { target } = env;
+    const { target, dev } = env;
 
     // Clone base config & options
     const options = Object.assign({}, baseOptions, defaultOptions);
     const config = Object.assign({optimization: {}}, baseConfig);
 
+    const getFilename = ext => dev ? `static/${ext}/[name].${ext}` : `static/${ext}/[name].[contenthash:16].${ext}`;
+
     // Target only web
     if (target === 'web') {
+        config.output.filename = getFilename('js');
+
         config.optimization = {
             // Copy base values
             ...config.optimization,
