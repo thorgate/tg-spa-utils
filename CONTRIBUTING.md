@@ -11,7 +11,7 @@ Types of Contributions
 
 ### Report Bugs
 
-Report bugs at <https://github.com/thorgate/tg-razzle-plugins/issues>.
+Report bugs at <https://github.com/thorgate/tg-spa-utils/issues>.
 
 If you are reporting a bug, please include:
 
@@ -32,14 +32,13 @@ Look through the GitHub issues for features. Anything tagged with
 
 ### Write Documentation
 
-tg-razzle-plugins could always use more documentation, whether as part of
-tg-razzle-plugins, or even on the web in blog posts,
-articles and such.
+`tg-spa-utils` packages could always use more documentation, whether as part of
+`tg-spa-utils`, or even on the web in blog posts, articles and such.
 
 ### Submit Feedback
 
 The best way to send feedback is to file an issue at
-<https://github.com/thorgate/tg-razzle-plugins/issues>.
+<https://github.com/thorgate/tg-spa-utils/issues>.
 
 If you are proposing a feature:
 
@@ -58,17 +57,18 @@ Changelog is maintained via github releases.
 Get Started!
 ------------
 
-Ready to contribute? Here's how to set up tg-razzle-plugins for local
+Ready to contribute? Here's how to set up tg-spa-utils for local
 development.
 
-1.  Fork the tg-razzle-plugins repo on GitHub.
+1.  Fork the tg-spa-utils repo on GitHub.
 2.  Clone your fork locally:
 
-        $ git clone git@github.com:your_name_here/tg-razzle-plugins.git
+        $ git clone git@github.com:your_name_here/tg-spa-utils.git
 
 3.  Install dependencies
 
         $ yarn install
+        $ yarn bootstrap
 
 4.  Create a branch for local development:
 

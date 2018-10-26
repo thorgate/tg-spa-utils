@@ -1,0 +1,33 @@
+{
+  "name": "@thorgate/spa-is",
+  "version": "0.1.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Internal type checking library for SPA packages",
+  "main": "lib/index.js",
+  "module": "lib/index.esm.js",
+  "typings": "lib/index.d.ts",
+  "license": "MIT",
+  "author": "Thorgate <hi@thorgate.eu>",
+  "contributors": [
+    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
+  ],
+  "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/type-utils#readme",
+  "repository": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/type-utils",
+  "bugs": {
+    "url": "https://github.com/thorgate/tg-spa-utils/issues"
+  },
+  "files": [
+    "lib"
+  ],
+  "dependencies": {
+    "is_js":"^0.9.0"
+  },
+  "scripts": {
+    "clean": "rimraf ./lib",
+    "lint": "tslint -p tsconfig.lint.json",
+    "build": "rollup -c=../../rollup.config.js",
+    "prebuild": "yarn clean && yarn lint"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "name": "tg-loading-bar",
+  "version": "0.1.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Controlled loading bar component",
+  "main": "lib/index.js",
+  "module": "lib/index.esm.js",
+  "typings": "lib/index.d.ts",
+  "license": "MIT",
+  "author": "Thorgate <hi@thorgate.eu>",
+  "contributors": [
+    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
+  ],
+  "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/loading-bar#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thorgate/tg-spa-utils.git"
+  },
+  "bugs": {
+    "url": "https://github.com/thorgate/tg-spa-utils/issues"
+  },
+  "keywords": [
+    "loading-bar",
+    "react"
+  ],
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "peerDependencies": {
+    "react": ">=16.4.0",
+    "react-dom": ">=16.4.0"
+  },
+  "scripts": {
+    "clean": "rimraf ./lib",
+    "lint": "tslint -p tsconfig.lint.json",
+    "build": "rollup -c=../../rollup.config.js",
+    "prebuild": "yarn clean && yarn lint"
+  }
+}

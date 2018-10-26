@@ -1,0 +1,39 @@
+{
+  "name": "tg-saga-manager",
+  "version": "0.1.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "",
+  "main": "lib/index.js",
+  "module": "lib/index.esm.js",
+  "typings": "lib/index.d.ts",
+  "license": "MIT",
+  "author": "Thorgate <hi@thorgate.eu>",
+  "contributors": [
+    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
+  ],
+  "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/saga-manager#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thorgate/tg-spa-utils.git"
+  },
+  "bugs": "https://github.com/thorgate/tg-spa-utils/issues",
+  "keywords": [
+    "redux-saga",
+    "hot-reload"
+  ],
+  "files": [
+    "lib"
+  ],
+  "peerDependencies": {
+    "redux": "^4.0.1",
+    "redux-saga": "^1.0.0-beta.3"
+  },
+  "scripts": {
+    "clean": "rimraf ./lib",
+    "lint": "tslint -p tsconfig.lint.json",
+    "build": "rollup -c=../../rollup.config.js",
+    "prebuild": "yarn clean && yarn lint"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "name": "@thorgate/spa-view",
+  "version": "0.1.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "View helpers used by Thorgate project template SPA variant",
+  "main": "lib/index.js",
+  "module": "lib/index.esm.js",
+  "typings": "lib/index.d.ts",
+  "license": "MIT",
+  "author": "Thorgate <hi@thorgate.eu>",
+  "contributors": [
+    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
+  ],
+  "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/spa-view#readme",
+  "repository": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/spa-view",
+  "bugs": {
+    "url": "https://github.com/thorgate/tg-spa-utils/issues"
+  },
+  "keywords": [
+    "react",
+    "redux",
+    "view",
+    "single-page application"
+  ],
+  "files": [
+    "lib"
+  ],
+  "peerDependencies": {
+    "react": ">=16.4.0",
+    "react-dom": ">=16.4.0"
+  },
+  "dependencies": {
+    "@thorgate/spa-errors": "^0.1.1",
+    "@thorgate/spa-is": "^0.1.1",
+    "@thorgate/spa-permissions": "^0.1.1",
+    "react-helmet": "^5.2.0",
+    "react-redux": "^5.1.1",
+    "react-router": "^4.4.0-beta.6",
+    "redux": "^4.0.1",
+    "tg-named-routes": "^0.1.1"
+  },
+  "scripts": {
+    "clean": "rimraf ./lib",
+    "lint": "tslint -p tsconfig.lint.json",
+    "build": "rollup -c=../../rollup.config.js",
+    "prebuild": "yarn clean && yarn lint"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "name": "@thorgate/spa-components",
+  "version": "0.1.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Collection of components used by Thorgate project template SPA variant",
+  "main": "lib/index.js",
+  "module": "lib/index.esm.js",
+  "typings": "lib/index.d.ts",
+  "license": "MIT",
+  "author": "Thorgate <hi@thorgate.eu>",
+  "contributors": [
+    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
+  ],
+  "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/spa-components#readme",
+  "repository": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/spa-components",
+  "bugs": {
+    "url": "https://github.com/thorgate/tg-spa-utils/issues"
+  },
+  "keywords": [
+    "react",
+    "redux",
+    "components",
+    "single-page application"
+  ],
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "peerDependencies": {
+    "react": ">=16.4.0",
+    "react-dom": ">=16.4.0"
+  },
+  "dependencies": {
+    "react-helmet": "^5.2.0",
+    "react-router": "^4.4.0-beta.6",
+    "tg-named-routes": "^0.1.1",
+    "warning": "^4.0.2"
+  },
+  "scripts": {
+    "clean": "rimraf ./lib",
+    "lint": "tslint -p tsconfig.lint.json",
+    "build": "rollup -c=../../rollup.config.js",
+    "prebuild": "yarn clean && yarn lint"
+  }
+}
