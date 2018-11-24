@@ -1,0 +1,30 @@
+.message-panel-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.message-panel-wrapper .message-panel {
+    background-color: #FFFFFF;
+    border-radius: 4px;
+    border: 2px solid #ECECEC;
+    box-shadow: 2px 7px 7px rgba(0, 0, 0, 0.04);
+    padding: 30px 40px 50px;
+    max-width: 50%;
+    text-align: center;
+    font-size: 16px;
+    color: #000000;
+}
+
+.message-panel-wrapper .message-panel .text-muted {
+    color: #AAAAAA;
+}
+
+.message-panel-wrapper .message-panel > pre {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    overflow: auto;
+    text-align: left;
+}

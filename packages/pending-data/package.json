@@ -1,0 +1,49 @@
+{
+  "name": "@thorgate/spa-pending-data",
+  "version": "0.1.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Pending data manager used by Thorgate project template SPA variant",
+  "main": "lib/index.js",
+  "module": "lib/index.esm.js",
+  "typings": "lib/index.d.ts",
+  "license": "MIT",
+  "author": "Thorgate <hi@thorgate.eu>",
+  "contributors": [
+    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
+  ],
+  "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/spa-pending-data#readme",
+  "repository": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/spa-pending-data",
+  "bugs": {
+    "url": "https://github.com/thorgate/tg-spa-utils/issues"
+  },
+  "keywords": [
+    "react",
+    "redux",
+    "pending data",
+    "single-page application"
+  ],
+  "files": [
+    "lib"
+  ],
+  "peerDependencies": {
+    "connected-react-router": "^5.0.0",
+    "react": ">=16.4.0",
+    "react-dom": ">=16.4.0",
+    "react-redux": "^5.1.1",
+    "react-router": "^4.4.0-beta.6",
+    "redux": "^4.0.1"
+  },
+  "dependencies": {
+    "tg-named-routes": "^0.1.1",
+    "memoize-one": "^4.0.2",
+    "tg-loading-bar": "^0.1.1"
+  },
+  "scripts": {
+    "clean": "rimraf ./lib",
+    "lint": "tslint -p tsconfig.lint.json",
+    "build": "rollup -c=../../rollup.config.js",
+    "prebuild": "yarn clean && yarn lint"
+  }
+}

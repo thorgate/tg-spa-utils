@@ -1,0 +1,27 @@
+.resources {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+@supports (padding-inline-start: 0) {
+    .resources {
+        padding-inline-start: 0;
+    }
+}
+
+.resources > li {
+    display: inline-block;
+    padding: 1rem;
+    text-align: center;
+}
+
+.resources > li > a {
+    color: rgba(10, 40, 200, 1);
+}
+
+.resources > li > a:hover {
+    color: rgba(10, 40, 200, 0.7);
+}

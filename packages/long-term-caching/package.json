@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thorgate/tg-razzle-plugins.git"
+    "url": "git+https://github.com/thorgate/tg-spa-utils.git"
   },
   "keywords": [
     "razzle",
@@ -17,14 +17,18 @@
     "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
   ],
   "bugs": {
-    "url": "https://github.com/thorgate/tg-razzle-plugins/issues"
+    "url": "https://github.com/thorgate/tg-spa-utils/issues"
   },
-  "homepage": "https://github.com/thorgate/tg-razzle-plugins",
+  "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/long-term-caching#README.md",
   "license": "MIT",
   "peerDependencies": {
     "razzle": "^2.4.0"
   },
   "files": [
     "index.js"
-  ]
+  ],
+  "scripts": {
+    "build": "echo Nothing to build",
+    "lint": "echo Nothing to lint"
+  }
 }
