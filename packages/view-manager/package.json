@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-view-manager",
-  "version": "0.1.1",
+  "version": "1.0.0-alpha.0",
   "publishConfig": {
     "access": "public"
   },
@@ -19,8 +19,7 @@
     "url": "git+https://github.com/thorgate/tg-spa-utils.git"
   },
   "bugs": "https://github.com/thorgate/tg-spa-utils/issues",
-  "keywords": [
-  ],
+  "keywords": [],
   "files": [
     "lib"
   ],
@@ -28,14 +27,14 @@
     "redux": "^4.0.1"
   },
   "dependencies": {
-    "@thorgate/spa-errors": "^0.1.1",
-    "@thorgate/spa-is": "^0.1.1",
-    "@thorgate/spa-pending-data": "^0.1.1",
+    "@thorgate/spa-errors": "^1.0.0-alpha.0",
+    "@thorgate/spa-is": "^1.0.0-alpha.0",
+    "@thorgate/spa-pending-data": "^1.0.0-alpha.0",
     "connected-react-router": "^5.0.0",
     "qs": "^6.5.2",
     "react-router-config": "^4.4.0-beta.6",
     "redux-saga": "^1.0.0-beta.3",
-    "tg-named-routes": "^0.1.1",
+    "tg-named-routes": "^1.0.0-alpha.0",
     "warning": "^4.0.2"
   },
   "scripts": {
