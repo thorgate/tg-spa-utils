@@ -1,6 +1,7 @@
 {
   "name": "example-razzle-app",
   "version": "1.0.0-alpha.0",
+  "private": false,
   "license": "MIT",
   "private": true,
   "scripts": {

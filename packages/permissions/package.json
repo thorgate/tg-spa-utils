@@ -1,6 +1,7 @@
 {
   "name": "@thorgate/spa-permissions",
   "version": "1.0.0-alpha.0",
+  "private": false,
   "publishConfig": {
     "access": "public"
   },
