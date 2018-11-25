@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-view",
-  "version": "1.0.0-alpha.0",
+  "version": "1.0.0-alpha.1",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -33,14 +33,14 @@
     "react-dom": ">=16.4.0"
   },
   "dependencies": {
-    "@thorgate/spa-errors": "^1.0.0-alpha.0",
-    "@thorgate/spa-is": "^1.0.0-alpha.0",
-    "@thorgate/spa-permissions": "^1.0.0-alpha.0",
+    "@thorgate/spa-errors": "^1.0.0-alpha.1",
+    "@thorgate/spa-is": "^1.0.0-alpha.1",
+    "@thorgate/spa-permissions": "^1.0.0-alpha.1",
     "react-helmet": "^5.2.0",
     "react-redux": "^5.1.1",
     "react-router": "^4.4.0-beta.6",
     "redux": "^4.0.1",
-    "tg-named-routes": "^1.0.0-alpha.0"
+    "tg-named-routes": "^1.0.0-alpha.1"
   },
   "scripts": {
     "clean": "rimraf ./lib",
