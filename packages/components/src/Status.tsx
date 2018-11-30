@@ -1,4 +1,4 @@
-import React, { ReactNode, SFC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { Route } from 'react-router';
 
 
@@ -8,7 +8,7 @@ export interface StatusProps {
 }
 
 
-export const Status: SFC<StatusProps> = ({ code, children }) => (
+export const Status: FC<StatusProps> = ({ code, children }) => (
     <Route
         render={({ staticContext }) => {
             if (staticContext) {

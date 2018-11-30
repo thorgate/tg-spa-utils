@@ -1,10 +1,10 @@
-import React, { ComponentType, SFC } from 'react';
+import React, { ComponentType, FC } from 'react';
 
 import { PermissionCheck, PermissionCheckFn, PermissionCheckProps } from './PermissionCheck';
 
 
 export type CreateDecoratorOptions = Pick<
-    PermissionCheckProps, 'redirectRouteName' | 'PermissionDeniedComponent'
+    PermissionCheckProps, 'redirectRouteName' | 'PermissionDeniedComponent' | 'hideWithoutPermissions'
 >;
 
 /**
@@ -25,7 +25,7 @@ export const permissionCheck = (
     permissionCheckFn: PermissionCheckFn, displayName: string | null = null, options: CreateDecoratorOptions = {}
 ) => (
     function decorator<Props>(Component: ComponentType<Props>) {
-        const WrappedComponent: SFC<Props> = (props) => (
+        const WrappedComponent: FC<Props> = (props) => (
             <PermissionCheck
                 permissionCheck={permissionCheckFn}
                 redirectRouteName={options.redirectRouteName}

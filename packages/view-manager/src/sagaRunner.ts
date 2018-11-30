@@ -2,7 +2,7 @@ import { errorActions } from '@thorgate/spa-errors';
 import { isDevelopment, isNode, isRouteSagaObject, isSaga } from '@thorgate/spa-is';
 import { call, put } from 'redux-saga/effects';
 
-import { MatchedSagas } from './matchRouteSagas';
+import { MatchedSagas } from './types';
 
 /**
  * Run sagas in sequence, if one of them fails, execution is stopped and result from that is thrown.

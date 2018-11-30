@@ -1,4 +1,4 @@
-import { StatelessComponent } from 'react';
+import { FC } from 'react';
 import { renderRoutes } from 'react-router-config';
 import warning from 'warning';
 
@@ -10,7 +10,7 @@ export interface RenderChildrenProps {
     routes?: NamedRouteConfig[];
 }
 
-export const RenderChildren: StatelessComponent<RenderChildrenProps> = ({ route, routes }) => {
+export const RenderChildren: FC<RenderChildrenProps> = ({ route, routes }) => {
     warning(!route || !routes, 'RenderChildren Requires one of [route, routes]');
 
     if (routes && routes.length) {

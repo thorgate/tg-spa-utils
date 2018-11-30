@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { NamedLink, NamedRouteConfig, NamedRouteConfigComponentProps, RenderChildren } from '../src';
 
 
-const AppShell: React.SFC<NamedRouteConfigComponentProps> = ({ route, match }) => (
+const AppShell: React.FC<NamedRouteConfigComponentProps> = ({ route, match }) => (
     <div className="app-shell">
         <div className="menu">
             <NamedLink name="home" data-testid="link-home">Link to Home</NamedLink>
@@ -16,13 +16,13 @@ const AppShell: React.SFC<NamedRouteConfigComponentProps> = ({ route, match }) =
     </div>
 );
 
-const Home: React.SFC<NamedRouteConfigComponentProps> = () => (
+const Home: React.FC<NamedRouteConfigComponentProps> = () => (
     <div className="home" data-testid="page-home">
         Home
     </div>
 );
 
-const ParentWithChildren: React.SFC<NamedRouteConfigComponentProps> = ({ route }) => (
+const ParentWithChildren: React.FC<NamedRouteConfigComponentProps> = ({ route }) => (
     <div className="parent-with-children">
         <div data-testid="page-parent">
             Parent page
@@ -31,7 +31,7 @@ const ParentWithChildren: React.SFC<NamedRouteConfigComponentProps> = ({ route }
     </div>
 );
 
-const ChildWithParams: React.SFC<NamedRouteConfigComponentProps<{ id: string }>> = ({ match }) => (
+const ChildWithParams: React.FC<NamedRouteConfigComponentProps<{ id: string }>> = ({ match }) => (
     <div className="child" data-testid="page-child">
         Child {match.params.id}
     </div>
@@ -66,7 +66,7 @@ export const routes: NamedRouteConfig[] = [
 ];
 
 
-export const TestApp: React.SFC<{ url: string }> = ({ url }) => (
+export const TestApp: React.FC<{ url: string }> = ({ url }) => (
     <MemoryRouter initialEntries={[url]}>
         <RenderChildren routes={routes} />
     </MemoryRouter>

@@ -1,4 +1,4 @@
-import React, { ReactNode, SFC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import Helmet from 'react-helmet';
 
 import { MessagePanel } from './MessagePanel';
@@ -13,7 +13,7 @@ export interface PageErrorProps {
 }
 
 
-export const PageError: SFC<PageErrorProps> = ({ title, description, children, statusCode }) => (
+export const PageError: FC<PageErrorProps> = ({ title, description, children, statusCode }) => (
     <Status code={statusCode}>
         <MessagePanel title={title} description={description}>
             <Helmet title={title} />

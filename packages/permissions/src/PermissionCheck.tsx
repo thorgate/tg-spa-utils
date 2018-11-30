@@ -4,6 +4,7 @@ import React, { Component, ReactNode, ReactType } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { NamedRouteConfigComponentProps, stringifyLocation } from 'tg-named-routes';
+import warning from 'warning';
 
 import { DefaultPermissionDenied } from './DefaultPermissionDenied';
 import { getUser, isAuthenticated, User, UserState } from './userReducer';
@@ -18,6 +19,7 @@ export interface PermissionCheckProps extends NamedRouteConfigComponentProps {
     redirectRouteName?: string;
     permissionCheck: PermissionCheckFn;
     PermissionDeniedComponent?: ReactType;
+    hideWithoutPermissions?: boolean;
     children: ReactNode;
 }
 
@@ -25,6 +27,7 @@ export interface PermissionCheckProps extends NamedRouteConfigComponentProps {
 class PermissionCheckBase extends Component<PermissionCheckProps> {
     public static defaultProps = {
         PermissionDeniedComponent: DefaultPermissionDenied,
+        hideWithoutPermissions: false,
         error: null,
     };
 
@@ -37,7 +40,7 @@ class PermissionCheckBase extends Component<PermissionCheckProps> {
     }
 
     public render() {
-        const { children, redirectRouteName, PermissionDeniedComponent, location } = this.props;
+        const { children, redirectRouteName, PermissionDeniedComponent, hideWithoutPermissions, location } = this.props;
 
         // Check view permissions
         const hasPermission = this.hasPermission();
@@ -58,7 +61,7 @@ class PermissionCheckBase extends Component<PermissionCheckProps> {
         }
 
         if (!hasPermission) {
-            console.warn('PermissionCheck misconfiguration'); // eslint-disable-line no-console
+            warning(!hideWithoutPermissions, 'PermissionCheck misconfiguration');
             return null;
         }
 

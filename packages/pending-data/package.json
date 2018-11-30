@@ -29,10 +29,11 @@
     "lib"
   ],
   "peerDependencies": {
-    "connected-react-router": "^5.0.0",
+    "connected-react-router": "^6.0.0-beta.1",
+    "history": "^4.7.2",
     "react": ">=16.4.0",
     "react-dom": ">=16.4.0",
-    "react-redux": "^5.1.1",
+    "react-redux": "^6.0.0-beta.3",
     "react-router": "^4.4.0-beta.6",
     "redux": "^4.0.1"
   },

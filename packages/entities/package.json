@@ -1,6 +1,7 @@
 {
   "name": "@thorgate/spa-entities",
   "version": "1.0.0-alpha.1",
+  "private": false,
   "publishConfig": {
     "access": "public"
   },
@@ -24,6 +25,19 @@
   "files": [
     "lib"
   ],
+  "dependencies": {
+    "@tg-resources/redux-saga-router": "^3.0.1",
+    "@thorgate/spa-errors": "^1.0.0-alpha.1",
+    "normalizr": "^3.3.0",
+    "redux": "^4.0.1",
+    "redux-saga": "^1.0.0-beta.3",
+    "tg-resources": "^3.0.1",
+    "typescript-fsa": "^2.5.0",
+    "typescript-fsa-reducers": "^1.1.0"
+  },
+  "devDependencies": {
+    "@thorgate/test-resource": "^1.0.0-alpha.1"
+  },
   "scripts": {
     "clean": "rimraf ./lib",
     "lint": "tslint -p tsconfig.lint.json",

@@ -5,11 +5,12 @@
   "license": "MIT",
   "scripts": {
     "clean": "rimraf build",
-    "prestart": "yarn clean",
-    "start": "razzle start",
+    "dev": "razzle start",
+    "prebuild": "yarn clean",
     "build": "razzle build",
     "test": "razzle test --env=jsdom",
-    "start:prod": "NODE_ENV=production node build/server.js"
+    "prestart": "yarn build",
+    "start": "NODE_ENV=production node build/server.js"
   },
   "dependencies": {
     "@thorgate/spa-components": "^1.0.0-alpha.1",
@@ -20,13 +21,13 @@
     "@thorgate/spa-view": "^1.0.0-alpha.1",
     "@thorgate/spa-view-manager": "^1.0.0-alpha.1",
     "express": "4.16.4",
-    "history": "^4.8.0-beta.0",
-    "razzle": "2.4.0",
+    "history": "^4.7.2",
+    "razzle": "3.0.0-alpha.0",
     "razzle-plugin-long-term-caching": "^1.0.0-alpha.1",
     "react": "16.6.0",
     "react-dom": "16.6.0",
     "react-helmet": "^5.2.0",
-    "react-redux": "^5.1.1",
+    "react-redux": "^6.0.0-beta.3",
     "react-router": "^4.4.0-beta.6",
     "react-router-config": "^4.4.0-beta.6",
     "react-router-dom": "^4.4.0-beta.6",
