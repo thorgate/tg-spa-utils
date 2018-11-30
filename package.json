@@ -66,7 +66,7 @@
     "start-example": "cd examples/example-app && yarn start",
     "clean": "lerna exec yarn clean && yarn clean-logs",
     "clean-incl-deps": "yarn clean && yarn clean-deps",
-    "clean-deps": "rimraf node_modules && rimraf packages/*/node_modules && rimraf yarn.lock && rimraf */**/yarn.lock",
+    "clean-deps": "rimraf packages/*/node_modules && rimraf yarn.lock && rimraf */**/yarn.lock && rimraf node_modules",
     "clean-logs": "rimraf *.log && rimraf */**/*.log"
   }
 }

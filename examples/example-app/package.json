@@ -4,6 +4,8 @@
   "private": true,
   "license": "MIT",
   "scripts": {
+    "clean": "rimraf build",
+    "prestart": "yarn clean",
     "start": "razzle start",
     "build": "razzle build",
     "test": "razzle test --env=jsdom",

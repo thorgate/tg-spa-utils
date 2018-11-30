@@ -29,6 +29,7 @@
     "index.js"
   ],
   "scripts": {
+    "clean": "echo Nothing to clean",
     "build": "echo Nothing to build",
     "lint": "echo Nothing to lint"
   }
