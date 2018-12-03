@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-entities",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -20,14 +20,13 @@
     "url": "git+https://github.com/thorgate/tg-spa-utils.git"
   },
   "bugs": "https://github.com/thorgate/tg-spa-utils/issues",
-  "keywords": [
-  ],
+  "keywords": [],
   "files": [
     "lib"
   ],
   "dependencies": {
     "@tg-resources/redux-saga-router": "^3.0.1",
-    "@thorgate/spa-errors": "^1.0.0-alpha.1",
+    "@thorgate/spa-errors": "^1.0.0-alpha.2",
     "normalizr": "^3.3.0",
     "redux": "^4.0.1",
     "redux-saga": "^1.0.0-beta.3",
@@ -36,7 +35,7 @@
     "typescript-fsa-reducers": "^1.1.0"
   },
   "devDependencies": {
-    "@thorgate/test-resource": "^1.0.0-alpha.1"
+    "@thorgate/test-resource": "^1.0.0-alpha.2"
   },
   "scripts": {
     "clean": "rimraf ./lib",

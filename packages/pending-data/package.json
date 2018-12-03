@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-pending-data",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -39,8 +39,8 @@
   },
   "dependencies": {
     "memoize-one": "^4.0.2",
-    "tg-loading-bar": "^1.0.0-alpha.1",
-    "tg-named-routes": "^1.0.0-alpha.1"
+    "tg-loading-bar": "^1.0.0-alpha.2",
+    "tg-named-routes": "^1.0.0-alpha.2"
   },
   "scripts": {
     "clean": "rimraf ./lib",
