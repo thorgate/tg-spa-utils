@@ -1,6 +1,6 @@
 import { RouterState } from 'connected-react-router';
 import { LocationState } from 'history';
-import React, { SFC } from 'react';
+import React, { FC } from 'react';
 import { connect } from 'react-redux';
 import { Redirect, RedirectProps, RouteComponentProps, withRouter } from 'react-router';
 
@@ -10,7 +10,7 @@ interface ConnectedRedirectProps extends RedirectProps, RouteComponentProps {
 }
 
 
-const ConnectedRedirectBase: SFC<ConnectedRedirectProps> = (props) => {
+const ConnectedRedirectBase: FC<ConnectedRedirectProps> = (props) => {
     const { location, routerLocation, ...rest } = props;
     if (location.key !== routerLocation.key) {
         return null;
@@ -31,6 +31,6 @@ const mapStateToProps = (state: ExpectedAppState) => ({
     routerLocation: state.router.location,
 });
 
-export const ConnectedRedirect: SFC<RedirectProps> = withRouter(
+export const ConnectedRedirect: FC<RedirectProps> = withRouter(
     connect(mapStateToProps)(ConnectedRedirectBase),
 ) as any;

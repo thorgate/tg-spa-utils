@@ -1,4 +1,4 @@
-import React, { ReactNode, SFC } from 'react';
+import React, { FC, ReactNode } from 'react';
 
 
 export interface MessagePanelProps {
@@ -8,7 +8,7 @@ export interface MessagePanelProps {
 }
 
 
-export const MessagePanel: SFC<MessagePanelProps> = ({ title, description, children }) => (
+export const MessagePanel: FC<MessagePanelProps> = ({ title, description, children }) => (
     <div className="message-panel-wrapper">
         <div className="message-panel">
             {title ? (

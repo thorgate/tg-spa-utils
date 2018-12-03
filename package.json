@@ -6,6 +6,7 @@
     "packages/*"
   ],
   "devDependencies": {
+    "@tg-resources/redux-saga-router": "^3.0.1",
     "@types/express": "^4.16.0",
     "@types/is": "^0.0.21",
     "@types/jest": "^23.3.9",
@@ -14,22 +15,26 @@
     "@types/path-to-regexp": "^1.7.0",
     "@types/qs": "^6.5.1",
     "@types/react-helmet": "^5.0.7",
-    "@types/react-redux": "^6.0.9",
+    "@types/react-redux": "^6.0.10",
     "@types/react-router": "^4.0.32",
     "@types/react-router-config": "^1.0.9",
     "@types/react-router-dom": "^4.3.1",
+    "@types/uuid": "^3.4.4",
     "@types/warning": "^3.0.0",
-    "connected-react-router": "^5.0.0",
+    "connected-react-router": "^6.0.0-beta.1",
+    "formik": "^1.3.2",
     "jest": "23.6.0",
     "jest-cli": "23.6.0",
     "jest-dom": "^2.1.0",
+    "history": "^4.7.2",
     "lerna": "3.4.3",
+    "lodash.template":"^4.0.0",
     "path-to-regexp": "^2.4.0",
     "qs": "^6.5.2",
-    "razzle": "^2.4.0",
+    "razzle": "^3.0.0-alpha.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "react-redux": "^5.1.1",
+    "react-redux": "^6.0.0-beta.3",
     "react-router": "^4.4.0-beta.6",
     "react-router-config": "^4.4.0-beta.6",
     "react-router-dom": "^4.4.0-beta.6",
@@ -42,12 +47,14 @@
     "rollup-plugin-node-resolve": "3.4.0",
     "rollup-plugin-replace": "2.0.0",
     "rollup-plugin-typescript2": "0.17.0",
+    "tg-resources": "^3.0.1",
     "ts-jest": "23.10.3",
     "tslib": "1.9.3",
     "tslint": "5.11.0",
     "tslint-config-standard": "8.0.1",
     "tslint-react": "3.6.0",
-    "typescript": "3.1.3"
+    "typescript": "3.1.3",
+    "uuid": "^3.3.2"
   },
   "scripts": {
     "lerna": "lerna",
@@ -66,7 +73,7 @@
     "start-example": "cd examples/example-app && yarn start",
     "clean": "lerna exec yarn clean && yarn clean-logs",
     "clean-incl-deps": "yarn clean && yarn clean-deps",
-    "clean-deps": "rimraf node_modules && rimraf packages/*/node_modules && rimraf yarn.lock && rimraf */**/yarn.lock",
+    "clean-deps": "rimraf packages/*/node_modules && rimraf yarn.lock && rimraf */**/yarn.lock && rimraf node_modules",
     "clean-logs": "rimraf *.log && rimraf */**/*.log"
   }
 }

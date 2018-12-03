@@ -1,0 +1,34 @@
+{
+  "name": "@thorgate/test-resource",
+  "version": "1.0.0-alpha.1",
+  "private": true,
+  "description": "",
+  "main": "lib/index.js",
+  "module": "lib/index.esm.js",
+  "typings": "lib/index.d.ts",
+  "license": "MIT",
+  "author": "Thorgate <hi@thorgate.eu>",
+  "contributors": [
+    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
+  ],
+  "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/test-resource#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thorgate/tg-spa-utils.git"
+  },
+  "bugs": "https://github.com/thorgate/tg-spa-utils/issues",
+  "keywords": [
+  ],
+  "files": [
+    "lib"
+  ],
+  "dependencies": {
+    "tg-resources": "^3.0.1"
+  },
+  "scripts": {
+    "clean": "rimraf ./lib",
+    "lint": "tslint -p tsconfig.lint.json",
+    "build": "rollup -c=../../rollup.config.js",
+    "prebuild": "yarn clean && yarn lint"
+  }
+}

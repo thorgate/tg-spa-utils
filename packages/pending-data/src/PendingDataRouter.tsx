@@ -1,5 +1,5 @@
 import memoize from 'memoize-one';
-import React, { CSSProperties, Fragment, ReactNode, SFC } from 'react';
+import React, { CSSProperties, FC, Fragment, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Route, RouteComponentProps, withRouter } from 'react-router';
 import { LoadingBar } from 'tg-loading-bar';
@@ -20,7 +20,7 @@ const showCurrentLocation = (currentProps: PendingDataManagerProps, prevProps: P
 const getLocation = memoize((props: PendingDataManagerProps) => props.location, showCurrentLocation);
 
 
-const PendingDataManagerBase: SFC<PendingDataManagerProps> = (props: PendingDataManagerProps) => {
+const PendingDataManagerBase: FC<PendingDataManagerProps> = (props: PendingDataManagerProps) => {
     const { location, children, isDataLoading } = props;
     const currentLocation = getLocation(props);
 

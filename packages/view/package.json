@@ -37,7 +37,7 @@
     "@thorgate/spa-is": "^1.0.0-alpha.1",
     "@thorgate/spa-permissions": "^1.0.0-alpha.1",
     "react-helmet": "^5.2.0",
-    "react-redux": "^5.1.1",
+    "react-redux": "^6.0.0-beta.3",
     "react-router": "^4.4.0-beta.6",
     "redux": "^4.0.1",
     "tg-named-routes": "^1.0.0-alpha.1"

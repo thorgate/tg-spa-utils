@@ -1,5 +1,5 @@
 import { OptionalMap } from '@thorgate/spa-is';
-import React, { ComponentType, SFC } from 'react';
+import React, { ComponentType, FC } from 'react';
 
 import { View, ViewProps } from './View';
 
@@ -15,7 +15,7 @@ export const defaultConnectOptions: ViewDecoratorOptions = {
 
 export const connectView = (options: OptionalMap<ViewDecoratorOptions> = {}) => (
     function decorator<P>(Component: ComponentType<P>) {
-        const WrappedComponent: SFC<P> = (props) => (
+        const WrappedComponent: FC<P> = (props) => (
             <View {...defaultConnectOptions} {...options}>
                 <Component {...props} />
             </View>

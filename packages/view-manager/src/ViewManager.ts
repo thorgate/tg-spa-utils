@@ -6,8 +6,9 @@ import { Effect, Task } from 'redux-saga';
 import { all, call, cancel, fork, put, spawn, take } from 'redux-saga/effects';
 import { NamedRouteConfig } from 'tg-named-routes';
 
-import { MatchedSaga, matchRouteSagas, WatcherTasks } from './matchRouteSagas';
+import { matchRouteSagas } from './matchRouteSagas';
 import { sagaRunner } from './sagaRunner';
+import { SagaTaskWithArgs, WatcherTasks } from './types';
 
 
 export interface ViewManagerOptions {
@@ -22,7 +23,9 @@ interface WatcherEffects {
     [routeName: string]: Effect;
 }
 
-const mapToStartArgs = ({ saga, args }: MatchedSaga): ReturnType<typeof spawn> => (
+const mapToStartArgs = <
+    Params extends { [K in keyof Params]?: string } = {}
+>({ saga, args }: SagaTaskWithArgs): ReturnType<typeof spawn> => (
     args ? (spawn as any)(saga, ...args) : spawn(saga)
 );
 

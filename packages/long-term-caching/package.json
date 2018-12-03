@@ -23,12 +23,13 @@
   "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/long-term-caching#README.md",
   "license": "MIT",
   "peerDependencies": {
-    "razzle": "^2.4.0"
+    "razzle": ">=2.4.0 <4"
   },
   "files": [
     "index.js"
   ],
   "scripts": {
+    "clean": "echo Nothing to clean",
     "build": "echo Nothing to build",
     "lint": "echo Nothing to lint"
   }

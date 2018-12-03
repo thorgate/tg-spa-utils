@@ -1,6 +1,6 @@
 import { PageError } from '@thorgate/spa-components';
 import { isDevelopment } from '@thorgate/spa-is';
-import React, { ComponentType, ErrorInfo, Fragment, SFC } from 'react';
+import React, { ComponentType, ErrorInfo, FC, Fragment } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 
 import { ErrorResponse } from './errorReducer';
@@ -15,7 +15,7 @@ export interface ErrorComponentProps {
 export type ErrorComponent = ComponentType<ErrorComponentProps>;
 
 
-const DefaultErrorHandler: SFC<ErrorComponentProps & RouteComponentProps> = ({ error, errorInfo, resetError, history }) => (
+const DefaultErrorHandler: FC<ErrorComponentProps & RouteComponentProps> = ({ error, errorInfo, resetError, history }) => (
     <PageError statusCode={error.statusCode || 500}>
         <div>{error.message}</div>
         {isDevelopment() ? (
