@@ -70,7 +70,7 @@ export const entitiesReducer = reducerWithInitialState(initialState)
         };
 
         let nextOrder: string[];
-        if (meta!.updateOrder) {
+        if (meta && meta.updateOrder) {
             nextOrder = [...selectEntityOrder(state, payload.key)];
 
             if (Array.isArray(payload.order)) {
@@ -101,7 +101,7 @@ export const entitiesReducer = reducerWithInitialState(initialState)
         nextState.data = { ...nextState.data };
 
         Object.entries(payload.entities).forEach(([key, entities]) => {
-            if (!meta!.preserveExisting) {
+            if (meta && !meta.preserveExisting) {
                 nextState.data[key] = entities;
                 return;
             }
@@ -109,7 +109,7 @@ export const entitiesReducer = reducerWithInitialState(initialState)
             nextState.data[key] = Object.entries(entities).reduce((last, [entityId, entity]) => {
                 let newEntity = entity;
 
-                if (meta!.mergeEntities) {
+                if (meta && meta.mergeEntities) {
                     const oldEntity = last[entityId] || {};
                     newEntity = { ...oldEntity, ...newEntity };
                 }
@@ -121,7 +121,7 @@ export const entitiesReducer = reducerWithInitialState(initialState)
             }, nextState.data[key] || {});
         });
 
-        if (meta!.clearArchived) {
+        if (meta && meta.clearArchived) {
             nextState.archived = {
                 ...nextState.archived,
 

@@ -1,5 +1,5 @@
 import { errorActions } from '@thorgate/spa-errors';
-import { isDevelopment, isNode, isRouteSagaObject, isSaga } from '@thorgate/spa-is';
+import { isNode, isRouteSagaObject, isSaga } from '@thorgate/spa-is';
 import { call, put } from 'redux-saga/effects';
 
 import { MatchedSagas } from './types';
@@ -20,7 +20,7 @@ export function* sagaRunner(sagas: MatchedSagas) {
             }
         }
     } catch (error) {
-        if ((!isNode() && isDevelopment()) || isNode()) {
+        if ((!isNode() && process.env.NODE_ENV !== 'production') || isNode()) {
             // It is more helpful to see real error message
             console.warn('SagaRunner failed with: %s', error);
         }

@@ -1,5 +1,4 @@
 import { errorActions } from '@thorgate/spa-errors';
-import { isDevelopment } from '@thorgate/spa-is';
 import { loadingActions } from '@thorgate/spa-pending-data';
 import { LOCATION_CHANGE, LocationChangeAction, RouterState } from 'connected-react-router';
 import { Effect, Task } from 'redux-saga';
@@ -91,7 +90,7 @@ export function* ViewManagerWorker(
     try {
         yield put(loadingActions.startLoadingView());
 
-        if (isDevelopment() && options.allowLogger) {
+        if (process.env.NODE_ENV !== 'production' && options.allowLogger) {
             console.log('Starting loading location', location);
         }
 
@@ -112,7 +111,7 @@ export function* ViewManagerWorker(
             yield call(sagaRunner, initials);
         }
 
-        if (isDevelopment() && options.allowLogger) {
+        if (process.env.NODE_ENV !== 'production' && options.allowLogger) {
             console.log('Finished loading location', location);
         }
 
@@ -153,7 +152,7 @@ export function* ViewManager(routes: NamedRouteConfig[], options: ViewManagerOpt
     try {
         yield call(runViewManagerWorker, routes, runningWatchers, options);
     } finally {
-        if (isDevelopment()) {
+        if (process.env.NODE_ENV !== 'production') {
             console.log('ViewManager cancelled !');
         }
 

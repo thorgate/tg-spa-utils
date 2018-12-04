@@ -1,8 +1,8 @@
-import { resourceSagaRunner, SagaResource } from '@tg-resources/redux-saga-router';
+import { resourceEffectFactory, SagaResource } from '@tg-resources/redux-saga-router';
 import { Omit, OptionalMap } from '@thorgate/spa-is';
 import { FormikActions } from 'formik';
 import { call, delay, race } from 'redux-saga/effects';
-import { Query, Resource, ResourcePostMethods } from 'tg-resources';
+import { Attachments, Query, Resource, ResourcePostMethods } from 'tg-resources';
 import actionCreatorFactory, { Action, ActionCreator } from 'typescript-fsa';
 
 import { FormErrorHandlerOptions, formErrorsHandler } from './formErrors';
@@ -18,10 +18,11 @@ type PayloadActions<Values> =
 
 
 export interface ActionPayload<Values, Params extends { [K in keyof Params]?: string | undefined; } = {}> {
-    payload: Values;
-    params: Params;
+    data: Values;
+    kwargs?: Params | null;
     actions: PayloadActions<Values>;
 
+    attachments?: Attachments | null;
     query?: Query | null;
 }
 
@@ -50,10 +51,6 @@ export interface CreateFormSaveSagaOptions<
 
 export const DEFAULT_TIMEOUT = 3000;
 
-function isSagaResource<Klass extends Resource>(obj: any): obj is SagaResource<Klass> {
-    return typeof obj.resource !== 'undefined' && typeof obj.resource === 'object';
-}
-
 
 export const createFormSaveSaga = <
     Values, Klass extends Resource, Params extends { [K in keyof Params]?: string | undefined; } = {}
@@ -74,22 +71,15 @@ export const createFormSaveSaga = <
         try {
             let fetchEffect: any;
 
-            // FIXME: Switch to `resourceEffectFactory` when it is available in `tg-resources`
             if (resource) {
-                if (isSagaResource(resource)) {
-                    fetchEffect = resource[method](action.payload.params, action.payload.payload, action.payload.query);
-                } else {
-                    fetchEffect = call(
-                        resourceSagaRunner,
-                        resource,
-                        method,
-                        {
-                            kwargs: action.payload.params,
-                            query: action.payload.query,
-                            data: action.payload.payload,
-                        },
-                    );
-                }
+                fetchEffect = resourceEffectFactory(resource, method, {
+                    kwargs: action.payload.kwargs,
+                    query: action.payload.query,
+                    data: action.payload.data,
+                    attachments: action.payload.attachments,
+                    requestConfig: { initializeSaga: false }, // Disable initialized saga in this context
+                });
+
             } else if (apiSaveHook) {
                 fetchEffect = call(apiSaveHook, action);
             } else {
