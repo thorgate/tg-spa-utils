@@ -1,7 +1,7 @@
 export * from './routes';
 
-export * from './Link';
+export * from './NamedLink';
 
-export * from './Redirect';
+export * from './NamedRedirect';
 
 export * from './RenderChildren';

@@ -40,10 +40,6 @@ export const hasChildrenRenderPropFn = <T extends {}, P>(value: T): value is Has
     'children' in value && is.function((value as HasChildrenRenderProp<T, P>).children)
 );
 
-export const isDevelopment = (): boolean => (
-    process.env.NODE_ENV !== 'production'
-);
-
 export const isNode = (): boolean => (
     typeof global !== 'undefined' && {}.toString.call(global) === '[object global]'
 );

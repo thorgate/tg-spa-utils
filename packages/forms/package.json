@@ -5,7 +5,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "description": "",
+  "description": "Redux-Saga helper for resource.post like methods",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
   "typings": "lib/index.d.ts",
@@ -24,14 +24,16 @@
   "files": [
     "lib"
   ],
+  "peerDependencies": {
+    "tg-resources": "^3.0.1"
+  },
   "dependencies": {
-    "@tg-resources/redux-saga-router": "^3.0.1",
+    "@tg-resources/redux-saga-router": "^3.0.2",
     "@thorgate/spa-errors": "^1.0.0-alpha.2",
     "@thorgate/spa-is": "^1.0.0-alpha.2",
     "formik": "^1.3.2",
     "redux": "^4.0.1",
     "redux-saga": "^1.0.0-beta.3",
-    "tg-resources": "^3.0.1",
     "typescript-fsa": "^2.5.0"
   },
   "scripts": {

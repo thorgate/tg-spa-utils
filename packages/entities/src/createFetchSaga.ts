@@ -1,9 +1,9 @@
 import { isFunction } from '@tg-resources/is';
-import { resourceSagaRunner, SagaResource } from '@tg-resources/redux-saga-router';
+import { resourceEffectFactory, SagaResource } from '@tg-resources/redux-saga-router';
 import { errorActions } from '@thorgate/spa-errors';
 import { normalize, schema } from 'normalizr';
 import { call, delay, put, race } from 'redux-saga/effects';
-import { isFetchMethod, Resource, ResourceMethods } from 'tg-resources';
+import { Resource, ResourceMethods } from 'tg-resources';
 import actionCreatorFactory, { Action, ActionCreator } from 'typescript-fsa';
 
 import { setEntities } from './entitiesReducer';
@@ -54,10 +54,6 @@ export class TimeoutError extends Error {
 }
 
 
-function isSagaResource<Klass extends Resource>(obj: any): obj is SagaResource<Klass> {
-    return typeof obj.resource !== 'undefined' && typeof obj.resource === 'object';
-}
-
 export function createFetchSaga<
     Klass extends Resource, Params extends { [K in keyof Params]?: string | undefined; } = {}
 >(options: NormalizedFetchOptions<Klass, Params>) {
@@ -78,26 +74,13 @@ export function createFetchSaga<
         try {
             let fetchEffect: any;
 
-            // FIXME: Switch to `resourceEffectFactory` when it is available in `@tg-resources/redux-saga-router`
             if (resource) {
-                if (isSagaResource(resource)) {
-                    if (isFetchMethod(method)) {
-                        fetchEffect = resource[method](action.payload.kwargs, action.payload.query);
-                    } else {
-                        fetchEffect = resource[method](action.payload.kwargs, action.payload.data, action.payload.query);
-                    }
-                } else {
-                    fetchEffect = call(
-                        resourceSagaRunner,
-                        resource,
-                        method,
-                        {
-                            kwargs: action.payload.kwargs,
-                            query: action.payload.query,
-                            data: action.payload.data,
-                        },
-                    );
-                }
+                fetchEffect = resourceEffectFactory(resource, method, {
+                    kwargs: action.payload.kwargs,
+                    query: action.payload.query,
+                    data: action.payload.data,
+                    requestConfig: { initializeSaga: false }, // Disable initialized saga in this context
+                });
             } else if (apiFetchHook) {
                 fetchEffect = call(apiFetchHook, action);
             } else {
