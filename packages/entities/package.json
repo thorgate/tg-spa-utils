@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-entities",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -26,7 +26,7 @@
   ],
   "dependencies": {
     "@tg-resources/redux-saga-router": "^3.0.2",
-    "@thorgate/spa-errors": "^1.0.0-alpha.3",
+    "@thorgate/spa-errors": "^1.0.0-alpha.4",
     "normalizr": "^3.3.0",
     "redux": "^4.0.1",
     "redux-saga": "^1.0.0-beta.3",
@@ -34,7 +34,7 @@
     "typesafe-actions": "^2.0.4"
   },
   "devDependencies": {
-    "@thorgate/test-resource": "^1.0.0-alpha.3"
+    "@thorgate/test-resource": "^1.0.0-alpha.4"
   },
   "scripts": {
     "clean": "rimraf ./lib",

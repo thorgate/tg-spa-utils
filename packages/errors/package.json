@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-errors",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -33,11 +33,11 @@
     "react-dom": ">=16.4.0"
   },
   "dependencies": {
-    "@thorgate/spa-components": "^1.0.0-alpha.3",
-    "@thorgate/spa-is": "^1.0.0-alpha.3",
+    "@thorgate/spa-components": "^1.0.0-alpha.4",
+    "@thorgate/spa-is": "^1.0.0-alpha.4",
     "react-router": "^4.4.0-beta.6",
     "redux": "^4.0.1",
-    "tg-named-routes": "^1.0.0-alpha.3",
+    "tg-named-routes": "^1.0.0-alpha.4",
     "typesafe-actions": "^2.0.4",
     "warning": "^4.0.2"
   },
