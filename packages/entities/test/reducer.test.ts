@@ -1,11 +1,8 @@
 import { normalize } from 'normalizr';
 
 import {
-    clearEntities,
+    entitiesActions,
     entitiesSelectors,
-    markActive, markArchived,
-    purgeEntities,
-    setEntities,
 } from '../src';
 
 import { configureStore } from './createStore';
@@ -77,7 +74,7 @@ describe('reducer works', () => {
     test('setEntities works w/ default meta args', () => {
         const normalizedData = normalize(generateArticles(5, 5), [article]);
 
-        store.dispatch(setEntities({
+        store.dispatch(entitiesActions.setEntities({
             key: article.key,
             entities: normalizedData.entities,
             order: normalizedData.result,
@@ -92,7 +89,7 @@ describe('reducer works', () => {
         const data = generateArticles(1, 5)[0];
         const normalizedData = normalize(data, article);
 
-        store.dispatch(setEntities({
+        store.dispatch(entitiesActions.setEntities({
             key: article.key,
             entities: normalizedData.entities,
             order: normalizedData.result,
@@ -118,7 +115,7 @@ describe('reducer works', () => {
         let normalizedData = normalize(data, [article]);
         const originalNormalized = normalizedData;
 
-        store.dispatch(setEntities({
+        store.dispatch(entitiesActions.setEntities({
             key: article.key,
             entities: normalizedData.entities,
             order: normalizedData.result,
@@ -128,14 +125,14 @@ describe('reducer works', () => {
 
         data[0] = originalFirst;
         normalizedData = normalize(data, [article]);
-        store.dispatch(setEntities({
+        store.dispatch(entitiesActions.setEntities({
             key: article.key,
             entities: normalizedData.entities,
             order: normalizedData.result,
         }, { mergeEntities: true }));
         expect(entitiesSelectors.selectEntities(store.getState())).toEqual(originalNormalized.entities);
 
-        store.dispatch(setEntities({
+        store.dispatch(entitiesActions.setEntities({
             key: article.key,
             entities: normalizedData.entities,
             order: normalizedData.result,
@@ -156,7 +153,7 @@ describe('reducer works', () => {
 
         let normalizedData = normalize(data, [article]);
 
-        store.dispatch(setEntities({
+        store.dispatch(entitiesActions.setEntities({
             key: article.key,
             entities: normalizedData.entities,
             order: normalizedData.result,
@@ -166,7 +163,7 @@ describe('reducer works', () => {
         // Let's restore original and check if data is valid
         data[0] = originalFirst;
         normalizedData = normalize(data, [article]);
-        store.dispatch(setEntities({
+        store.dispatch(entitiesActions.setEntities({
             key: article.key,
             entities: normalizedData.entities,
             order: normalizedData.result,
@@ -181,7 +178,7 @@ describe('reducer works', () => {
         let normalizedData = normalize(data, [article]);
         const normalizedOriginal = normalizedData;
 
-        store.dispatch(setEntities({
+        store.dispatch(entitiesActions.setEntities({
             key: article.key,
             entities: normalizedData.entities,
             order: normalizedData.result,
@@ -191,7 +188,7 @@ describe('reducer works', () => {
         // Let's restore original and check if data is valid
         data = generateArticles(15, 5);
         normalizedData = normalize(data, [article]);
-        store.dispatch(setEntities({
+        store.dispatch(entitiesActions.setEntities({
             key: article.key,
             entities: normalizedData.entities,
             order: normalizedData.result,
@@ -229,7 +226,7 @@ describe('reducer works', () => {
 
         const singleData = generateArticles(1, 0)[0];
         normalizedData = normalize(singleData, article);
-        store.dispatch(setEntities({
+        store.dispatch(entitiesActions.setEntities({
             key: article.key,
             entities: normalizedData.entities,
             order: normalizedData.result,
@@ -270,7 +267,7 @@ describe('reducer works', () => {
         const normalizedData = normalize(data, [article]);
 
         // expect initial data to be correct
-        store.dispatch(setEntities({
+        store.dispatch(entitiesActions.setEntities({
             key: article.key,
             entities: normalizedData.entities,
             order: normalizedData.result,
@@ -279,7 +276,7 @@ describe('reducer works', () => {
         expectEntities(normalizedData);
 
         // Expect archive to work
-        store.dispatch(markArchived({ key: article.key, ids: [firstId] }));
+        store.dispatch(entitiesActions.markArchived({ key: article.key, ids: [firstId] }));
         expectGlobalEntities(normalizedData, {
             archived: {
                 [article.key]: [firstId],
@@ -288,12 +285,12 @@ describe('reducer works', () => {
         expectEntities(normalizedData, { archived: [firstId] });
 
         // Expect markActive to restore
-        store.dispatch(markActive({ key: article.key, ids: [firstId] }));
+        store.dispatch(entitiesActions.markActive({ key: article.key, ids: [firstId] }));
         expectGlobalEntities(normalizedData);
         expectEntities(normalizedData);
 
-        store.dispatch(markArchived({ key: article.key, ids: [firstId] }));
-        store.dispatch(setEntities({
+        store.dispatch(entitiesActions.markArchived({ key: article.key, ids: [firstId] }));
+        store.dispatch(entitiesActions.setEntities({
             key: article.key,
             entities: normalizedData.entities,
             order: normalizedData.result,
@@ -316,7 +313,7 @@ describe('reducer works', () => {
         let normalizedData = normalize(data, [article]);
 
         // expect initial data to be correct
-        store.dispatch(setEntities({
+        store.dispatch(entitiesActions.setEntities({
             key: article.key,
             entities: normalizedData.entities,
             order: normalizedData.result,
@@ -325,9 +322,9 @@ describe('reducer works', () => {
         expectEntities(normalizedData);
 
         // Expect purge to work
-        store.dispatch(purgeEntities({ key: article.key, ids: ['asd'] }));
-        store.dispatch(purgeEntities({ key: article.key, ids: [firstId] }));
-        store.dispatch(purgeEntities({ key: comment.key, ids: commentIds }));
+        store.dispatch(entitiesActions.purgeEntities({ key: article.key, ids: ['asd'] }));
+        store.dispatch(entitiesActions.purgeEntities({ key: article.key, ids: [firstId] }));
+        store.dispatch(entitiesActions.purgeEntities({ key: comment.key, ids: commentIds }));
         normalizedData = normalize(withoutFirst, [article]);
         expectGlobalEntities(normalizedData, {
             order: {
@@ -341,7 +338,7 @@ describe('reducer works', () => {
     test('clearEntities works', () => {
         const normalizedData = normalize(generateArticles(5, 5), [article]);
 
-        store.dispatch(setEntities({
+        store.dispatch(entitiesActions.setEntities({
             key: article.key,
             entities: normalizedData.entities,
             order: normalizedData.result,
@@ -349,7 +346,7 @@ describe('reducer works', () => {
         expectGlobalEntities(normalizedData);
         expectEntities(normalizedData);
 
-        store.dispatch(clearEntities());
+        store.dispatch(entitiesActions.clearEntities());
 
         expect(entitiesSelectors.selectEntitiesRoot(store.getState())).toEqual({
             order: {},

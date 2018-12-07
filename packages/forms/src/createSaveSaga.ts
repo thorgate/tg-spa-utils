@@ -3,13 +3,10 @@ import { Omit, OptionalMap } from '@thorgate/spa-is';
 import { FormikActions } from 'formik';
 import { call, delay, race } from 'redux-saga/effects';
 import { Attachments, Query, Resource, ResourcePostMethods } from 'tg-resources';
-import actionCreatorFactory, { Action, ActionCreator } from 'typescript-fsa';
+import { createAction } from 'typesafe-actions';
 
 import { FormErrorHandlerOptions, formErrorsHandler } from './formErrors';
 import { defaultMessages, ErrorMessages } from './messages';
-
-
-const actionFactory = actionCreatorFactory('@@tg-spa-forms-save');
 
 
 type PayloadActions<Values> =
@@ -27,10 +24,23 @@ export interface ActionPayload<Values, Params extends { [K in keyof Params]?: st
 }
 
 export const createSaveAction = <
-    Values, Params extends { [K in keyof Params]?: string | undefined; } = {}
->(type: string): ActionCreator<ActionPayload<Values, Params>> => (
-    actionFactory<ActionPayload<Values, Params>>(type)
+    Values,
+    Params extends { [K in keyof Params]?: string | undefined; } = {}
+>(type: string) => (
+    createAction(`@@tg-spa-forms-save/${type}`, (resolve) => (
+        (payload: ActionPayload<Values, Params>) => (
+            resolve(payload)
+        )
+    ))
 );
+
+export interface ActionType <
+    Values,
+    Params extends { [K in keyof Params]?: string | undefined; } = {}
+> {
+    type: string;
+    payload: ActionPayload<Values, Params>;
+}
 
 export interface CreateFormSaveSagaOptions<
     Values,
@@ -40,8 +50,8 @@ export interface CreateFormSaveSagaOptions<
     resource?: Klass | SagaResource<Klass>;
     method?: ResourcePostMethods;
 
-    apiSaveHook?: (action: Action<ActionPayload<Values, Params>>) => any | Iterator<any>;
-    successHook: (result: any, action: Action<ActionPayload<Values, Params>>) => any | Iterator<any>;
+    apiSaveHook?: (action: ActionType<Values, Params>) => any | Iterator<any>;
+    successHook: (result: any, action: ActionType<Values, Params>) => any | Iterator<any>;
     errorHook?: (options: FormErrorHandlerOptions<Values>) => void | Iterator<any>;
 
     messages?: ErrorMessages;
@@ -65,7 +75,7 @@ export const createFormSaveSaga = <
         timeoutMs = DEFAULT_TIMEOUT,
     } = options;
 
-    return function* handleFormSave(action: Action<ActionPayload<Values, Params>>) {
+    return function* handleFormSave(action: ActionType<Values, Params>) {
         const { actions } = action.payload;
 
         try {

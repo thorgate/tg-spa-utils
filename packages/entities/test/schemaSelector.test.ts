@@ -2,8 +2,7 @@ import { normalize } from 'normalizr';
 
 import {
     createSchemaSelector,
-    markArchived,
-    setEntities,
+    entitiesActions,
 } from '../src';
 
 import { configureStore } from './createStore';
@@ -21,7 +20,7 @@ beforeEach(() => {
 const pushDataToStore = (schema: any, data: any) => {
     const normalizedData = normalize(data, [schema]);
 
-    store.dispatch(setEntities({
+    store.dispatch(entitiesActions.setEntities({
         key: schema.key,
         entities: normalizedData.entities,
         order: normalizedData.result,
@@ -51,7 +50,7 @@ describe('createSchemaSelector works', () => {
 
         expect(schemaSelector(store.getState(), ...ids)).toEqual(data);
 
-        store.dispatch(markArchived({ key: comment.key, ids: [skip] }));
+        store.dispatch(entitiesActions.markArchived({ key: comment.key, ids: [skip] }));
 
         expect(schemaSelector(store.getState(), ...ids)).toEqual(data.filter((d) => active.includes(d.id)));
     });

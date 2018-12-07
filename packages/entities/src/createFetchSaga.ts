@@ -4,13 +4,11 @@ import { errorActions } from '@thorgate/spa-errors';
 import { normalize, schema } from 'normalizr';
 import { call, delay, put, race } from 'redux-saga/effects';
 import { Resource, ResourceMethods } from 'tg-resources';
-import actionCreatorFactory, { Action, ActionCreator } from 'typescript-fsa';
+import { createAction } from 'typesafe-actions';
 
-import { setEntities } from './entitiesReducer';
-import { ActionPayload } from './types';
+import { entitiesActions } from './entitiesReducer';
+import { ActionPayload, SetStateMetaOptions } from './types';
 
-
-const actionFactory = actionCreatorFactory('@@tg-spa-entities-fetch');
 
 const normalizeData = (result: any, listSchema: schema.Entity[]): ReturnType<typeof normalize> => (
     normalize(Array.isArray(result) ? result : result.results, listSchema)
@@ -19,9 +17,22 @@ const normalizeData = (result: any, listSchema: schema.Entity[]): ReturnType<typ
 
 export const createFetchAction = <
     Params extends { [K in keyof Params]?: string | undefined; } = {}
->(type: string): ActionCreator<ActionPayload<Params>> => (
-    actionFactory<ActionPayload<Params>>(type)
+>(type: string) => (
+    createAction(`@@tg-spa-entities-fetch/${type}`, (resolve) => (
+        (payload: ActionPayload<Params>, meta: SetStateMetaOptions = {}) => (
+            resolve(payload, meta)
+        )
+    ))
 );
+
+
+export interface ActionType <
+    Params extends { [K in keyof Params]?: string | undefined; } = {}
+> {
+    type: string;
+    payload: ActionPayload<Params>;
+    meta: SetStateMetaOptions;
+}
 
 
 export interface NormalizedFetchOptions<
@@ -33,7 +44,7 @@ export interface NormalizedFetchOptions<
     resource?: Klass | SagaResource<Klass>;
     method?: ResourceMethods;
 
-    apiFetchHook?: (action: Action<ActionPayload<Params>>) => any | Iterator<any>;
+    apiFetchHook?: (action: ActionType<Params>) => any | Iterator<any>;
 
     serializeData?: (result: any, listSchema: schema.Entity[]) => ReturnType<typeof normalize>;
 
@@ -67,7 +78,7 @@ export function createFetchSaga<
         timeoutMs = DEFAULT_TIMEOUT,
     } = options;
 
-    return function* fetchNormalizedFetchSaga(action: Action<ActionPayload<Params>>) {
+    return function* fetchNormalizedFetchSaga(action: ActionType<Params>) {
         const { callback = null } = action.payload;
         const { meta = {} } = action;
 
@@ -98,7 +109,7 @@ export function createFetchSaga<
 
             // Serialize data and update store
             const { entities, result: order } = yield call(serializeData, response, listSchema);
-            yield put(setEntities({ entities, key, order }, meta));
+            yield put(entitiesActions.setEntities({ entities, key, order }, meta));
 
             // If callback was added call the function
             if (isFunction(callback)) {

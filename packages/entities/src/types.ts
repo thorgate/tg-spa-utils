@@ -7,3 +7,11 @@ export interface ActionPayload<Params extends { [K in keyof Params]?: string | u
     callback?: () => void;
     data?: any;
 }
+
+
+export interface SetStateMetaOptions {
+    preserveExisting?: boolean;
+    mergeEntities?: boolean;
+    updateOrder?: boolean;
+    clearArchived?: boolean;
+}
