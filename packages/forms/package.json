@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-forms",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -29,8 +29,8 @@
   },
   "dependencies": {
     "@tg-resources/redux-saga-router": "^3.0.2",
-    "@thorgate/spa-errors": "^1.0.0-alpha.5",
-    "@thorgate/spa-is": "^1.0.0-alpha.5",
+    "@thorgate/spa-errors": "^1.0.0-alpha.6",
+    "@thorgate/spa-is": "^1.0.0-alpha.6",
     "formik": "^1.3.2",
     "redux": "^4.0.1",
     "redux-saga": "^1.0.0-beta.3",
