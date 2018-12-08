@@ -68,7 +68,7 @@ export const matchRouteSagas = <Params extends { [K in keyof Params]?: string }>
 
         warning(route.routeName !== undefined, `RouteName is missing for ${route.path}`);
 
-        if (route.watcher && route.routeName) {
+        if (route.watcher && route.routeName !== undefined) {
             tasks.watchers[route.routeName] = reduceSagas([route.watcher as any], routeMatch);
         }
     });

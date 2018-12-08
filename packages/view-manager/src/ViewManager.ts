@@ -57,7 +57,7 @@ function* manageWatchers(runningWatchers: RunningWatcherTasks, watcherTasks: Wat
         }
 
         runningWatchers[routeName].forEach((task) => {
-            if (task.isRunning()) {
+            if (task && !task.isRunning()) {
                 watchersToStart[routeName] = all(watcherTasks[routeName].map(mapToStartArgs));
             }
         });
@@ -73,6 +73,7 @@ function* manageWatchers(runningWatchers: RunningWatcherTasks, watcherTasks: Wat
     alreadyRunning.filter((routeName) => !newRouteTasks.includes(routeName)).forEach((routeName) => {
         watchersToStop[routeName] = all(runningWatchers[routeName].map((task) => cancel(task)));
     });
+
     const stopped = yield all(watchersToStop);
     Object.keys(stopped).forEach((key) => {
         delete runningWatchers[key]; // eslint-disable-line no-param-reassign

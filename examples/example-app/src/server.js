@@ -1,4 +1,4 @@
-import { createLocationAction, matchRouteSagas, sagaRunner, ViewManagerWorker } from '@thorgate/spa-view-manager';
+import { createLocationAction, ViewManagerWorker } from '@thorgate/spa-view-manager';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router-dom';

@@ -1,6 +1,8 @@
 import { buildUrlCache } from 'tg-named-routes';
 
 import { simulateLogin, simulateLogout } from '../sagas/auth';
+import simulateWatcher from '../sagas/simulateWatcher';
+
 import App from './App';
 import Home from './Home';
 import PageNotFound from './PageNotFound';
@@ -12,6 +14,7 @@ import SimulatedError from './SimulateError';
 const routes = [
     {
         component: App,
+        watcher: simulateWatcher,
         routes: [{
             path: '/',
             exact: true,
