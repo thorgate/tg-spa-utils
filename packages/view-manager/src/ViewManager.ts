@@ -123,6 +123,14 @@ export function* ViewManagerWorker(
     }
 }
 
+export function* ServerViewManagerWorker(
+    routes: NamedRouteConfig[], locationAction: LocationChangeAction, options: ViewManagerOptions = {}
+) {
+    const runningWatchers = {};
+    yield call(ViewManagerWorker, routes, locationAction, options, runningWatchers);
+    yield call(manageWatchers, runningWatchers, {});
+}
+
 
 function* runViewManagerWorker(routes: NamedRouteConfig[], runningWatchers: RunningWatcherTasks, options: ViewManagerOptions) {
     let task: Task | null = null;
