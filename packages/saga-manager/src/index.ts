@@ -26,6 +26,7 @@ function* runAbortAbleSaga(saga: RootSaga, hot: boolean = false, options?: Reloa
 
                 yield take(CANCEL_SAGAS_HMR);
                 yield cancel(sagaTask);
+                break;
             } else {
                 yield call(saga, retryCount > 0);
             }
