@@ -4,9 +4,10 @@ node_js:
 - '8'
 - '9'
 - '10'
+- '11'
 
 before_install:
-- curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.10.1
+- curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.3
 - export PATH=$HOME/.yarn/bin:$PATH
 
 before_script:
@@ -16,6 +17,9 @@ before_script:
 script:
   - yarn build
   - yarn testAll
+
+after_success:
+- test $TRAVIS_NODE_VERSION = 10 && yarn coveralls
 
 cache:
   yarn: true
