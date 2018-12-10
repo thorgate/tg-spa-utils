@@ -2,6 +2,8 @@ export * from './ConnectedRedirect';
 
 export * from './ConnectedNamedRedirect';
 
-export * from './PendingDataRouter';
+export * from './PendingDataManager';
 
 export * from './loadingReducer';
+
+export * from './waitForData';

@@ -8,4 +8,6 @@ module.exports = {
     name: pkg.name,
     displayName: pkg.name,
     rootDir: './',
+
+    setupTestFrameworkScriptFile: 'jest-dom/extend-expect',
 };
