@@ -1,4 +1,4 @@
-import { applyMiddleware, createStore } from 'redux';
+import { Action, AnyAction, applyMiddleware, createStore, Reducer, Store } from 'redux';
 import createSagaMiddleware, { SagaMiddleware } from 'redux-saga';
 
 
@@ -6,7 +6,13 @@ type ExtendedStore<S, T> = S & {
     [P in keyof T]: T[P]
 };
 
-export const configureStore = (reducer: any) => {
+export type ConfigureStore<S = any, A extends Action = AnyAction> = Store<S, A> & {
+    sagaMiddleware: SagaMiddleware;
+};
+
+export const configureStore = <S = any, A extends Action = AnyAction>(reducer: Reducer<S, A>): Store<S, A> & {
+    sagaMiddleware: SagaMiddleware;
+} => {
     const sagaMiddleware = createSagaMiddleware({
         onError: () => null,
     });

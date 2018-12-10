@@ -64,11 +64,11 @@ export class LoadingBar extends Component<LoadingBarProps, LoadingBarState> {
         }));
 
         // Clear the delay flag
-        setTimeout(() => (
+        setTimeout(() => {
             this.setState({
                 delayShow: false,
-            })
-        ));
+            });
+        });
     };
 
     public hide = () => {
@@ -109,6 +109,7 @@ export class LoadingBar extends Component<LoadingBarProps, LoadingBarState> {
         return percent + random;
     };
 
+    // istanbul ignore next: Simulate is ignored in tests
     public startSimulate() {
         if (window !== undefined) {
             if (this.props.simulateInterval > 0) {
@@ -119,6 +120,7 @@ export class LoadingBar extends Component<LoadingBarProps, LoadingBarState> {
         }
     }
 
+    // istanbul ignore next: Simulate is ignored in tests
     public stopSimulate() {
         if (window !== undefined) {
             if (this.simulateInterval) {

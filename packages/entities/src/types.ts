@@ -12,6 +12,7 @@ export interface ActionPayload<Params extends { [K in keyof Params]?: string | u
 export interface SetStateMetaOptions {
     preserveExisting?: boolean;
     mergeEntities?: boolean;
+    skipOrder?: boolean;
     updateOrder?: boolean;
     clearArchived?: boolean;
 }

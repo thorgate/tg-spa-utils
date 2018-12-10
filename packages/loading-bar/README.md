@@ -22,6 +22,7 @@ class App {
     };
 
     render() {
+        return <LoadingBar isLoading={this.state.isLoading} />;
     }
 }
 ```

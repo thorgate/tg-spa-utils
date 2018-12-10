@@ -1,3 +1,4 @@
+import { ConfigureStore, configureStore } from '@thorgate/test-store';
 import { normalize } from 'normalizr';
 
 import {
@@ -5,15 +6,14 @@ import {
     entitiesActions,
 } from '../src';
 
-import { configureStore } from './createStore';
 import { article, comment, generateArticles, generateComments, user } from './createTestData';
+import { reducer, State } from './reducer';
 
 
-let store: ReturnType<typeof configureStore>;
-
+let store: ConfigureStore<State>;
 
 beforeEach(() => {
-    store = configureStore();
+    store = configureStore(reducer);
 });
 
 

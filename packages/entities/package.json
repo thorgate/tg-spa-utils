@@ -34,7 +34,8 @@
     "typesafe-actions": "^2.0.4"
   },
   "devDependencies": {
-    "@thorgate/test-resource": "^1.0.0-alpha.6"
+    "@thorgate/test-resource": "^1.0.0-alpha.6",
+    "@thorgate/test-store": "^1.0.0-alpha.6"
   },
   "scripts": {
     "clean": "rimraf ./lib",

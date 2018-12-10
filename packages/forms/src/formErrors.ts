@@ -1,12 +1,25 @@
 import { FormikErrors } from 'formik';
 import { call } from 'redux-saga/effects';
-import { ResourceErrorInterface, ValidationErrorInterface } from 'tg-resources';
+import {
+    InvalidResponseCode,
+    NetworkError,
+    ResourceErrorInterface,
+    ValidationErrorInterface
+} from 'tg-resources';
 
 import { defaultMessages, ErrorMessages } from './messages';
 
 
 const isValidationError = (error: any): error is ValidationErrorInterface => (
     error.isValidationError
+);
+
+const isStatusCodeError = (error: any): error is InvalidResponseCode => (
+    error.isInvalidResponseCode
+);
+
+const isNetworkError = (error: any): error is NetworkError => (
+    error.isNetworkError
 );
 
 export interface FormErrorHandlerOptions<Values> {
@@ -27,14 +40,14 @@ interface ErrorMapping {
 export function* formErrorsHandler<Values>(options: FormErrorHandlerOptions<Values>) {
     const { error, messages = defaultMessages, setErrors, setStatus } = options;
 
-    if (error.isNetworkError) {
+    if (isNetworkError(error)) {
         yield call(setStatus, {
             message: messages.network,
         });
 
-    } else if (error.isInvalidResponseCode) {
+    } else if (isStatusCodeError(error)) {
         yield call(setStatus, {
-            message: messages.network,
+            message: messages.invalidResponseCode,
         });
 
     } else if (isValidationError(error)) {
@@ -55,5 +68,8 @@ export function* formErrorsHandler<Values>(options: FormErrorHandlerOptions<Valu
             }, {});
 
         yield call(setErrors, fields);
+    } else {
+        // Fallback to status error
+        yield call(setStatus, `${error}`);
     }
 }

@@ -25,6 +25,7 @@ export interface EntitiesState {
 const defaultActionMeta: SetStateMetaOptions = {
     preserveExisting: true,
     mergeEntities: false,
+    skipOrder: false,
     updateOrder: false,
     clearArchived: true,
 };
@@ -92,7 +93,9 @@ export const entitiesReducer = (state: EntitiesState = initialState, action: Ent
             };
 
             let nextOrder: string[];
-            if (meta && meta.updateOrder) {
+            if (meta && meta.skipOrder) {
+                nextOrder = selectEntityOrder(state, payload.key);
+            } else if (meta && meta.updateOrder) {
                 nextOrder = [...selectEntityOrder(state, payload.key)];
 
                 if (Array.isArray(payload.order)) {
