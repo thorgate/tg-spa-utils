@@ -1,5 +1,5 @@
 {
-  "name": "tg-saga-manager",
+  "name": "@thorgate/test-store",
   "version": "1.0.0-alpha.6",
   "private": false,
   "publishConfig": {
@@ -14,25 +14,20 @@
   "contributors": [
     "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
   ],
-  "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/saga-manager#readme",
+  "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/test-store#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thorgate/tg-spa-utils.git"
   },
   "bugs": "https://github.com/thorgate/tg-spa-utils/issues",
   "keywords": [
-    "redux-saga",
-    "hot-reload"
   ],
   "files": [
     "lib"
   ],
-  "peerDependencies": {
+  "dependencies": {
     "redux": "^4.0.1",
     "redux-saga": "^1.0.0-beta.3"
-  },
-  "devDependencies": {
-    "@thorgate/test-store": "^1.0.0-alpha.6"
   },
   "scripts": {
     "clean": "rimraf ./lib",

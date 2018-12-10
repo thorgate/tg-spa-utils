@@ -11,6 +11,7 @@ const DEFAULT_RETRIES = 10;
 
 
 export interface ReloadOptions {
+    enableHotReload?: boolean;
     maxRetries?: number;
     onError?: ReportError;
 }
@@ -19,13 +20,21 @@ function* runAbortAbleSaga(saga: RootSaga, hot: boolean = false, options?: Reloa
     const maxRetries = (options && options.maxRetries) || DEFAULT_RETRIES;
     let retryCount = 0;
 
+    const enableHotReload = (options && options.enableHotReload !== undefined) ? (
+        options.enableHotReload
+    ) : (
+        process.env.NODE_ENV !== 'production'
+    );
+
     while (retryCount < maxRetries) {
         try {
-            if (process.env.NODE_ENV !== 'production') {
-                const sagaTask = yield fork(saga, hot);
+            if (enableHotReload) {
+                const sagaTask = yield fork(saga, hot || retryCount > 0);
 
                 yield take(CANCEL_SAGAS_HMR);
                 yield cancel(sagaTask);
+
+                // Stop execution
                 break;
             } else {
                 yield call(saga, retryCount > 0);
@@ -49,13 +58,17 @@ export class SagaHotReloader<S = any> {
         this.options = options;
     }
 
+    public get runningTask() {
+        return this._runningTask;
+    }
+
     private readonly store: Store<S>;
     private readonly sagaMiddleWare: SagaMiddleware;
     private readonly options?: ReloadOptions;
-    private runningTask: Task | null = null;
+    private _runningTask: Task | null = null;
 
     public startRootSaga(saga: RootSaga) {
-        this.runningTask = this.sagaMiddleWare.run(runAbortAbleSaga, saga, false, this.options);
+        this._runningTask = this.sagaMiddleWare.run(runAbortAbleSaga, saga, false, this.options);
     }
 
     public stopRootSaga() {
@@ -67,7 +80,7 @@ export class SagaHotReloader<S = any> {
         this.store.dispatch({ type: CANCEL_SAGAS_HMR });
         return this.runningTask.toPromise().then(() => {
             console.log('Running root saga has been stopped.');
-            this.runningTask = null;
+            this._runningTask = null;
         });
     }
 
@@ -79,7 +92,7 @@ export class SagaHotReloader<S = any> {
 
         return (this.stopRootSaga() as Promise<any>).then(() => {
             console.log('Replaced root saga.');
-            this.runningTask = this.sagaMiddleWare.run(runAbortAbleSaga, saga, true, this.options);
+            this._runningTask = this.sagaMiddleWare.run(runAbortAbleSaga, saga, true, this.options);
         });
     }
 }
