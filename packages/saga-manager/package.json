@@ -31,6 +31,9 @@
     "redux": "^4.0.1",
     "redux-saga": "^1.0.0-beta.3"
   },
+  "devDependencies": {
+    "@thorgate/test-store": "^1.0.0-alpha.6"
+  },
   "scripts": {
     "clean": "rimraf ./lib",
     "lint": "tslint -p tsconfig.lint.json",

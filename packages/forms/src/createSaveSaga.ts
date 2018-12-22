@@ -23,17 +23,6 @@ export interface ActionPayload<Values, Params extends { [K in keyof Params]?: st
     query?: Query | null;
 }
 
-export const createSaveAction = <
-    Values,
-    Params extends { [K in keyof Params]?: string | undefined; } = {}
->(type: string) => (
-    createAction(`@@tg-spa-forms-save/${type}`, (resolve) => (
-        (payload: ActionPayload<Values, Params>) => (
-            resolve(payload)
-        )
-    ))
-);
-
 export interface ActionType <
     Values,
     Params extends { [K in keyof Params]?: string | undefined; } = {}
@@ -41,6 +30,24 @@ export interface ActionType <
     type: string;
     payload: ActionPayload<Values, Params>;
 }
+
+export type SaveAction<
+    Values,
+    Params extends { [K in keyof Params]?: string | undefined; } = {}
+> = (payload: ActionPayload<Values, Params>) => ActionType<Values, Params>;
+
+
+export const createSaveAction = <
+    Values,
+    Params extends { [K in keyof Params]?: string | undefined; } = {}
+>(type: string): SaveAction<Values, Params> => (
+    createAction(`@@tg-spa-forms-save/${type}`, (resolve) => (
+        (payload: ActionPayload<Values, Params>) => (
+            resolve(payload)
+        )
+    ))
+);
+
 
 export interface CreateFormSaveSagaOptions<
     Values,
@@ -93,7 +100,7 @@ export const createFormSaveSaga = <
             } else if (apiSaveHook) {
                 fetchEffect = call(apiSaveHook, action);
             } else {
-                throw new Error(`Misconfiguration: "resource" or "apiFetchHook" is required formSaveSaga`);
+                throw new Error('Misconfiguration: "resource" or "apiFetchHook" is required formSaveSaga');
             }
 
             const { response, timeout } = yield race({
@@ -105,9 +112,7 @@ export const createFormSaveSaga = <
                 throw new Error('Timeout reached, form save failed');
             }
 
-            if (successHook) {
-                yield call(successHook, response, action);
-            }
+            yield call(successHook, response, action);
 
         } catch (error) {
             yield call(errorHook, {

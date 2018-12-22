@@ -1,17 +1,18 @@
 import { SagaResource } from '@tg-resources/redux-saga-router';
 import { getError } from '@thorgate/spa-errors';
 import { DummyResource } from '@thorgate/test-resource';
+import { ConfigureStore, configureStore } from '@thorgate/test-store';
 import { delay } from 'redux-saga/effects';
 
-import { createFetchAction, createFetchSaga, createSchemaSelector } from '../src';
-import { configureStore } from './createStore';
+import { createFetchAction, createFetchSaga, createSchemaSelector, saveResult, saveResults } from '../src';
 import { article, generateArticles } from './createTestData';
+import { reducer, State } from './reducer';
 
 
-let store: ReturnType<typeof configureStore>;
+let store: ConfigureStore<State>;
 
 beforeEach(() => {
-    store = configureStore();
+    store = configureStore(reducer);
 });
 
 const actionCreator = createFetchAction('TEST_DATA');
@@ -22,7 +23,7 @@ const expectResponse = async (
     payload: any = {},
     data?: any
 ) => {
-    await store.runSaga(fetchSaga, actionCreator(payload)).toPromise();
+    await store.sagaMiddleware.run(fetchSaga, actionCreator(payload)).toPromise();
 
     if (data) {
         expect(getError(store.getState())).toEqual(null);
@@ -63,6 +64,31 @@ describe('createFetchSaga works', () => {
         expect(callback.mock.calls.length).toEqual(1);
     });
 
+    test('saveResults', async () => {
+        const schemaSelector = createSchemaSelector(article);
+        const data = generateArticles(100, 5);
+
+        await store.sagaMiddleware.run(saveResults, article.key, data, [article]);
+        expect(schemaSelector(store.getState())).toEqual(data);
+    });
+
+    test('saveResults w/ update', async () => {
+        const schemaSelector = createSchemaSelector(article);
+        const data = generateArticles(100, 5);
+
+        await store.sagaMiddleware.run(saveResults, article.key, data, [article]);
+        expect(schemaSelector(store.getState())).toEqual(data);
+
+        const firstArticle = {
+            ...data[0],
+
+            title: 'Updated title',
+        };
+
+        await store.sagaMiddleware.run(saveResult, article.key, firstArticle, article);
+        expect(schemaSelector(store.getState())).toEqual([firstArticle, ...data.slice(1)]);
+    });
+
     test('with Resource', async () => {
         const schemaSelector = createSchemaSelector(article);
         const resource = new SagaResource('/test', null, DummyResource);
@@ -87,9 +113,7 @@ describe('createFetchSaga works', () => {
         const data = generateArticles(100, 5);
 
         function apiFetchHook() {
-            return {
-                results: data,
-            };
+            return data;
         }
 
         const fetchSaga = createFetchSaga({
@@ -117,7 +141,8 @@ describe('createFetchSaga works', () => {
 
         await expectResponse(fetchSaga, schemaSelector);
 
-        expect(getError(store.getState())!.message).toEqual('TimeoutError: NormalizedFetch saga timed out for key: articles');
+        const error = getError(store.getState());
+        expect(error && error.message).toEqual('TimeoutError: NormalizedFetch saga timed out for key: articles');
     });
 
     test('error handling', async () => {
@@ -133,6 +158,7 @@ describe('createFetchSaga works', () => {
 
         await expectResponse(fetchSaga, schemaSelector);
 
-        expect(getError(store.getState())!.message).toEqual('NetworkError');
+        const error = getError(store.getState());
+        expect(error && error.message).toEqual('NetworkError');
     });
 });

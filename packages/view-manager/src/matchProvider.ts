@@ -1,5 +1,4 @@
-import { createMatchSelector, getLocation, RouterRootState } from 'connected-react-router';
-import { Location } from 'history';
+import { createMatchSelector } from 'connected-react-router';
 import { call, select } from 'redux-saga/effects';
 
 import { SagaTask, SagaTaskArgs } from './types';
@@ -13,10 +12,10 @@ const typedCallEffect = <
 
 
 export function* matchProvider<
-    S extends RouterRootState, Params extends { [K in keyof Params]?: string } = {}
->(sagaTask: SagaTask<Params>, ...params: any[]) {
-    const location = yield select<S, Location>(getLocation);
-    const matchSelector = createMatchSelector(location.pathname);
+    Params extends { [K in keyof Params]?: string } = {}
+>(pathPattern: string, sagaTask: SagaTask<Params>, ...params: any[]) {
+    const matchSelector = createMatchSelector(pathPattern);
     const match = yield select(matchSelector);
-    yield typedCallEffect(sagaTask, match, ...params);
+
+    return yield typedCallEffect(sagaTask, match, ...params);
 }

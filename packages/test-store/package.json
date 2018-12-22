@@ -1,11 +1,11 @@
 {
-  "name": "@thorgate/spa-entities",
+  "name": "@thorgate/test-store",
   "version": "1.0.0-alpha.6",
   "private": false,
   "publishConfig": {
     "access": "public"
   },
-  "description": "Redux normalized storage & fetch helper",
+  "description": "",
   "main": "lib/index.js",
   "module": "lib/index.esm.js",
   "typings": "lib/index.d.ts",
@@ -14,28 +14,20 @@
   "contributors": [
     "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
   ],
-  "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/entities#readme",
+  "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/test-store#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thorgate/tg-spa-utils.git"
   },
   "bugs": "https://github.com/thorgate/tg-spa-utils/issues",
-  "keywords": [],
+  "keywords": [
+  ],
   "files": [
     "lib"
   ],
   "dependencies": {
-    "@tg-resources/redux-saga-router": "^3.0.2",
-    "@thorgate/spa-errors": "^1.0.0-alpha.6",
-    "normalizr": "^3.3.0",
     "redux": "^4.0.1",
-    "redux-saga": "^1.0.0-beta.3",
-    "tg-resources": "^3.0.1",
-    "typesafe-actions": "^2.0.4"
-  },
-  "devDependencies": {
-    "@thorgate/test-resource": "^1.0.0-alpha.6",
-    "@thorgate/test-store": "^1.0.0-alpha.6"
+    "redux-saga": "^1.0.0-beta.3"
   },
   "scripts": {
     "clean": "rimraf ./lib",

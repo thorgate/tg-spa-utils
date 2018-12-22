@@ -10,14 +10,21 @@ import { entitiesActions } from './entitiesReducer';
 import { ActionPayload, SetStateMetaOptions } from './types';
 
 
-const normalizeData = (result: any, listSchema: schema.Entity[]): ReturnType<typeof normalize> => (
-    normalize(Array.isArray(result) ? result : result.results, listSchema)
-);
+export interface ActionType <
+    Params extends { [K in keyof Params]?: string | undefined; } = {}
+> {
+    type: string;
+    payload: ActionPayload<Params>;
+    meta: SetStateMetaOptions;
+}
 
+export type FetchAction<
+    Params extends { [K in keyof Params]?: string | undefined; } = {}
+> = (payload: ActionPayload<Params>, meta?: SetStateMetaOptions) => ActionType<Params>;
 
 export const createFetchAction = <
     Params extends { [K in keyof Params]?: string | undefined; } = {}
->(type: string) => (
+>(type: string): FetchAction<Params> => (
     createAction(`@@tg-spa-entities-fetch/${type}`, (resolve) => (
         (payload: ActionPayload<Params>, meta: SetStateMetaOptions = {}) => (
             resolve(payload, meta)
@@ -26,13 +33,7 @@ export const createFetchAction = <
 );
 
 
-export interface ActionType <
-    Params extends { [K in keyof Params]?: string | undefined; } = {}
-> {
-    type: string;
-    payload: ActionPayload<Params>;
-    meta: SetStateMetaOptions;
-}
+export type SerializeData = (result: any, listSchema: schema.Entity[]) => ReturnType<typeof normalize>;
 
 
 export interface NormalizedFetchOptions<
@@ -46,10 +47,35 @@ export interface NormalizedFetchOptions<
 
     apiFetchHook?: (action: ActionType<Params>) => any | Iterator<any>;
 
-    serializeData?: (result: any, listSchema: schema.Entity[]) => ReturnType<typeof normalize>;
+    serializeData?: SerializeData;
 
     timeoutMs?: number;
 }
+
+
+export function* saveResult(
+    key: string,
+    result: any,
+    detailSchema: schema.Entity,
+    meta: SetStateMetaOptions = {},
+    serialize: SerializeData = normalize
+) {
+    const { entities } = yield call(serialize, [result], [detailSchema]);
+    yield put(entitiesActions.setEntities({ entities, key, order: [] }, { ...meta, skipOrder: true }));
+}
+
+
+export function* saveResults(
+    key: string,
+    result: any,
+    listSchema: schema.Entity[],
+    meta: SetStateMetaOptions = {},
+    serialize: SerializeData = normalize
+) {
+    const { entities, result: order } = yield call(serialize, result, listSchema);
+    yield put(entitiesActions.setEntities({ entities, key, order }, meta));
+}
+
 
 export const DEFAULT_TIMEOUT = 3000;
 
@@ -74,7 +100,7 @@ export function createFetchSaga<
         resource,
         method = 'fetch',
         apiFetchHook,
-        serializeData = normalizeData,
+        serializeData = normalize,
         timeoutMs = DEFAULT_TIMEOUT,
     } = options;
 
@@ -108,8 +134,7 @@ export function createFetchSaga<
             }
 
             // Serialize data and update store
-            const { entities, result: order } = yield call(serializeData, response, listSchema);
-            yield put(entitiesActions.setEntities({ entities, key, order }, meta));
+            yield call(saveResults, key, response, listSchema, meta, serializeData);
 
             // If callback was added call the function
             if (isFunction(callback)) {

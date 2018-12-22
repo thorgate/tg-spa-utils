@@ -18,7 +18,7 @@ export class DummyResponse extends ResponseInterface {
     }
 
     public get text(): string {
-        return '';
+        return JSON.stringify(this._data);
     }
 
     public get data(): any {

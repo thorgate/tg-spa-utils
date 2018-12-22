@@ -3,6 +3,7 @@
 
 const defaultOptions = {
     runtimeChunk: 'single',
+    vendorsMinUsed: 2,
 };
 
 
@@ -10,7 +11,7 @@ module.exports = function razzleLongTermCaching(baseConfig, env, webpack, baseOp
     const { target, dev } = env;
 
     // Clone base config & options
-    const options = Object.assign({}, baseOptions, defaultOptions);
+    const options = Object.assign({}, baseOptions || {}, defaultOptions);
     const config = Object.assign({optimization: {}}, baseConfig);
 
     const getFilename = ext => dev ? `static/${ext}/[name].${ext}` : `static/${ext}/[name].[contenthash:16].${ext}`;
@@ -32,12 +33,23 @@ module.exports = function razzleLongTermCaching(baseConfig, env, webpack, baseOp
                     default: false,
                     vendors: { // Override default vendors configuration
                         name: 'vendors',
-                        test: /node_modules/,  // Include all assets in node_modules directory
+
+                        // Include all assets in node_modules directory
+                        test: /node_modules/,
+
                         reuseExistingChunk: true,
+
                         enforce: true,
-                        chunks: 'all', // Use both async and non-async
-                        minChunks: 1, // If module is used, they should end up in this chunk
-                        priority: 100, // Vendors chunk has priority for node_module assets
+
+                        // Use both async and non-async
+                        chunks: 'all',
+
+                        // How many usages is required before they end up in vendor chunk
+                        // This is will make clients fetch assets more often but keeps better balance compared to package sizes
+                        minChunks: options.vendorsMinUsed,
+
+                        // Vendors chunk has priority for node_module assets
+                        priority: 100,
                     },
                 },
             },
@@ -46,6 +58,6 @@ module.exports = function razzleLongTermCaching(baseConfig, env, webpack, baseOp
         config.optimization.runtimeChunk = options.runtimeChunk;
     }
 
-    // Do some stuff...
+    // Return generated config to Razzle
     return config;
 };

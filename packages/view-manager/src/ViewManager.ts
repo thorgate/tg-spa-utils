@@ -161,7 +161,7 @@ export function* ViewManager(routes: NamedRouteConfig[], options: ViewManagerOpt
     try {
         yield call(runViewManagerWorker, routes, runningWatchers, options);
     } finally {
-        if (process.env.NODE_ENV !== 'production') {
+        if (process.env.NODE_ENV !== 'production' && options.allowLogger) {
             console.log('ViewManager cancelled !');
         }
 
