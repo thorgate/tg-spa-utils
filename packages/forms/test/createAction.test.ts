@@ -3,7 +3,7 @@ import { createSaveAction } from '../src';
 
 describe('createSaveAction works', () => {
     test('correct type created', () => {
-        const saveAction = createSaveAction('TEST_DATA');
+        const saveAction = createSaveAction('@@tg-spa-forms-save/TEST_DATA');
 
         const actions = {
             setErrors: () => null,
@@ -12,15 +12,13 @@ describe('createSaveAction works', () => {
         };
 
         expect(saveAction({
-            actions,
             data: {},
-        })).toEqual({
+        }, actions)).toEqual({
             type: '@@tg-spa-forms-save/TEST_DATA',
             payload: {
-                actions,
                 data: {},
             },
-            meta: undefined,
+            meta: actions,
         });
     });
 });

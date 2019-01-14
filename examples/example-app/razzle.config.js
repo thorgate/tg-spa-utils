@@ -1,7 +1,10 @@
 'use strict';
 
 module.exports = {
-    plugins: [
-        'long-term-caching',
-    ],
+    plugins: [{
+        name: 'long-term-caching',
+        options: {
+            aggressiveCaching: true,
+        },
+    }],
 };

@@ -1,6 +1,6 @@
 import { ActionType, createAction, getType } from 'typesafe-actions';
 
-import { SetStateMetaOptions } from './types';
+import { FetchMeta } from './types';
 
 
 export interface EntitiesDataMap {
@@ -22,10 +22,10 @@ export interface EntitiesState {
 }
 
 
-const defaultActionMeta: SetStateMetaOptions = {
+const defaultActionMeta: FetchMeta = {
     preserveExisting: true,
     mergeEntities: false,
-    skipOrder: false,
+    preserveOrder: false,
     updateOrder: false,
     clearArchived: true,
 };
@@ -43,7 +43,7 @@ export interface EntitiesIdsPayload {
 
 export const entitiesActions = {
     setEntities: createAction('@@tg-spa-entities/SET_ENTITIES', (resolve) => (
-        (payload: SetEntitiesPayload, meta: SetStateMetaOptions = {}) => {
+        (payload: SetEntitiesPayload, meta: FetchMeta = {}) => {
             return resolve(payload, { ...defaultActionMeta, ...meta });
         }
     )),
@@ -63,7 +63,7 @@ export const entitiesActions = {
     clearEntities: createAction('@@tg-spa-entities/CLEAR_ENTITIES'),
 };
 
-export type EntitesAction = ActionType<typeof entitiesActions>;
+export type EntitiesAction = ActionType<typeof entitiesActions>;
 
 
 const selectEntities = (state: EntitiesState) => state.data;
@@ -83,7 +83,7 @@ const initialState: EntitiesState = {
 };
 
 
-export const entitiesReducer = (state: EntitiesState = initialState, action: EntitesAction) => {
+export const entitiesReducer = (state: EntitiesState = initialState, action: EntitiesAction) => {
     switch (action.type) {
         case getType(entitiesActions.setEntities): {
             const { meta, payload } = action;
@@ -93,7 +93,7 @@ export const entitiesReducer = (state: EntitiesState = initialState, action: Ent
             };
 
             let nextOrder: string[];
-            if (meta && meta.skipOrder) {
+            if (meta && meta.preserveOrder) {
                 nextOrder = selectEntityOrder(state, payload.key);
             } else if (meta && meta.updateOrder) {
                 nextOrder = [...selectEntityOrder(state, payload.key)];

@@ -1,55 +1,52 @@
 import { isFunction } from '@tg-resources/is';
-import { resourceEffectFactory, SagaResource } from '@tg-resources/redux-saga-router';
+import { SagaResource } from '@tg-resources/redux-saga-router';
+import { ActionType, createResourceSaga } from '@thorgate/create-resource-saga';
 import { errorActions } from '@thorgate/spa-errors';
 import { normalize, schema } from 'normalizr';
-import { call, delay, put, race } from 'redux-saga/effects';
-import { Resource, ResourceMethods } from 'tg-resources';
-import { createAction } from 'typesafe-actions';
+import { match } from 'react-router';
+import { call, put } from 'redux-saga/effects';
+import { Query, Resource, ResourceMethods } from 'tg-resources';
 
 import { entitiesActions } from './entitiesReducer';
-import { ActionPayload, SetStateMetaOptions } from './types';
-
-
-export interface ActionType <
-    Params extends { [K in keyof Params]?: string | undefined; } = {}
-> {
-    type: string;
-    payload: ActionPayload<Params>;
-    meta: SetStateMetaOptions;
-}
-
-export type FetchAction<
-    Params extends { [K in keyof Params]?: string | undefined; } = {}
-> = (payload: ActionPayload<Params>, meta?: SetStateMetaOptions) => ActionType<Params>;
-
-export const createFetchAction = <
-    Params extends { [K in keyof Params]?: string | undefined; } = {}
->(type: string): FetchAction<Params> => (
-    createAction(`@@tg-spa-entities-fetch/${type}`, (resolve) => (
-        (payload: ActionPayload<Params>, meta: SetStateMetaOptions = {}) => (
-            resolve(payload, meta)
-        )
-    ))
-);
+import { FetchMeta } from './types';
 
 
 export type SerializeData = (result: any, listSchema: schema.Entity[]) => ReturnType<typeof normalize>;
 
 
 export interface NormalizedFetchOptions<
-    Klass extends Resource, Params extends { [K in keyof Params]?: string | undefined; } = {}
+    T extends string, Klass extends Resource, Kwargs extends { [K in keyof Kwargs]?: string | undefined; } = {},
+    Params extends { [K in keyof Params]?: string | undefined; } = {}, Data = any
 > {
-    listSchema: schema.Entity[];
+    listSchema: [schema.Entity];
     key: string;
 
     resource?: Klass | SagaResource<Klass>;
     method?: ResourceMethods;
 
-    apiFetchHook?: (action: ActionType<Params>) => any | Iterator<any>;
+    apiFetchHook?: (matchObj: match<Params> | null, action: ActionType<T, FetchMeta, Kwargs, Data>) => any;
+    successHook?: (result: any, matchObj: match<Params> | null, action: ActionType<T, FetchMeta, Kwargs, Data>) => any;
 
     serializeData?: SerializeData;
 
     timeoutMs?: number;
+
+    mutateKwargs?: (matchObj: match<Params> | null, kwargs: Kwargs | null) => any;
+    mutateQuery?: (matchObj: match<Params> | null, query: Query | null) => any;
+}
+
+
+export function* saveResults(
+    key: string,
+    result: any[],
+    listSchema: [schema.Entity],
+    meta: FetchMeta = {},
+    serialize: SerializeData = normalize
+) {
+    const { entities, result: order } = yield call(serialize, result, listSchema);
+    yield put(entitiesActions.setEntities({ entities, key, order }, meta));
+
+    return { entities, order };
 }
 
 
@@ -57,88 +54,62 @@ export function* saveResult(
     key: string,
     result: any,
     detailSchema: schema.Entity,
-    meta: SetStateMetaOptions = {},
+    meta: FetchMeta = {},
     serialize: SerializeData = normalize
 ) {
-    const { entities } = yield call(serialize, [result], [detailSchema]);
-    yield put(entitiesActions.setEntities({ entities, key, order: [] }, { ...meta, skipOrder: true }));
-}
-
-
-export function* saveResults(
-    key: string,
-    result: any,
-    listSchema: schema.Entity[],
-    meta: SetStateMetaOptions = {},
-    serialize: SerializeData = normalize
-) {
-    const { entities, result: order } = yield call(serialize, result, listSchema);
-    yield put(entitiesActions.setEntities({ entities, key, order }, meta));
-}
-
-
-export const DEFAULT_TIMEOUT = 3000;
-
-export class TimeoutError extends Error {
-    public readonly key: string;
-
-    public constructor(key: string) {
-        super();
-        this.key = key;
-
-        this.message = `TimeoutError: NormalizedFetch saga timed out for key: ${key}`;
-    }
+    return yield call(saveResults, key, [result], [detailSchema], { ...meta, preserveOrder: true }, serialize);
 }
 
 
 export function createFetchSaga<
-    Klass extends Resource, Params extends { [K in keyof Params]?: string | undefined; } = {}
->(options: NormalizedFetchOptions<Klass, Params>) {
+    T extends string, Klass extends Resource, Kwargs extends { [K in keyof Kwargs]?: string | undefined; } = {},
+    Params extends { [K in keyof Params]?: string | undefined; } = {}, Data = any
+>(options: NormalizedFetchOptions<T, Klass, Kwargs, Params, Data>) {
     const {
         key,
         listSchema,
         resource,
         method = 'fetch',
         apiFetchHook,
+        successHook,
         serializeData = normalize,
-        timeoutMs = DEFAULT_TIMEOUT,
+        timeoutMs,
+        mutateKwargs,
+        mutateQuery,
     } = options;
 
-    return function* fetchNormalizedFetchSaga(action: ActionType<Params>) {
-        const { callback = null } = action.payload;
+    function* saveHook(response: any, matchObj: match<Params> | null, action: ActionType<T, FetchMeta, Kwargs, Data>) {
+        if (action.meta.asDetails) {
+            yield call(saveResult, key, response, listSchema[0], action.meta, serializeData);
+        } else {
+            yield call(saveResults, key, response, listSchema, action.meta, serializeData);
+        }
+
+        if (successHook) {
+            yield call(successHook, response, matchObj, action);
+        }
+    }
+
+    const resourceSaga = createResourceSaga({
+        resource,
+        method,
+        apiHook: apiFetchHook,
+        successHook: saveHook,
+        timeoutMessage: `TimeoutError: NormalizedFetch saga timed out for key: ${key}`,
+        timeoutMs,
+        mutateKwargs,
+        mutateQuery,
+    });
+
+    return function* fetchSaga(matchObj: match<Params> | null, action: ActionType<T, FetchMeta, Kwargs, Data>) {
         const { meta = {} } = action;
 
         try {
-            let fetchEffect: any;
-
-            if (resource) {
-                fetchEffect = resourceEffectFactory(resource, method, {
-                    kwargs: action.payload.kwargs,
-                    query: action.payload.query,
-                    data: action.payload.data,
-                    requestConfig: { initializeSaga: false }, // Disable initialized saga in this context
-                });
-            } else if (apiFetchHook) {
-                fetchEffect = call(apiFetchHook, action);
-            } else {
-                throw new Error(`Misconfiguration: "resource" or "apiFetchHook" is required for "${key}"`);
-            }
-
-            const { response, timeout } = yield race({
-                timeout: delay(timeoutMs, true),
-                response: fetchEffect,
-            });
-
-            if (timeout) {
-                throw new TimeoutError(key);
-            }
-
-            // Serialize data and update store
-            yield call(saveResults, key, response, listSchema, meta, serializeData);
+            yield call(resourceSaga, matchObj, action);
 
             // If callback was added call the function
-            if (isFunction(callback)) {
-                callback();
+            if (isFunction(meta.callback)) {
+                meta.callback();
             }
         } catch (error) {
             yield put(errorActions.setError(error));

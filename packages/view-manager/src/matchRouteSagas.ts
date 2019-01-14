@@ -1,15 +1,23 @@
 import { isRouteSagaObject, isSaga } from '@thorgate/spa-is';
-import { match } from 'react-router';
 import { matchRoutes } from 'react-router-config';
 import { NamedRouteConfig } from 'tg-named-routes';
 import warning from 'warning';
 
-import { MatchedNamedRoute, MatchedSagas, MatchRouteSagas, SagaRunnerTask, SagaRunnerTasks, SagaTaskType, SagaTaskWithArgs } from './types';
+import {
+    MatchedNamedRoute,
+    MatchedSagas,
+    MatchRouteSagas,
+    MatchWithRoute,
+    SagaRunnerTask,
+    SagaRunnerTasks,
+    SagaTaskType,
+    SagaTaskWithArgs
+} from './types';
 
 
 const mapSaga = <
     Params extends { [K in keyof Params]?: string } = {}
->(sagaToMap: SagaTaskType<Params>, routeMatch: match<Params>): SagaTaskWithArgs<Params> => {
+>(sagaToMap: SagaTaskType<Params>, routeMatch: MatchWithRoute<Params>): SagaTaskWithArgs<Params> => {
     if (isRouteSagaObject(sagaToMap)) {
         const { saga, args = [] } = sagaToMap;
 
@@ -39,7 +47,7 @@ const mapSaga = <
 
 const reduceSagas = <
     Params extends { [K in keyof Params]?: string } = {}
->(sagas: SagaRunnerTasks<Params>, routeMatch: match<Params>): MatchedSagas<Params> => (
+>(sagas: SagaRunnerTasks<Params>, routeMatch: MatchWithRoute<Params>): MatchedSagas<Params> => (
     sagas.reduce((result: MatchedSagas<Params>, saga: SagaRunnerTask<Params>) => {
         if (Array.isArray(saga)) {
             return result.concat(saga.map((sagaObj) => mapSaga(sagaObj, routeMatch)));
@@ -52,7 +60,7 @@ const reduceSagas = <
 
 
 export const matchRouteSagas = <Params extends { [K in keyof Params]?: string }>(
-    routes: NamedRouteConfig[], pathName: string
+    routes: NamedRouteConfig[], pathName: string,
 ): MatchRouteSagas => {
     const branch: Array<MatchedNamedRoute<Params>> = matchRoutes(routes, pathName) as any;
 
@@ -63,13 +71,13 @@ export const matchRouteSagas = <Params extends { [K in keyof Params]?: string }>
 
     branch.forEach(({ route, match: routeMatch }) => {
         if (route.initial) {
-            tasks.initials.push(...reduceSagas([route.initial as any], routeMatch));
+            tasks.initials.push(...reduceSagas([route.initial as any], { ...routeMatch, routePattern: route.path }));
         }
 
         warning(route.routeName !== undefined, `RouteName is missing for ${route.path}`);
 
         if (route.watcher && route.routeName !== undefined) {
-            tasks.watchers[route.routeName] = reduceSagas([route.watcher as any], routeMatch);
+            tasks.watchers[route.routeName] = reduceSagas([route.watcher as any], { ...routeMatch, routePattern: route.path });
         }
     });
 

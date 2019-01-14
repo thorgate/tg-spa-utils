@@ -3,9 +3,15 @@ import { match } from 'react-router';
 import { NamedRouteConfig } from 'tg-named-routes';
 
 
-export type SagaTaskArgs<Params extends { [K in keyof Params]?: string } = {}> = [match<Params>, ...any[]];
+export interface MatchWithRoute<Params extends { [K in keyof Params]?: string } = {}> extends match<Params> {
+    routePattern?: string;
+}
 
-export type SagaTask<Params extends { [K in keyof Params]?: string } = {}> = (match: match<Params>, ...args: any[]) => Iterator<any>;
+export type SagaTaskArgs<Params extends { [K in keyof Params]?: string } = {}> = [MatchWithRoute<Params>, ...any[]];
+
+export type SagaTask<
+    Params extends { [K in keyof Params]?: string } = {}
+> = (match: MatchWithRoute<Params>, ...args: any[]) => Iterator<any>;
 
 export type SagaTaskWithArgs<Params extends { [K in keyof Params]?: string } = {}> = RouteSagaObject<SagaTaskArgs<Params>>;
 
@@ -27,7 +33,7 @@ export interface TaskedNamedRouteConfig<Params extends { [K in keyof Params]?: s
 
 export interface MatchedNamedRoute<Params extends { [K in keyof Params]?: string } = {}> {
     route: TaskedNamedRouteConfig<Params>;
-    match: match<Params>;
+    match: MatchWithRoute<Params>;
 }
 
 export type MatchedSagas<Params extends { [K in keyof Params]?: string } = {}> = Array<SagaTaskWithArgs<Params>>;

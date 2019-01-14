@@ -10,11 +10,16 @@ import { isLoading, LoadingState } from './loadingReducer';
 export interface PendingDataManagerProps extends RouteComponentProps {
     isDataLoading: boolean;
     children: ReactNode;
+    isDisabled?: boolean;
     loadingBarStyle?: CSSProperties;
 }
 
-const showCurrentLocation = (currentProps: PendingDataManagerProps, prevProps: PendingDataManagerProps) => (
-    currentProps.location.key !== prevProps.location.key && currentProps.isDataLoading
+type MemoizeArgs = [PendingDataManagerProps];
+
+const showCurrentLocation = (newArgs: MemoizeArgs, lastArgs: MemoizeArgs) => (
+    newArgs.length === 1 && newArgs.length === lastArgs.length && (
+        newArgs[0].location.key !== lastArgs[0].location.key && newArgs[0].isDataLoading && !newArgs[0].isDisabled
+    )
 );
 
 const getLocation = memoize((props: PendingDataManagerProps) => props.location, showCurrentLocation);

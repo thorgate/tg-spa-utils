@@ -1,4 +1,4 @@
-import { createLocationAction, ViewManagerWorker } from '@thorgate/spa-view-manager';
+import { createLocationAction, ServerViewManagerWorker } from '@thorgate/spa-view-manager';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router-dom';
@@ -16,21 +16,25 @@ const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
 const mainEntryPoints = ['runtime', 'vendors', 'client'];
 
-const scripts = mainEntryPoints.reduce((scripts, key) => {
-    if (!assets[key] || !assets[key].js) {
-        return scripts;
-    }
+const sortedAssets = Object.entries(assets).sort(
+    (([firstKey], [secondKey]) => {
+        const [firstPart] = firstKey.split('.');
+        const [secondPart] = secondKey.split('.');
+        return mainEntryPoints.indexOf(firstPart) - mainEntryPoints.indexOf(secondPart);
+    })
+);
 
-    return `${scripts}<script src="${assets[key].js}" defer crossorigin></script>`;
-}, '');
+const scripts = sortedAssets.filter(
+    ([key, asset]) => !!asset.js
+).reduce((scripts, [key, asset]) => (
+    `${scripts}<script src="${asset.js}" defer crossorigin></script>`
+), '');
 
-const styles = mainEntryPoints.reduce((styles, key) => {
-    if (!assets[key] || !assets[key].css) {
-        return styles;
-    }
-
-    return `${styles}<link rel="stylesheet" href="${assets[key].css}" crossorigin />`;
-}, '');
+const styles = sortedAssets.filter(
+    ([key, asset]) => !!asset.css
+).reduce((styles, [key, asset]) => (
+    `${styles}<link rel="stylesheet" href="${asset.css}" crossorigin />`
+), '');
 
 
 const asyncWrapper = (fn) => (req, res, next) => (
@@ -47,7 +51,7 @@ server
             location: req.originalUrl,
         });
 
-        const task = store.runSaga(ViewManagerWorker, routes, createLocationAction(store.getState().router));
+        const task = store.runSaga(ServerViewManagerWorker, routes, createLocationAction(store.getState().router), { allowLogger: true });
 
         store.close();
 

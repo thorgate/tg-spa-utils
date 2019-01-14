@@ -27,7 +27,7 @@
   ],
   "dependencies": {
     "redux": "^4.0.1",
-    "redux-saga": "^1.0.0-beta.3"
+    "redux-saga": "^1.0.0"
   },
   "scripts": {
     "clean": "rimraf ./lib",

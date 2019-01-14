@@ -1,7 +1,8 @@
 import { ConfigureStore, configureStore } from '@thorgate/test-store';
-import { normalize } from 'normalizr';
+import * as normalizr from 'normalizr';
 
 import {
+    createDetailSchemaSelector,
     createSchemaSelector,
     entitiesActions,
 } from '../src';
@@ -18,7 +19,7 @@ beforeEach(() => {
 
 
 const pushDataToStore = (schema: any, data: any) => {
-    const normalizedData = normalize(data, [schema]);
+    const normalizedData = normalizr.normalize(data, [schema]);
 
     store.dispatch(entitiesActions.setEntities({
         key: schema.key,
@@ -28,6 +29,7 @@ const pushDataToStore = (schema: any, data: any) => {
 };
 
 
+// TODO: mock with real implementation `denormalize` and inspect that it is not called second time
 describe('createSchemaSelector works', () => {
     test('root schema selector works', () => {
         const schemaSelector = createSchemaSelector(article);
@@ -35,7 +37,9 @@ describe('createSchemaSelector works', () => {
         const data = generateArticles(15, 15);
         pushDataToStore(article, data);
 
+        const result = schemaSelector(store.getState());
         expect(schemaSelector(store.getState())).toEqual(data);
+        expect(schemaSelector(store.getState())).toStrictEqual(result);
     });
 
     test('specific ids w/ archive', () => {
@@ -48,16 +52,57 @@ describe('createSchemaSelector works', () => {
 
         const [skip, ...active] = ids;
 
-        expect(schemaSelector(store.getState(), ...ids)).toEqual(data);
+        expect(schemaSelector(store.getState(), ids)).toEqual(data);
 
         store.dispatch(entitiesActions.markArchived({ key: comment.key, ids: [skip] }));
 
-        expect(schemaSelector(store.getState(), ...ids)).toEqual(data.filter((d) => active.includes(d.id)));
+        const result = schemaSelector(store.getState(), ids);
+        expect(schemaSelector(store.getState(), ids)).toEqual(data.filter((d) => active.includes(d.id)));
+        expect(schemaSelector(store.getState(), ids)).toStrictEqual(result);
     });
 
-    test('missing key returns empty', () => {
+    test('detail selector works', () => {
+        const schemaSelector = createDetailSchemaSelector(article);
+
+        const data = generateArticles(15, 15);
+        pushDataToStore(article, data);
+
+        const result = schemaSelector(store.getState(), data[0].id);
+        expect(schemaSelector(store.getState(), data[0].id)).toEqual(data[0]);
+
+        // This should not call `denormalize` again, we should have same result as previous call
+        expect(schemaSelector(store.getState(), data[0].id)).toStrictEqual(result);
+    });
+
+    test('detail selector ignores archived', () => {
+        const schemaSelector = createDetailSchemaSelector(comment);
+
+        const data = generateComments(15);
+        pushDataToStore(comment, data);
+
+        const ids = data.map((d) => d.id);
+
+        const [id] = ids;
+        const [expectedData] = data;
+
+        const result = schemaSelector(store.getState(), id);
+        expect(schemaSelector(store.getState(), id)).toEqual(expectedData);
+
+        store.dispatch(entitiesActions.markArchived({ key: comment.key, ids: [id] }));
+
+        // This should not call `denormalize` again, we should have same result as previous call
+        expect(schemaSelector(store.getState(), id)).toStrictEqual(result);
+    });
+
+    test('list :: missing key returns empty', () => {
         const schemaSelector = createSchemaSelector(user);
 
         expect(schemaSelector(store.getState())).toEqual([]);
+    });
+
+    test('detail :: missing key returns null', () => {
+        const schemaSelector = createDetailSchemaSelector(user);
+
+        expect(schemaSelector(store.getState(), 1)).toEqual(null);
     });
 });

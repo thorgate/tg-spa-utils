@@ -50,6 +50,10 @@ module.exports = {
 
 Customize runtime chunk behaviour, this is directly provided to Webpack config
 
+**aggressiveCaching: _boolean_** (defaults: false)
+
+Enable per-package vendor (node_modules) splitting for bigger initial download but smaller patches later on. This option works best with HTTP/2.
+
 ## License
 
 MIT © [Thorgate](http://github.com/thorgate)

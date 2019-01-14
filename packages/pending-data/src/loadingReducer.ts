@@ -57,21 +57,22 @@ export function loadingReducer(state: LoadingStateType = initialState, action: L
             return {
                 ...state,
 
+                data: {
+                    ...state.data,
+                    [action.payload]: true,
+                },
+            };
+
+        case getType(loadingActions.finishLoadingResource):
+            return {
+                ...state,
+
                 data: Object.keys(state.data)
                     .filter((key: string) => action.payload !== key)
                     .reduce((prev: DataLoadingState, current: string) => {
                         prev[current] = state.data[current];
                         return prev;
                     }, {}),
-            };
-
-        case getType(loadingActions.finishLoadingResource):
-            return {
-                ...state,
-                data: {
-                    ...state.data,
-                    [action.payload]: false,
-                },
             };
 
         default:
@@ -85,7 +86,7 @@ export const isViewLoading = <T extends LoadingState>(state: T) => (
 );
 
 export const isDataLoading = <T extends LoadingState>(state: T, key: string) => (
-    state.loading.data[key]
+    state.loading.data[key] || false
 );
 
 export const isLoading = <T extends LoadingState>(state: T) => (

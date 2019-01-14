@@ -1,8 +1,8 @@
 export * from './matchRouteSagas';
 
-export * from './matchProvider';
-
 export * from './sagaRunner';
+
+export * from './takeWithMatchHelpers';
 
 export * from './types';
 

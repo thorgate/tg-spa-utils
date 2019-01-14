@@ -1,6 +1,6 @@
 import { ErrorState, ErrorType, getError } from '@thorgate/spa-errors';
 import { ConnectedNamedRedirect } from '@thorgate/spa-pending-data';
-import React, { Component, ReactNode, ReactType } from 'react';
+import React, { Component, ComponentType, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { NamedRouteConfigComponentProps, stringifyLocation } from 'tg-named-routes';
@@ -18,7 +18,7 @@ export interface PermissionCheckProps extends NamedRouteConfigComponentProps {
     error: ErrorType;
     redirectRouteName?: string;
     permissionCheck: PermissionCheckFn;
-    PermissionDeniedComponent?: ReactType;
+    PermissionDeniedComponent?: ComponentType;
     hideWithoutPermissions?: boolean;
     children: ReactNode;
 }

@@ -39,7 +39,7 @@
     "@thorgate/spa-errors": "^1.0.0-alpha.6",
     "@thorgate/spa-pending-data": "^1.0.0-alpha.6",
     "tg-named-routes": "^1.0.0-alpha.6",
-    "typesafe-actions": "^2.0.4",
+    "typesafe-actions": "^3.0.0",
     "warning": "^4.0.2"
   },
   "scripts": {

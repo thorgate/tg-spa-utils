@@ -1,18 +1,19 @@
-import { Query } from 'tg-resources';
+import { ActionPayload, ActionType, Kwargs, MetaOptions } from '@thorgate/create-resource-saga';
 
 
-export interface ActionPayload<Params extends { [K in keyof Params]?: string | undefined; } = {}> {
-    kwargs?: Params | null;
-    query?: Query | null;
-    callback?: () => void;
-    data?: any;
-}
-
-
-export interface SetStateMetaOptions {
+export interface FetchMeta extends MetaOptions {
     preserveExisting?: boolean;
     mergeEntities?: boolean;
-    skipOrder?: boolean;
+    preserveOrder?: boolean;
     updateOrder?: boolean;
     clearArchived?: boolean;
+
+    asDetails?: boolean;
+
+    callback?: () => void;
 }
+
+
+export type FetchAction<
+    T extends string, KW extends Kwargs<KW> = {}, Data = any
+> = (payload: ActionPayload<KW, Data>, meta?: FetchMeta) => ActionType<T, FetchMeta, KW, Data>;
