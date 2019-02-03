@@ -16,7 +16,7 @@ module.exports = function razzleLongTermCaching(baseConfig, env, webpack, userOp
 
     // Clone base config & options
     const options = Object.assign({}, defaultOptions, userOptions);
-    const config = Object.assign({}, baseConfig);
+    const config = Object.assign({optimization: {}}, baseConfig);
 
     const getFilename = (chunk = false) => dev ? (
         `static/js/[name]${chunk ? '.chunk' : ''}.js`
