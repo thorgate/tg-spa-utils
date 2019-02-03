@@ -4,9 +4,7 @@ const crypto = require('crypto');
 
 
 const defaultOptions = {
-    runtimeChunk: {
-        name: 'runtime'
-    },
+    runtimeChunk: 'single',
     aggressiveCaching: false,
 };
 
@@ -16,7 +14,7 @@ module.exports = function razzleLongTermCaching(baseConfig, env, webpack, userOp
 
     // Clone base config & options
     const options = Object.assign({}, defaultOptions, userOptions);
-    const config = Object.assign({optimization: {}}, baseConfig);
+    const config = Object.assign({}, baseConfig);
 
     const getFilename = (chunk = false) => dev ? (
         `static/js/[name]${chunk ? '.chunk' : ''}.js`
@@ -34,6 +32,7 @@ module.exports = function razzleLongTermCaching(baseConfig, env, webpack, userOp
             ...config.optimization,
 
             // And overwrite what we want
+            runtimeChunk: options.runtimeChunk,
             splitChunks: {
                 chunks: 'all',
                 name: false,
@@ -45,7 +44,7 @@ module.exports = function razzleLongTermCaching(baseConfig, env, webpack, userOp
 
                 cacheGroups: {
                     default: false,
-                    vendor: { // Override default vendors configuration
+                    vendors: { // Override default vendors configuration
                         name: options.aggressiveCaching ? (
                             function (module) {
                                 const packageNameMatch = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/);
@@ -89,8 +88,6 @@ module.exports = function razzleLongTermCaching(baseConfig, env, webpack, userOp
                 },
             },
         };
-
-        config.optimization.runtimeChunk = options.runtimeChunk;
     }
 
     // Return generated config to Razzle
