@@ -1,7 +1,7 @@
+import { Effect, Task } from '@redux-saga/types';
 import { errorActions } from '@thorgate/spa-errors';
 import { loadingActions } from '@thorgate/spa-pending-data';
 import { LOCATION_CHANGE, LocationChangeAction, RouterState } from 'connected-react-router';
-import { Effect, Task } from 'redux-saga';
 import { all, call, cancel, fork, put, spawn, take } from 'redux-saga/effects';
 import { NamedRouteConfig } from 'tg-named-routes';
 

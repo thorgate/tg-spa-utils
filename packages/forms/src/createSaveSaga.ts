@@ -1,77 +1,41 @@
-import { resourceEffectFactory, SagaResource } from '@tg-resources/redux-saga-router';
-import { Omit, OptionalMap } from '@thorgate/spa-is';
-import { FormikActions } from 'formik';
-import { call, delay, race } from 'redux-saga/effects';
-import { Attachments, Query, Resource, ResourcePostMethods } from 'tg-resources';
-import { createAction } from 'typesafe-actions';
+import { SagaResource } from '@tg-resources/redux-saga-router';
+import { createResourceSaga, Kwargs } from '@thorgate/create-resource-saga';
+import { match } from 'react-router';
+import { call } from 'redux-saga/effects';
+import { Query, Resource, ResourcePostMethods } from 'tg-resources';
 
 import { FormErrorHandlerOptions, formErrorsHandler } from './formErrors';
 import { defaultMessages, ErrorMessages } from './messages';
-
-
-type PayloadActions<Values> =
-    Pick<FormikActions<Values>, 'setErrors' | 'setStatus' | 'setSubmitting'> &
-    OptionalMap<Omit<FormikActions<Values>, 'setErrors' | 'setStatus' | 'setSubmitting'>>;
-
-
-export interface ActionPayload<Values, Params extends { [K in keyof Params]?: string | undefined; } = {}> {
-    data: Values;
-    kwargs?: Params | null;
-    actions: PayloadActions<Values>;
-
-    attachments?: Attachments | null;
-    query?: Query | null;
-}
-
-export interface ActionType <
-    Values,
-    Params extends { [K in keyof Params]?: string | undefined; } = {}
-> {
-    type: string;
-    payload: ActionPayload<Values, Params>;
-}
-
-export type SaveAction<
-    Values,
-    Params extends { [K in keyof Params]?: string | undefined; } = {}
-> = (payload: ActionPayload<Values, Params>) => ActionType<Values, Params>;
-
-
-export const createSaveAction = <
-    Values,
-    Params extends { [K in keyof Params]?: string | undefined; } = {}
->(type: string): SaveAction<Values, Params> => (
-    createAction(`@@tg-spa-forms-save/${type}`, (resolve) => (
-        (payload: ActionPayload<Values, Params>) => (
-            resolve(payload)
-        )
-    ))
-);
+import { SaveActionType } from './types';
 
 
 export interface CreateFormSaveSagaOptions<
     Values,
+    T extends string,
     Klass extends Resource,
-    Params extends { [K in keyof Params]?: string | undefined; } = {}
+    KW extends Kwargs<KW> = {},
+    Params extends Kwargs<Params> = {}
 > {
     resource?: Klass | SagaResource<Klass>;
     method?: ResourcePostMethods;
 
-    apiSaveHook?: (action: ActionType<Values, Params>) => any | Iterator<any>;
-    successHook: (result: any, action: ActionType<Values, Params>) => any | Iterator<any>;
+    apiSaveHook?: (matchObj: match<Params> | null, action: SaveActionType<T, Values, KW>) => any | Iterator<any>;
+    successHook: (result: any, matchObj: match<Params> | null, action: SaveActionType<T, Values, KW>) => any | Iterator<any>;
     errorHook?: (options: FormErrorHandlerOptions<Values>) => void | Iterator<any>;
 
     messages?: ErrorMessages;
     timeoutMs?: number;
+
+    mutateKwargs?: (matchObj: match<Params> | null, kwargs: KW | null) => any;
+    mutateQuery?: (matchObj: match<Params> | null, query: Query | null) => any;
 }
 
 
-export const DEFAULT_TIMEOUT = 3000;
-
-
 export const createFormSaveSaga = <
-    Values, Klass extends Resource, Params extends { [K in keyof Params]?: string | undefined; } = {}
->(options: CreateFormSaveSagaOptions<Values, Klass, Params>) => {
+    Values, T extends string, Klass extends Resource,
+    KW extends Kwargs<KW> = {},
+    Params extends Kwargs<Params> = {}
+>(options: CreateFormSaveSagaOptions<Values, T, Klass, KW, Params>) => {
     const {
         resource,
         method = 'post',
@@ -79,51 +43,36 @@ export const createFormSaveSaga = <
         errorHook = formErrorsHandler,
         messages = defaultMessages,
         successHook,
-        timeoutMs = DEFAULT_TIMEOUT,
+        timeoutMs,
+        mutateKwargs,
+        mutateQuery,
     } = options;
 
-    return function* handleFormSave(action: ActionType<Values, Params>) {
-        const { actions } = action.payload;
+    const resourceSaga = createResourceSaga({
+        resource,
+        method,
+        apiHook: apiSaveHook,
+        successHook,
+        timeoutMessage: 'Timeout reached, form save failed',
+        timeoutMs,
+        mutateKwargs,
+        mutateQuery,
+    });
 
+    return function* handleFormSave(matchObj: match<Params> | null, action: SaveActionType<T, Values, KW>) {
         try {
-            let fetchEffect: any;
-
-            if (resource) {
-                fetchEffect = resourceEffectFactory(resource, method, {
-                    kwargs: action.payload.kwargs,
-                    query: action.payload.query,
-                    data: action.payload.data,
-                    attachments: action.payload.attachments,
-                    requestConfig: { initializeSaga: false }, // Disable initialized saga in this context
-                });
-
-            } else if (apiSaveHook) {
-                fetchEffect = call(apiSaveHook, action);
-            } else {
-                throw new Error('Misconfiguration: "resource" or "apiFetchHook" is required formSaveSaga');
-            }
-
-            const { response, timeout } = yield race({
-                timeout: delay(timeoutMs, true),
-                response: fetchEffect,
-            });
-
-            if (timeout) {
-                throw new Error('Timeout reached, form save failed');
-            }
-
-            yield call(successHook, response, action);
+            yield call(resourceSaga, matchObj, action);
 
         } catch (error) {
             yield call(errorHook, {
                 messages,
                 error,
-                setErrors: actions.setErrors,
-                setStatus: actions.setStatus,
+                setErrors: action.meta.setErrors,
+                setStatus: action.meta.setStatus,
             });
 
         } finally {
-            actions.setSubmitting(false);
+            action.meta.setSubmitting(false);
         }
     };
 };

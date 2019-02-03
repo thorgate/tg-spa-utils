@@ -1,4 +1,4 @@
-import { RouterState } from 'connected-react-router';
+import { getLocation, RouterState } from 'connected-react-router';
 import { LocationState } from 'history';
 import React, { FC } from 'react';
 import { connect } from 'react-redux';
@@ -28,7 +28,7 @@ interface ExpectedAppState {
 }
 
 const mapStateToProps = (state: ExpectedAppState) => ({
-    routerLocation: state.router.location,
+    routerLocation: getLocation(state),
 });
 
 export const ConnectedRedirect: FC<RedirectProps> = withRouter(

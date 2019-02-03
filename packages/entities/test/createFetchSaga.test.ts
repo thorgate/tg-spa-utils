@@ -4,7 +4,14 @@ import { DummyResource } from '@thorgate/test-resource';
 import { ConfigureStore, configureStore } from '@thorgate/test-store';
 import { delay } from 'redux-saga/effects';
 
-import { createFetchAction, createFetchSaga, createSchemaSelector, saveResult, saveResults } from '../src';
+import {
+    createFetchAction,
+    createFetchSaga,
+    createSchemaSelector,
+    FetchMeta,
+    saveResult,
+    saveResults
+} from '../src';
 import { article, generateArticles } from './createTestData';
 import { reducer, State } from './reducer';
 
@@ -21,9 +28,10 @@ const expectResponse = async (
     fetchSaga: ReturnType<typeof createFetchSaga>,
     schemaSelector: ReturnType<typeof createSchemaSelector>,
     payload: any = {},
+    meta: FetchMeta = {},
     data?: any
 ) => {
-    await store.sagaMiddleware.run(fetchSaga, actionCreator(payload)).toPromise();
+    await store.sagaMiddleware.run(fetchSaga, null, actionCreator(payload, meta)).toPromise();
 
     if (data) {
         expect(getError(store.getState())).toEqual(null);
@@ -42,7 +50,7 @@ describe('createFetchSaga works', () => {
 
         await expectResponse(fetchSaga, schemaSelector);
         expect(getError(store.getState())!.message)
-            .toEqual('Misconfiguration: "resource" or "apiFetchHook" is required for "articles"');
+            .toEqual('Misconfiguration: "resource" or "apiFetchHook" is required');
     });
 
     test('with SagaResource', async () => {
@@ -59,9 +67,40 @@ describe('createFetchSaga works', () => {
             listSchema: [article],
         });
 
-        await expectResponse(fetchSaga, schemaSelector, { callback }, data);
+        await expectResponse(fetchSaga, schemaSelector, {}, { callback }, data);
 
         expect(callback.mock.calls.length).toEqual(1);
+    });
+
+    test('with SagaResource as details', async () => {
+        const schemaSelector = createSchemaSelector(article);
+        const resource = new SagaResource('/test', null, DummyResource);
+        const data = generateArticles(100, 5);
+        resource.resource.Data = data;
+
+        const callback = jest.fn();
+
+        const fetchSaga = createFetchSaga({
+            resource,
+            key: article.key,
+            listSchema: [article],
+        });
+
+        await expectResponse(fetchSaga, schemaSelector, {}, { callback }, data);
+
+        expect(callback.mock.calls.length).toEqual(1);
+
+        const firstArticle = {
+            ...data[0],
+
+            title: 'Updated title',
+        };
+
+        resource.resource.Data = firstArticle;
+
+        await expectResponse(
+            fetchSaga, schemaSelector, {}, { callback, asDetails: true }, [firstArticle, ...data.slice(1)],
+        );
     });
 
     test('saveResults', async () => {
@@ -103,9 +142,29 @@ describe('createFetchSaga works', () => {
             listSchema: [article],
         });
 
-        await expectResponse(fetchSaga, schemaSelector, { callback }, data);
+        await expectResponse(fetchSaga, schemaSelector, {}, { callback }, data);
 
         expect(callback.mock.calls.length).toEqual(1);
+    });
+
+    test('with successHook', async () => {
+        const schemaSelector = createSchemaSelector(article);
+        const resource = new SagaResource('/test', null, DummyResource);
+        const data = generateArticles(100, 5);
+        resource.resource.Data = data;
+
+        function successHook(result: any, _0: any, _1: any) {
+            expect(result).toEqual(data);
+        }
+
+        const fetchSaga = createFetchSaga({
+            key: article.key,
+            listSchema: [article],
+            resource,
+            successHook,
+        });
+
+        await expectResponse(fetchSaga, schemaSelector, {}, { callback: 123 as any }, data);
     });
 
     test('with apiFetchHook', async () => {
@@ -122,7 +181,7 @@ describe('createFetchSaga works', () => {
             apiFetchHook,
         });
 
-        await expectResponse(fetchSaga, schemaSelector, { callback: 123 }, data);
+        await expectResponse(fetchSaga, schemaSelector, {}, { callback: 123 as any }, data);
     });
 
     test('timeout handling', async () => {

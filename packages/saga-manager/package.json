@@ -29,7 +29,7 @@
   ],
   "peerDependencies": {
     "redux": "^4.0.1",
-    "redux-saga": "^1.0.0-beta.3"
+    "redux-saga": "^1.0.0"
   },
   "devDependencies": {
     "@thorgate/test-store": "^1.0.0-alpha.6"

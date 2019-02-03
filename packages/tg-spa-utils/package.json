@@ -1,0 +1,46 @@
+{
+  "name": "tg-spa-utils",
+  "version": "1.0.0-alpha.6",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "",
+  "main": "lib/index.js",
+  "module": "lib/index.esm.js",
+  "typings": "lib/index.d.ts",
+  "license": "MIT",
+  "author": "Thorgate <hi@thorgate.eu>",
+  "contributors": [
+    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
+  ],
+  "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/tg-spa-utils#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thorgate/tg-spa-utils.git"
+  },
+  "bugs": "https://github.com/thorgate/tg-spa-utils/issues",
+  "keywords": [
+  ],
+  "files": [
+    "lib"
+  ],
+  "dependencies": {
+    "@thorgate/create-resource-saga": "1.0.0-alpha.6",
+    "@thorgate/spa-components": "1.0.0-alpha.6",
+    "@thorgate/spa-entities": "1.0.0-alpha.6",
+    "@thorgate/spa-errors": "1.0.0-alpha.6",
+    "@thorgate/spa-forms": "1.0.0-alpha.6",
+    "@thorgate/spa-is": "1.0.0-alpha.6",
+    "@thorgate/spa-pending-data": "1.0.0-alpha.6",
+    "@thorgate/spa-permissions": "1.0.0-alpha.6",
+    "@thorgate/spa-view": "1.0.0-alpha.6",
+    "@thorgate/spa-view-manager": "1.0.0-alpha.6"
+  },
+  "scripts": {
+    "clean": "rimraf ./lib",
+    "lint": "tslint -p tsconfig.lint.json",
+    "build": "rollup -c=../../rollup.config.js",
+    "prebuild": "yarn clean && yarn lint"
+  }
+}

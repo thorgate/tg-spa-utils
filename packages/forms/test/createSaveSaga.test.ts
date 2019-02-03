@@ -1,10 +1,11 @@
 import { SagaResource } from '@tg-resources/redux-saga-router';
+import { ActionPayload } from '@thorgate/create-resource-saga';
 import { DummyResource } from '@thorgate/test-resource';
 import { ConfigureStore, configureStore } from '@thorgate/test-store';
 import { delay } from 'redux-saga/effects';
 import { NetworkError } from 'tg-resources';
 
-import { ActionPayload, createFormSaveSaga, createSaveAction, defaultMessages } from '../src';
+import { createFormSaveSaga, createSaveAction, defaultMessages, SaveMeta } from '../src';
 
 
 function testReducer(state: any = null, action: any) {
@@ -29,18 +30,19 @@ beforeEach(() => {
 const expectSaveResponse = async (
     saveSaga: ReturnType<typeof createFormSaveSaga>,
     payload: ActionPayload<any>,
+    meta: SaveMeta<any>,
     data: any = null
 ) => {
-    await store.sagaMiddleware.run(saveSaga, saveAction(payload)).toPromise();
+    await store.sagaMiddleware.run(saveSaga, null, saveAction(payload, meta)).toPromise();
 
     if (data) {
-        expect((payload.actions.setErrors as any).mock.calls).toEqual([]);
-        expect((payload.actions.setStatus as any).mock.calls).toEqual([]);
+        expect((meta.setErrors as any).mock.calls).toEqual([]);
+        expect((meta.setStatus as any).mock.calls).toEqual([]);
 
         expect(store.getState()).toEqual(data);
     }
 
-    expect((payload.actions.setSubmitting as any).mock.calls).toEqual([[false]]);
+    expect((meta.setSubmitting as any).mock.calls).toEqual([[false]]);
 };
 
 const createActions = () => ({
@@ -59,11 +61,10 @@ describe('createFormSaveSaga works', () => {
 
         await expectSaveResponse(saveSaga, {
             data: {},
-            actions,
-        });
+        }, actions);
 
         expect(actions.setStatus.mock.calls).toEqual([
-            ['Error: Misconfiguration: "resource" or "apiFetchHook" is required formSaveSaga'],
+            ['Error: Misconfiguration: "resource" or "apiFetchHook" is required'],
         ]);
     });
 
@@ -87,9 +88,7 @@ describe('createFormSaveSaga works', () => {
 
         await expectSaveResponse(saveSaga, {
             data: {},
-            actions,
-
-        }, {
+        }, actions, {
             success: true,
         });
     });
@@ -107,10 +106,7 @@ describe('createFormSaveSaga works', () => {
             timeoutMs: 10,
         });
 
-        await expectSaveResponse(saveSaga, {
-            data: {},
-            actions,
-        });
+        await expectSaveResponse(saveSaga, { data: {} }, actions);
 
         expect(actions.setStatus.mock.calls).toEqual([
             ['Error: Timeout reached, form save failed'],
@@ -135,10 +131,7 @@ describe('default error handler', () => {
             }
         });
 
-        await expectSaveResponse(saveSaga, {
-            data: {},
-            actions,
-        });
+        await expectSaveResponse(saveSaga, { data: {} }, actions);
 
         expect(actions.setStatus.mock.calls).toEqual([[{
             message: 'Network error yo',
@@ -158,8 +151,7 @@ describe('default error handler', () => {
 
         await expectSaveResponse(saveSaga, {
             data: {},
-            actions,
-        });
+        }, actions);
 
         expect(actions.setStatus.mock.calls).toEqual([[{
             message: defaultMessages.network,
@@ -179,10 +171,7 @@ describe('default error handler', () => {
             successHook: (_0, _1) => null,
         });
 
-        await expectSaveResponse(saveSaga, {
-            data: {},
-            actions,
-        });
+        await expectSaveResponse(saveSaga, { data: {} }, actions);
 
         expect(actions.setStatus.mock.calls).toEqual([[{
             message: defaultMessages.invalidResponseCode,
@@ -220,10 +209,7 @@ describe('default error handler', () => {
             successHook: (_0, _1) => null,
         });
 
-        await expectSaveResponse(saveSaga, {
-            data: {},
-            actions,
-        });
+        await expectSaveResponse(saveSaga, { data: {} }, actions);
 
         expect(actions.setStatus.mock.calls).toEqual([[{
             message: 'Something is generally broken',

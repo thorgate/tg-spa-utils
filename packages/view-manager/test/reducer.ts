@@ -5,7 +5,7 @@ import { combineReducers } from 'redux';
 
 
 export interface State {
-    error: ErrorType,
+    error: ErrorType;
     router: RouterState;
     loading: LoadingStateType;
     data: {

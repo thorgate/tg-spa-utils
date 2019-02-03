@@ -38,7 +38,7 @@
     "react-router": "^4.4.0-beta.6",
     "redux": "^4.0.1",
     "tg-named-routes": "^1.0.0-alpha.6",
-    "typesafe-actions": "^2.0.4",
+    "typesafe-actions": "^3.0.0",
     "warning": "^4.0.2"
   },
   "scripts": {
