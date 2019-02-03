@@ -14,6 +14,8 @@ export interface FetchMeta extends MetaOptions {
 }
 
 
-export type FetchAction<
-    T extends string, KW extends Kwargs<KW> = {}, Data = any
-> = (payload: ActionPayload<KW, Data>, meta?: FetchMeta) => ActionType<T, FetchMeta, KW, Data>;
+export interface FetchAction<T extends string, KW extends Kwargs<KW> = {}, Data = any> {
+    (payload: ActionPayload<KW, Data>, meta?: FetchMeta): ActionType<T, FetchMeta, KW, Data>;
+
+    getType?: () => T;
+}

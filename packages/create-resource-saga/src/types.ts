@@ -27,6 +27,8 @@ export interface ActionType <
 }
 
 
-export type ResourceAction<
-    T extends string, Meta extends MetaOptions = {}, KW extends Kwargs<KW> = {}, Data = any
-> = (payload: ActionPayload<KW, Data>, meta?: Meta | MetaOptions) => ActionType<T, Meta | MetaOptions, KW, Data>;
+export interface ResourceAction<T extends string, Meta extends MetaOptions = {}, KW extends Kwargs<KW> = {}, Data = any> {
+    (payload: ActionPayload<KW, Data>, meta?: Meta | MetaOptions): ActionType<T, Meta | MetaOptions, KW, Data>;
+
+    getType?: () => T;
+}

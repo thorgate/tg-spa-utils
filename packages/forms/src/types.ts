@@ -13,6 +13,8 @@ export type SaveActionType<
 > = ActionType<T, SaveMeta<Values>, KW, Values>;
 
 
-export type SaveAction<
-    T extends string, Values, KW extends Kwargs<KW> = {}
-> = (payload: ActionPayload<KW, Values>, meta: SaveMeta<Values>) => ActionType<T, SaveMeta<Values>, KW, Values>;
+export interface SaveAction<T extends string, Values, KW extends Kwargs<KW> = {}> {
+    (payload: ActionPayload<KW, Values>, meta: SaveMeta<Values>): ActionType<T, SaveMeta<Values>, KW, Values>;
+
+    getType?: () => T;
+}
