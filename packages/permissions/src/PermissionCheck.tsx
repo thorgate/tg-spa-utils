@@ -21,11 +21,13 @@ export interface PermissionCheckProps extends NamedRouteConfigComponentProps {
     PermissionDeniedComponent?: ComponentType;
     hideWithoutPermissions?: boolean;
     children: ReactNode;
+    permissionDeniedStatusCodes?: number[];
 }
 
 
 class PermissionCheckBase extends Component<PermissionCheckProps> {
     public static defaultProps = {
+        permissionDeniedStatusCodes: [401, 403],
         PermissionDeniedComponent: DefaultPermissionDenied,
         hideWithoutPermissions: false,
         error: null,
@@ -69,10 +71,12 @@ class PermissionCheckBase extends Component<PermissionCheckProps> {
     }
 
     protected hasPermission() {
-        const { error, permissionCheck } = this.props;
+        const { error, permissionCheck, permissionDeniedStatusCodes } = this.props;
 
-        if (error && error.statusCode === 403) {
-            return false;
+        if (error && error.statusCode && permissionDeniedStatusCodes) {
+            if (permissionDeniedStatusCodes.includes(error.statusCode)) {
+                return false;
+            }
         }
 
         return permissionCheck(this.props);
