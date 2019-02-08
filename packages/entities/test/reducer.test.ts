@@ -352,6 +352,7 @@ describe('reducer works', () => {
             order: {},
             data: {},
             archived: {},
+            status: {},
         });
     });
 });

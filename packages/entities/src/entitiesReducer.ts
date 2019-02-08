@@ -2,6 +2,12 @@ import { ActionType, createAction, getType } from 'typesafe-actions';
 
 import { FetchMeta } from './types';
 
+export enum EntityStatus {
+    NotLoaded = 'NotLoaded',
+    Fetching = 'Fetching',
+    Fetched = 'Fetched',
+}
+
 
 export interface EntitiesDataMap {
     [id: string]: any | undefined;
@@ -15,10 +21,15 @@ export interface EntitiesKeys {
     [key: string]: string[] | undefined;
 }
 
+export interface EntitiesStatus {
+    [key: string]: EntityStatus.NotLoaded | EntityStatus.Fetching | EntityStatus.Fetched | undefined;
+}
+
 export interface EntitiesState {
     data: EntitiesData;
     order: EntitiesKeys;
     archived: EntitiesKeys;
+    status: EntitiesStatus;
 }
 
 
@@ -30,15 +41,21 @@ const defaultActionMeta: FetchMeta = {
     clearArchived: true,
 };
 
-export interface SetEntitiesPayload {
+export interface EntityKeyPayload {
     key: string;
+}
+
+export interface SetEntitiesPayload extends EntityKeyPayload {
     entities: any;
     order: string | string[];
 }
 
-export interface EntitiesIdsPayload {
-    key: string;
+export interface EntitiesIdsPayload extends EntityKeyPayload {
     ids: string[];
+}
+
+export interface EntitiesStatusPayload extends EntityKeyPayload {
+    status: EntityStatus.NotLoaded | EntityStatus.Fetching | EntityStatus.Fetched;
 }
 
 export const entitiesActions = {
@@ -48,12 +65,20 @@ export const entitiesActions = {
         }
     )),
 
+    setEntitiesStatus: createAction('@@tg-spa-entities/SET_ENTITIES_STATUS', (resolve) => (
+        (payload: EntitiesStatusPayload) => resolve(payload)
+    )),
+
     markArchived: createAction('@@tg-spa-entities/MARK_ARCHIVED', (resolve) => (
         (payload: EntitiesIdsPayload) => resolve(payload)
     )),
 
     markActive: createAction('@@tg-spa-entities/MARK_ACTIVE', (resolve) => (
         (payload: EntitiesIdsPayload) => resolve(payload)
+    )),
+
+    purgeOrder: createAction('@@tg-spa-entities/PURGE_ORDER', (resolve) => (
+        (payload: EntityKeyPayload) => resolve(payload)
     )),
 
     purgeEntities: createAction('@@tg-spa-entities/PURGE_ENTITIES', (resolve) => (
@@ -75,11 +100,15 @@ const selectEntityOrder = (state: EntitiesState, key: string) => selectOrder(sta
 const selectArchived = (state: EntitiesState) => state.archived;
 const selectArchivedEntities = (state: EntitiesState, key: string) => selectArchived(state)[key] || [];
 
+const selectStatus = (state: EntitiesState) => state.status;
+const selectEntitiesStatus = (state: EntitiesState, key: string) => selectStatus(state)[key] || EntityStatus.NotLoaded;
+
 
 const initialState: EntitiesState = {
     data: {},
     order: {},
     archived: {},
+    status: {},
 };
 
 
@@ -157,6 +186,11 @@ export const entitiesReducer = (state: EntitiesState = initialState, action: Ent
             return nextState;
         }
 
+        case getType(entitiesActions.setEntitiesStatus):
+            return Object.assign({}, state, {
+                status: Object.assign({}, state.status, { [action.payload.key]: action.payload.status }),
+            });
+
         case getType(entitiesActions.markArchived):
             return Object.assign({}, state, {
                 archived: Object.assign({}, state.archived, {
@@ -193,6 +227,11 @@ export const entitiesReducer = (state: EntitiesState = initialState, action: Ent
             });
         }
 
+        case getType(entitiesActions.purgeOrder):
+            return Object.assign({}, state, {
+                order: Object.assign({}, state.order, { [action.payload.key]: [] }),
+            });
+
         case getType(entitiesActions.clearEntities):
             return initialState;
 
@@ -223,4 +262,8 @@ export const entitiesSelectors = {
     selectArchived: <S extends EntitiesRootState>(state: S) => selectArchived(selectEntitiesRoot(state)),
 
     selectArchivedEntities: <S extends EntitiesRootState>(state: S, key: string) => selectArchivedEntities(selectEntitiesRoot(state), key),
+
+    selectStatus: <S extends EntitiesRootState>(state: S) => selectStatus(selectEntitiesRoot(state)),
+
+    selectEntitiesStatus: <S extends EntitiesRootState>(state: S, key: string) => selectEntitiesStatus(selectEntitiesRoot(state), key),
 };

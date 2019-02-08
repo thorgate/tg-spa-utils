@@ -7,7 +7,7 @@ import { match } from 'react-router';
 import { call, put } from 'redux-saga/effects';
 import { Query, Resource, ResourceMethods } from 'tg-resources';
 
-import { entitiesActions } from './entitiesReducer';
+import { entitiesActions, EntityStatus } from './entitiesReducer';
 import { FetchMeta } from './types';
 
 
@@ -105,12 +105,14 @@ export function createFetchSaga<
         const { meta = {} } = action;
 
         try {
+            yield put(entitiesActions.setEntitiesStatus({ key, status: EntityStatus.Fetching }));
             yield call(resourceSaga, matchObj, action);
 
             // If callback was added call the function
             if (isFunction(meta.callback)) {
                 meta.callback();
             }
+            yield put(entitiesActions.setEntitiesStatus({ key, status: EntityStatus.Fetched }));
         } catch (error) {
             yield put(errorActions.setError(error));
         }

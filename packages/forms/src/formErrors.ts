@@ -2,9 +2,12 @@ import { FormikErrors } from 'formik';
 import { call } from 'redux-saga/effects';
 import {
     InvalidResponseCode,
+    ListValidationError,
     NetworkError,
     ResourceErrorInterface,
-    ValidationErrorInterface
+    SingleValidationError,
+    ValidationErrorInterface,
+    ValidationErrorType,
 } from 'tg-resources';
 
 import { defaultMessages, ErrorMessages } from './messages';
@@ -33,7 +36,37 @@ export interface FormErrorHandlerOptions<Values> {
 
 interface ErrorMapping {
     field: string;
-    message: string;
+    error: ValidationErrorType;
+}
+
+
+export interface NestedError {
+    [key: string]: null | string | NestedError[] | NestedError;
+}
+
+export type NestedErrorType = string | null | NestedError;
+
+export function reduceNestedErrors(error: ValidationErrorType): NestedErrorType {
+    if (!error || !error.hasError()) {
+        return null;
+    }
+
+    if (error instanceof SingleValidationError) {
+        return error.toString();
+    }
+
+    if (error instanceof ListValidationError) {
+        return error.errors.map(reduceNestedErrors);
+    }
+
+    const errors: ValidationErrorInterface[] = Object.values(error.errors);
+
+    return errors
+        .map((e: ValidationErrorInterface) => ({ field: e.fieldName, error: e }))
+        .reduce((result: any, current: any) => {
+            result[current.field] = reduceNestedErrors(current.error);
+            return result;
+        }, {} as NestedErrorType);
 }
 
 
@@ -61,9 +94,15 @@ export function* formErrorsHandler<Values>(options: FormErrorHandlerOptions<Valu
 
         const fields = error.errors
             .filter((e: ValidationErrorInterface) => e.fieldName !== 'nonFieldErrors')
-            .map((e: ValidationErrorInterface) => ({ field: e.fieldName, message: e.toString() }))
+            .map((e: ValidationErrorInterface) => ({ field: e.fieldName, error: e }))
             .reduce((result: any, current: ErrorMapping) => {
-                result[current.field] = current.message;
+                const currentError = reduceNestedErrors(current.error);
+
+                if (currentError === null) {
+                    return;
+                }
+
+                result[current.field] = currentError;
                 return result;
             }, {});
 

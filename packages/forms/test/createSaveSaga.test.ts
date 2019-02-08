@@ -216,7 +216,9 @@ describe('default error handler', () => {
         }]]);
 
         expect(actions.setErrors.mock.calls).toEqual([[{
-            email: 'something: be wrong yo',
+            email: {
+                something: 'be wrong yo',
+            },
             password: 'too short missing numbers',
             remember: 'false'
         }]]);
