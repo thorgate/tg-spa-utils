@@ -20,8 +20,8 @@ export interface ResourceSagaOptions<
     resource?: Klass | SagaResource<Klass>;
     method?: ResourceMethods;
 
-    apiHook?: (matchObj: match<Params> | null, action: ActionType<T, Meta, KW, Data>) => any;
-    successHook?: (result: any, matchObj: match<Params> | null, action: ActionType<T, Meta, KW, Data>) => any;
+    apiHook?: (matchObj: match<Params> | null, action?: ActionType<T, Meta, KW, Data>) => any;
+    successHook?: (result: any, matchObj: match<Params> | null, action?: ActionType<T, Meta, KW, Data>) => any;
 
     timeoutMessage?: string;
     timeoutMs?: number;
@@ -50,10 +50,12 @@ export function createResourceSaga<
         mutateQuery,
     } = options;
 
-    return function* resourceSaga(matchObj: match<Params> | null, action: ActionType<T, Meta, KW, Data>) {
+    return function* resourceSaga(matchObj: match<Params> | null, action?: ActionType<T, Meta, KW, Data>) {
+        const { payload = {} } = action || {};
+
         let fetchEffect: any;
 
-        let { kwargs = null, query = null } = action.payload;
+        let { kwargs = null, query = null } = payload;
 
         if (mutateKwargs) {
             kwargs = yield call(mutateKwargs, matchObj, kwargs);
@@ -67,8 +69,8 @@ export function createResourceSaga<
             fetchEffect = resourceEffectFactory(resource, method, {
                 kwargs,
                 query,
-                data: action.payload.data,
-                attachments: action.payload.attachments,
+                data: payload.data,
+                attachments: payload.attachments,
                 requestConfig: { initializeSaga: false }, // Disable initialized saga in this context
             });
         } else if (apiHook) {

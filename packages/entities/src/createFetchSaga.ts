@@ -24,8 +24,8 @@ export interface NormalizedFetchOptions<
     resource?: Klass | SagaResource<Klass>;
     method?: ResourceMethods;
 
-    apiFetchHook?: (matchObj: match<Params> | null, action: ActionType<T, FetchMeta, Kwargs, Data>) => any;
-    successHook?: (result: any, matchObj: match<Params> | null, action: ActionType<T, FetchMeta, Kwargs, Data>) => any;
+    apiFetchHook?: (matchObj: match<Params> | null, action?: ActionType<T, FetchMeta, Kwargs, Data>) => any;
+    successHook?: (result: any, matchObj: match<Params> | null, action?: ActionType<T, FetchMeta, Kwargs, Data>) => any;
 
     serializeData?: SerializeData;
 
@@ -78,11 +78,13 @@ export function createFetchSaga<
         mutateQuery,
     } = options;
 
-    function* saveHook(response: any, matchObj: match<Params> | null, action: ActionType<T, FetchMeta, Kwargs, Data>) {
-        if (action.meta.asDetails) {
-            yield call(saveResult, key, response, listSchema[0], action.meta, serializeData);
+    function* saveHook(response: any, matchObj: match<Params> | null, action?: ActionType<T, FetchMeta, Kwargs, Data>) {
+        const { meta = {} } = action || {};
+
+        if (meta.asDetails) {
+            yield call(saveResult, key, response, listSchema[0], meta, serializeData);
         } else {
-            yield call(saveResults, key, response, listSchema, action.meta, serializeData);
+            yield call(saveResults, key, response, listSchema, meta, serializeData);
         }
 
         if (successHook) {
@@ -101,8 +103,8 @@ export function createFetchSaga<
         mutateQuery,
     });
 
-    return function* fetchSaga(matchObj: match<Params> | null, action: ActionType<T, FetchMeta, Kwargs, Data>) {
-        const { meta = {} } = action;
+    return function* fetchSaga(matchObj: match<Params> | null, action?: ActionType<T, FetchMeta, Kwargs, Data>) {
+        const { meta = {} } = action || {};
 
         try {
             yield put(entitiesActions.setEntitiesStatus({ key, status: EntityStatus.Fetching }));

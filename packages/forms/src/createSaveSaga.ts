@@ -51,15 +51,19 @@ export const createFormSaveSaga = <
     const resourceSaga = createResourceSaga({
         resource,
         method,
-        apiHook: apiSaveHook,
-        successHook,
+        apiHook: apiSaveHook as any, // Because base resources argument is optional - need to turn this into any
+        successHook: successHook as any, // Because base resources argument is optional - need to turn this into any
         timeoutMessage: 'Timeout reached, form save failed',
         timeoutMs,
         mutateKwargs,
         mutateQuery,
     });
 
-    return function* handleFormSave(matchObj: match<Params> | null, action: SaveActionType<T, Values, KW>) {
+    return function* handleFormSave(matchObj: match<Params> | null, action?: SaveActionType<T, Values, KW>) {
+        if (!action) {
+            throw new Error('Action is required for formSaveSaga');
+        }
+
         try {
             yield call(resourceSaga, matchObj, action);
 
