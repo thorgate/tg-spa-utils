@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-entities",
-  "version": "1.0.0-alpha.11",
+  "version": "1.0.0-alpha.12",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -26,7 +26,7 @@
   ],
   "dependencies": {
     "@tg-resources/redux-saga-router": "^3.1.0",
-    "@thorgate/create-resource-saga": "^1.0.0-alpha.8",
+    "@thorgate/create-resource-saga": "^1.0.0-alpha.12",
     "@thorgate/spa-errors": "^1.0.0-alpha.7",
     "normalizr": "^3.3.0",
     "redux": "^4.0.1",
