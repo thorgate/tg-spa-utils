@@ -1,6 +1,6 @@
 {
   "name": "example-razzle-app",
-  "version": "1.0.0-alpha.10",
+  "version": "1.0.0-alpha.13",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -17,8 +17,8 @@
     "@thorgate/spa-errors": "^1.0.0-alpha.7",
     "@thorgate/spa-is": "^1.0.0-alpha.6",
     "@thorgate/spa-pending-data": "^1.0.0-alpha.7",
-    "@thorgate/spa-permissions": "^1.0.0-alpha.7",
-    "@thorgate/spa-view": "^1.0.0-alpha.7",
+    "@thorgate/spa-permissions": "^1.0.0-alpha.13",
+    "@thorgate/spa-view": "^1.0.0-alpha.13",
     "@thorgate/spa-view-manager": "^1.0.0-alpha.7",
     "express": "4.16.4",
     "history": "^4.7.2",
