@@ -12,7 +12,7 @@ This is combination of utility packages used at [Thorgate](https://thorgate.eu).
 Some of the packages are used by [Thorgate project template (SPA variant)](https://gitlab.com/thorgate-public/django-project-template/tree/spa).
 
 * [components](packages/components/README.md) - common components used with SPA template
-* [create-resource-saga](packages/create-resource-saga/README.md) -  helper for creating [Redux-Saga](https://github.com/redux-saga/redux-saga)s loading resources
+* [create-resource-saga](packages/create-resource-saga/README.md) -  helper for creating [Redux-Saga](https://github.com/redux-saga/redux-saga)s to fetch and store resources
 * [entities](packages/entities/README.md) - normalized data storage helper
 * [errors](packages/errors/README.md) - error handling helpers used by SPA template
 * [forms](packages/forms/README.md) - helper for creating [Redux-Saga](https://github.com/redux-saga/redux-saga)s for saving forms
