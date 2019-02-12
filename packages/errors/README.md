@@ -4,7 +4,7 @@
 
 ## ErrorBoundary
 ErrorBoundary component allows to prevent whole app from crashing on error and can show 
-comprehensive error message instead. Consider using [view](../view/README.md) package instead
+comprehensive error message instead. Consider using [view](https://github.com/thorgate/tg-spa-utils/tree/master/packages/view/README.md) package instead
 of using this directly.
 
 ```javascript

@@ -2,7 +2,7 @@
 
 > Pending data manager used by [Thorgate project template SPA variant](https://gitlab.com/thorgate-public/django-project-template/tree/spa)
 
-[view-manager](../view-manager/README.md) package uses `@thorgate/spa-pending-data` to store current
+[view-manager](https://github.com/thorgate/tg-spa-utils/tree/master/packages/view-manager/README.md) package uses `@thorgate/spa-pending-data` to store current
 loading status of the app in Redux state.
 
 ## Usage:

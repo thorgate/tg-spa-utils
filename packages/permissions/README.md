@@ -2,9 +2,9 @@
 
 > Permissions helpers used by [Thorgate project template SPA variant](https://gitlab.com/thorgate-public/django-project-template/tree/spa)
 
-Used by [view](../view/README.md) to provide user and authentication information stored
-in Redux state to the components inside the view. Consider using [view](../view/README.md) and 
-[view-manager](../view-manager/README.md) with this package.
+Used by [view](https://github.com/thorgate/tg-spa-utils/tree/master/packages/view/README.md) to provide user and authentication information stored
+in Redux state to the components inside the view. Consider using [view](https://github.com/thorgate/tg-spa-utils/tree/master/packages/view/README.md) and 
+[view-manager](https://github.com/thorgate/tg-spa-utils/tree/master/packages/view-manager/README.md) with this package.
 
 ## Usage
 
