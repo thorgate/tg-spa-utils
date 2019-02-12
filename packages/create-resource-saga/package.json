@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/create-resource-saga",
-  "version": "1.0.0-alpha.12",
+  "version": "1.0.0-alpha.14",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -26,7 +26,7 @@
   ],
   "dependencies": {
     "@tg-resources/redux-saga-router": "^3.1.0",
-    "@thorgate/spa-is": "^1.0.0-alpha.6",
+    "@thorgate/spa-is": "^1.0.0-alpha.14",
     "react-router": "^4.4.0-beta.6",
     "redux": "^4.0.1",
     "redux-saga": "^1.0.0",
