@@ -26,11 +26,11 @@
   ],
   "dependencies": {
     "@tg-resources/redux-saga-router": "^3.1.0",
+    "@thorgate/spa-is": "^1.0.0-alpha.6",
     "react-router": "^4.4.0-beta.6",
     "redux": "^4.0.1",
     "redux-saga": "^1.0.0",
-    "tg-resources": "^3.1.0",
-    "typesafe-actions": "^3.0.0"
+    "tg-resources": "^3.1.0"
   },
   "scripts": {
     "clean": "rimraf ./lib",

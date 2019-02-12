@@ -11,6 +11,7 @@ export type OptionalMap<T> = {
     [K in keyof T]?: T[K]
 };
 
+export type Kwargs<KW> = { [K in keyof KW]?: string | undefined; };
 
 export type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
 
@@ -55,6 +56,9 @@ export const isIterator = (it: any): it is Iterator<any> => it && is.function(it
 type IsSagaFn<T> = T extends SagaFn ? T : never;
 
 export const isSaga = <T>(fn: T): fn is IsSagaFn<T> => is.function(fn);
+
+type IsFunction<T> = T extends (...args: any[]) => any ? T : never;
+export const isFunction = <T extends {} | null | undefined>(value: T): value is IsFunction<T> => is.function(value);
 
 export const isRouteSagaObject = (obj: any): obj is RouteSagaObject<any[]> => (
     is.object(obj) && 'saga' in obj && isSaga(obj.saga)

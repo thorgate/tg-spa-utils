@@ -1,9 +1,11 @@
 import { resourceEffectFactory, SagaResource } from '@tg-resources/redux-saga-router';
+import { Kwargs } from '@thorgate/spa-is';
 import { match } from 'react-router';
+import { SagaIterator } from 'redux-saga';
 import { call, delay, race } from 'redux-saga/effects';
 import { Query, Resource, ResourceMethods } from 'tg-resources';
 
-import { ActionType, Kwargs } from './types';
+import { ActionType, ResourceSaga } from './types';
 
 
 export const DEFAULT_TIMEOUT = 3000;
@@ -20,14 +22,14 @@ export interface ResourceSagaOptions<
     resource?: Klass | SagaResource<Klass>;
     method?: ResourceMethods;
 
-    apiHook?: (matchObj: match<Params> | null, action?: ActionType<T, Meta, KW, Data>) => any;
-    successHook?: (result: any, matchObj: match<Params> | null, action?: ActionType<T, Meta, KW, Data>) => any;
+    apiHook?: (matchObj: match<Params> | null, action: ActionType<T, Meta, KW, Data>) => (any | SagaIterator);
+    successHook: (result: any, matchObj: match<Params> | null, action: ActionType<T, Meta, KW, Data>) => (any | SagaIterator);
 
     timeoutMessage?: string;
     timeoutMs?: number;
 
-    mutateKwargs?: (matchObj: match<Params> | null, kwargs: KW | null) => any;
-    mutateQuery?: (matchObj: match<Params> | null, query: Query | null) => any;
+    mutateKwargs?: (matchObj: match<Params> | null, kwargs: KW | null) => (any | SagaIterator);
+    mutateQuery?: (matchObj: match<Params> | null, query: Query | null) => (any | SagaIterator);
 }
 
 
@@ -38,7 +40,7 @@ export function createResourceSaga<
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {},
     Data = any,
->(options: ResourceSagaOptions<T, Klass, Meta, KW, Params, Data>) {
+>(options: ResourceSagaOptions<T, Klass, Meta, KW, Params, Data>): ResourceSaga<T, Meta, KW, Params> {
     const {
         resource,
         method = 'fetch',
@@ -50,10 +52,10 @@ export function createResourceSaga<
         mutateQuery,
     } = options;
 
-    return function* resourceSaga(matchObj: match<Params> | null, action?: ActionType<T, Meta, KW, Data>) {
-        const { payload = {} } = action || {};
+    return function* resourceSaga(matchObj: match<Params> | null, action: ActionType<T, Meta, KW, Data>) {
+        const { payload = {} } = action;
 
-        let fetchEffect: any;
+        let resourceEffect: any;
 
         let { kwargs = null, query = null } = payload;
 
@@ -66,7 +68,7 @@ export function createResourceSaga<
         }
 
         if (resource) {
-            fetchEffect = resourceEffectFactory(resource, method, {
+            resourceEffect = resourceEffectFactory(resource, method, {
                 kwargs,
                 query,
                 data: payload.data,
@@ -74,22 +76,20 @@ export function createResourceSaga<
                 requestConfig: { initializeSaga: false }, // Disable initialized saga in this context
             });
         } else if (apiHook) {
-            fetchEffect = call(apiHook, matchObj, action);
+            resourceEffect = call(apiHook, matchObj, action);
         } else {
             throw new Error('Misconfiguration: "resource" or "apiFetchHook" is required');
         }
 
         const { response, timeout } = yield race({
             timeout: delay(timeoutMs, true),
-            response: fetchEffect,
+            response: resourceEffect,
         });
 
         if (timeout) {
             throw new Error(timeoutMessage);
         }
 
-        if (successHook) {
-            yield call(successHook, response, matchObj, action);
-        }
+        yield call(successHook, response, matchObj, action);
     };
 }

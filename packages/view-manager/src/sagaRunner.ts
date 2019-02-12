@@ -1,3 +1,4 @@
+import { effect } from '@redux-saga/is';
 import { errorActions } from '@thorgate/spa-errors';
 import { isNode, isRouteSagaObject, isSaga } from '@thorgate/spa-is';
 import { call, put } from 'redux-saga/effects';
@@ -12,7 +13,9 @@ import { MatchedSagas } from './types';
 export function* sagaRunner(sagas: MatchedSagas) {
     try {
         for (const sagaObj of sagas) {
-            if (isSaga(sagaObj)) {
+            if (effect(sagaObj)) {
+                yield sagaObj;
+            } else if (isSaga(sagaObj)) {
                 yield call(sagaObj);
             } else if (isRouteSagaObject(sagaObj)) {
                 const { saga, args = [] } = sagaObj;

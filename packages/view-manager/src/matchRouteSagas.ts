@@ -1,4 +1,4 @@
-import { isRouteSagaObject, isSaga } from '@thorgate/spa-is';
+import { isRouteSagaObject, isSaga, Kwargs } from '@thorgate/spa-is';
 import { matchRoutes } from 'react-router-config';
 import { NamedRouteConfig } from 'tg-named-routes';
 import warning from 'warning';
@@ -16,7 +16,7 @@ import {
 
 
 const mapSaga = <
-    Params extends { [K in keyof Params]?: string } = {}
+    Params extends Kwargs<Params> = {}
 >(sagaToMap: SagaTaskType<Params>, routeMatch: MatchWithRoute<Params>): SagaTaskWithArgs<Params> => {
     if (isRouteSagaObject(sagaToMap)) {
         const { saga, args = [] } = sagaToMap;
@@ -46,7 +46,7 @@ const mapSaga = <
 
 
 const reduceSagas = <
-    Params extends { [K in keyof Params]?: string } = {}
+    Params extends Kwargs<Params> = {}
 >(sagas: SagaRunnerTasks<Params>, routeMatch: MatchWithRoute<Params>): MatchedSagas<Params> => (
     sagas.reduce((result: MatchedSagas<Params>, saga: SagaRunnerTask<Params>) => {
         if (Array.isArray(saga)) {
@@ -59,7 +59,7 @@ const reduceSagas = <
 );
 
 
-export const matchRouteSagas = <Params extends { [K in keyof Params]?: string }>(
+export const matchRouteSagas = <Params extends Kwargs<Params>>(
     routes: NamedRouteConfig[], pathName: string,
 ): MatchRouteSagas => {
     const branch: Array<MatchedNamedRoute<Params>> = matchRoutes(routes, pathName) as any;

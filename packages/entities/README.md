@@ -6,7 +6,7 @@
 ## Basic Usage
 
 ```
-import { createFetchAction, createFetchSaga, createSchemaSelector } from '@thorgate/spa-entities';
+import { createFetchAction, createFetchSaga, createSchemaSelector, createDetailSchemaSelector } from '@thorgate/spa-entities';
 import { schema } from 'normalizr';
 import { getType } from 'typesafe-actions';
 
@@ -22,7 +22,12 @@ const fetchSaga = createFetchSaga({
     listSchema: [article],
 });
 
-const schemaSelector = createSchemaSelector(article);
+const listSelector = createSchemaSelector(article);
+const detailSelector = createDetailSchemaSelector(article);
+
+
+// Usage with `@thorgate/spa-view-manager`
+const initialFetchWorker = fetchSaga.asInitialWorker((match) => fetchAction());
 
 
 function* fetchArticleWatcher() {
@@ -36,7 +41,7 @@ function* fetchArticleWatcher() {
 - ``listSchema``: *(schema.Entity[])*: Required: List schema to be used for serialization
 - ``key``: *(string)*: Required: Field name under which key order is stored under
 - ``resource``: *(Resource|SagaResource<Resource>)*: Resource instance used to fetch data
-- ``method``: *(string)*: Resource method used
+- ``method``: *(ResourceMethods)*: Resource method used
 - ``apiFetchHook``: *((action: ActionType<Params>) => any | Iterator<any>)*: Custom fetch method. This can be used to customize response or dispatch additional actions. 
 - ``serializeData``: *((result: any, listSchema: schema.Entity[]) => {result: any, entities: any} | Iterator<Effect | {result: any, entities: any}>)*: Custom serializer method. 
                                                                                             This can be used to customize response or dispatch additional actions.
@@ -45,6 +50,7 @@ function* fetchArticleWatcher() {
 
 ## `createFetchAction` Payload object
 
+- ``method``: *(ResourceMethods)*: Optional override to change ``<resource>`` method used.
 - ``kwargs``: *(Object)*: Optionally URL kwargs to pass to ``<resource>.<method>``
 - ``query``: *(Object)*: Optionally URL Query parameters to pass to ``<resource>.<method>``
 - ``data``: *(Object)*: Optionally POST like data to pass to ``<resource>.<method>``

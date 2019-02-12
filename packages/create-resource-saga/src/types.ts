@@ -1,8 +1,7 @@
-import { Attachments, Query } from 'tg-resources';
-
-
-// To future me: Move this to `tg-resources`
-export type Kwargs<KW> = { [K in keyof KW]?: string | undefined; };
+import { Kwargs } from '@thorgate/spa-is';
+import { match } from 'react-router';
+import { SagaIterator } from 'redux-saga';
+import { Attachments, Query, ResourceMethods } from 'tg-resources';
 
 
 export interface ActionPayload<
@@ -12,6 +11,7 @@ export interface ActionPayload<
     query?: Query | null;
     data?: Data;
     attachments?: Attachments | null;
+    method?: ResourceMethods;
 }
 
 export interface MetaOptions {
@@ -26,9 +26,10 @@ export interface ActionType <
     meta: Meta;
 }
 
-
-export interface ResourceAction<T extends string, Meta extends MetaOptions = {}, KW extends Kwargs<KW> = {}, Data = any> {
-    (payload: ActionPayload<KW, Data>, meta?: Meta | MetaOptions): ActionType<T, Meta | MetaOptions, KW, Data>;
-
-    getType?: () => T;
-}
+export type ResourceSaga<
+    T extends string,
+    Meta extends {} = {},
+    KW extends Kwargs<KW> = {},
+    Params extends Kwargs<Params> = {},
+    Data = any,
+> = (matchObj: match<Params> | null, action: ActionType<T, Meta, KW, Data>) => SagaIterator;

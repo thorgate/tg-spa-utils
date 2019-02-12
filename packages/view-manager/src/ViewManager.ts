@@ -1,7 +1,9 @@
 import { Effect, Task } from '@redux-saga/types';
 import { errorActions } from '@thorgate/spa-errors';
+import { Kwargs } from '@thorgate/spa-is';
 import { loadingActions } from '@thorgate/spa-pending-data';
 import { LOCATION_CHANGE, LocationChangeAction, RouterState } from 'connected-react-router';
+import { SagaIterator } from 'redux-saga';
 import { all, call, cancel, fork, put, spawn, take } from 'redux-saga/effects';
 import { NamedRouteConfig } from 'tg-named-routes';
 
@@ -23,7 +25,7 @@ interface WatcherEffects {
 }
 
 const mapToStartArgs = <
-    Params extends { [K in keyof Params]?: string } = {}
+    Params extends Kwargs<Params> = {}
 >({ saga, args }: SagaTaskWithArgs): ReturnType<typeof spawn> => (
     args ? (spawn as any)(saga, ...args) : spawn(saga)
 );
@@ -87,7 +89,7 @@ export const createLocationAction = (payload: RouterState): LocationChangeAction
 export function* ViewManagerWorker(
     routes: NamedRouteConfig[], { payload: { location } }: LocationChangeAction,
     options: ViewManagerOptions = {}, runningWatchers: RunningWatcherTasks = {}
-) {
+): SagaIterator {
     try {
         yield put(loadingActions.startLoadingView());
 
@@ -125,7 +127,7 @@ export function* ViewManagerWorker(
 
 export function* ServerViewManagerWorker(
     routes: NamedRouteConfig[], locationAction: LocationChangeAction, options: ViewManagerOptions = {}
-) {
+): SagaIterator {
     const runningWatchers = {};
     yield call(ViewManagerWorker, routes, locationAction, options, runningWatchers);
     yield call(manageWatchers, runningWatchers, {});
@@ -155,7 +157,7 @@ function* runViewManagerWorker(routes: NamedRouteConfig[], runningWatchers: Runn
  * @param options View manager options
  * @returns {void}
  */
-export function* ViewManager(routes: NamedRouteConfig[], options: ViewManagerOptions = {}) {
+export function* ViewManager(routes: NamedRouteConfig[], options: ViewManagerOptions = {}): SagaIterator {
     const runningWatchers: RunningWatcherTasks = {};
 
     try {

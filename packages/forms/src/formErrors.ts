@@ -1,4 +1,5 @@
 import { FormikErrors } from 'formik';
+import { SagaIterator } from 'redux-saga';
 import { call } from 'redux-saga/effects';
 import {
     InvalidResponseCode,
@@ -70,7 +71,7 @@ export function reduceNestedErrors(error: ValidationErrorType): NestedErrorType 
 }
 
 
-export function* formErrorsHandler<Values>(options: FormErrorHandlerOptions<Values>) {
+export function* formErrorsHandler<Values>(options: FormErrorHandlerOptions<Values>): SagaIterator {
     const { error, messages = defaultMessages, setErrors, setStatus } = options;
 
     if (isNetworkError(error)) {
