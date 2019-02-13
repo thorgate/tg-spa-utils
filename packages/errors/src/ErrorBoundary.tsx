@@ -13,6 +13,7 @@ export interface ErrorBoundaryProps {
     children: ReactNode;
     ErrorHandler?: ErrorComponent;
     error?: ErrorType;
+    ignoreStatusCodes?: number[];
 }
 
 
@@ -23,6 +24,7 @@ interface ErrorBoundaryState {
 
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     public static defaultProps = {
+        ignoreStatusCodes: [401, 403, 404],
         error: null,
     };
 
@@ -48,7 +50,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     };
 
     public render() {
-        const { children, error } = this.props;
+        const { children, error, ignoreStatusCodes } = this.props;
         const ErrorHandler = this.props.ErrorHandler || DefaultFallback;
 
         if (this.state.error) {
@@ -61,9 +63,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             );
         }
 
-        if (error) {
+        const validErrorWithStatus = (
+            error && error.statusCode && !(ignoreStatusCodes as number[]).includes(error.statusCode)
+        );
+
+        if (error || validErrorWithStatus) {
             return (
-                <ErrorHandler error={error} />
+                <ErrorHandler error={error as ErrorResponse} />
             );
         }
 
