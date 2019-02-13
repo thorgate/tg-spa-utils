@@ -55,8 +55,8 @@ export const createFormSaveSaga = <
     const resourceSaga = createResourceSaga({
         resource,
         method,
-        apiHook: apiSaveHook as any, // Because base resources argument is optional - need to turn this into any
-        successHook: successHook as any, // Because base resources argument is optional - need to turn this into any
+        apiHook: apiSaveHook,
+        successHook,
         timeoutMessage: 'Timeout reached, form save failed',
         timeoutMs,
         mutateKwargs,
