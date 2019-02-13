@@ -18,7 +18,7 @@ export interface MetaOptions {
     [key: string]: any;
 }
 
-export interface ActionType <
+export interface ResourceActionType <
     T extends string, Meta extends MetaOptions = {}, KW extends Kwargs<KW> = {}, Data = any
 > {
     type: T;
@@ -32,4 +32,4 @@ export type ResourceSaga<
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {},
     Data = any,
-> = (matchObj: match<Params> | null, action: ActionType<T, Meta, KW, Data>) => SagaIterator;
+> = (matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>) => SagaIterator;

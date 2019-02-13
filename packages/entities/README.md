@@ -42,7 +42,7 @@ function* fetchArticleWatcher() {
 - ``key``: *(string)*: Required: Field name under which key order is stored under
 - ``resource``: *(Resource|SagaResource<Resource>)*: Resource instance used to fetch data
 - ``method``: *(ResourceMethods)*: Resource method used
-- ``apiFetchHook``: *((action: ActionType<Params>) => any | Iterator<any>)*: Custom fetch method. This can be used to customize response or dispatch additional actions. 
+- ``apiFetchHook``: *((action: FetchActionType) => any | Iterator<any>)*: Custom fetch method. This can be used to customize response or dispatch additional actions. 
 - ``serializeData``: *((result: any, listSchema: schema.Entity[]) => {result: any, entities: any} | Iterator<Effect | {result: any, entities: any}>)*: Custom serializer method. 
                                                                                             This can be used to customize response or dispatch additional actions.
 - ``timeoutMs``: *(number)*: Timeout after which request is cancelled and error is thrown. Default: ``3000``

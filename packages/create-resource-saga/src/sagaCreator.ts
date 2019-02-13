@@ -5,7 +5,7 @@ import { SagaIterator } from 'redux-saga';
 import { call, delay, race } from 'redux-saga/effects';
 import { Resource, ResourceMethods } from 'tg-resources';
 
-import { ActionType, ResourceSaga } from './types';
+import { ResourceActionType, ResourceSaga } from './types';
 
 
 export const DEFAULT_TIMEOUT = 3000;
@@ -22,14 +22,14 @@ export interface ResourceSagaOptions<
     resource?: Klass | SagaResource<Klass>;
     method?: ResourceMethods;
 
-    apiHook?: (matchObj: match<Params> | null, action: ActionType<T, Meta, KW, Data>) => (any | SagaIterator);
-    successHook: (result: any, matchObj: match<Params> | null, action: ActionType<T, Meta, KW, Data>) => (any | SagaIterator);
+    apiHook?: (matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>) => (any | SagaIterator);
+    successHook: (result: any, matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>) => (any | SagaIterator);
 
     timeoutMessage?: string;
     timeoutMs?: number;
 
-    mutateKwargs?: (matchObj: match<Params> | null, action: ActionType<T, Meta, KW, Data>) => (any | SagaIterator);
-    mutateQuery?: (matchObj: match<Params> | null, action: ActionType<T, Meta, KW, Data>) => (any | SagaIterator);
+    mutateKwargs?: (matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>) => (any | SagaIterator);
+    mutateQuery?: (matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>) => (any | SagaIterator);
 }
 
 
@@ -52,7 +52,7 @@ export function createResourceSaga<
         mutateQuery,
     } = options;
 
-    return function* resourceSaga(matchObj: match<Params> | null, action: ActionType<T, Meta, KW, Data>) {
+    return function* resourceSaga(matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>) {
         const { payload = {} } = action;
 
         let resourceEffect: any;

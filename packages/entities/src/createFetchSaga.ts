@@ -1,5 +1,5 @@
 import { SagaResource } from '@tg-resources/redux-saga-router';
-import { ActionType, createResourceSaga } from '@thorgate/create-resource-saga';
+import { createResourceSaga } from '@thorgate/create-resource-saga';
 import { errorActions } from '@thorgate/spa-errors';
 import { isFunction, Kwargs } from '@thorgate/spa-is';
 import { normalize, schema } from 'normalizr';
@@ -9,7 +9,7 @@ import { call, put } from 'redux-saga/effects';
 import { Resource, ResourceMethods } from 'tg-resources';
 
 import { entitiesActions, EntityStatus } from './entitiesReducer';
-import { FetchMeta, FetchSaga, InitialAction } from './types';
+import { FetchActionType, FetchMeta, FetchSaga, InitialAction } from './types';
 
 
 export type SerializeData = (result: any, listSchema: schema.Entity[]) => ReturnType<typeof normalize>;
@@ -27,16 +27,16 @@ export interface NormalizedFetchOptions<
 
     useDetails?: boolean;
 
-    apiFetchHook?: (matchObj: match<Params> | null, action: ActionType<T, FetchMeta, KW, Data>) => (any | SagaIterator);
-    successHook?: (result: any, matchObj: match<Params> | null, action: ActionType<T, FetchMeta, KW, Data>) => (any | SagaIterator);
+    apiFetchHook?: (matchObj: match<Params> | null, action: FetchActionType<T, KW, Data>) => (any | SagaIterator);
+    successHook?: (result: any, matchObj: match<Params> | null, action: FetchActionType<T, KW, Data>) => (any | SagaIterator);
 
     serializeData?: SerializeData;
 
     timeoutMs?: number;
 
-    mutateKwargs?: (matchObj: match<Params> | null, action: ActionType<T, FetchMeta, KW, Data>) => (any | SagaIterator);
-    mutateQuery?: (matchObj: match<Params> | null, action: ActionType<T, FetchMeta, KW, Data>) => (any | SagaIterator);
-    mutateResponse?: (result: any, action: ActionType<T, FetchMeta, KW, Data>) => (any | SagaIterator);
+    mutateKwargs?: (matchObj: match<Params> | null, action: FetchActionType<T, KW, Data>) => (any | SagaIterator);
+    mutateQuery?: (matchObj: match<Params> | null, action: FetchActionType<T, KW, Data>) => (any | SagaIterator);
+    mutateResponse?: (result: any, action: FetchActionType<T, KW, Data>) => (any | SagaIterator);
 }
 
 
@@ -87,7 +87,7 @@ export function createFetchSaga<
         mutateResponse,
     } = options;
 
-    function* saveHook(response: any, matchObj: match<Params> | null, action: ActionType<T, FetchMeta, KW, Data>) {
+    function* saveHook(response: any, matchObj: match<Params> | null, action: FetchActionType<T, KW, Data>) {
         const { meta = {} } = action;
 
         let result = response;
@@ -117,7 +117,7 @@ export function createFetchSaga<
         mutateQuery,
     });
 
-    function* fetchSaga(matchObj: match<Params> | null, action: ActionType<T, FetchMeta, KW, Data>) {
+    function* fetchSaga(matchObj: match<Params> | null, action: FetchActionType<T, KW, Data>) {
         if (!(action as any)) {
             throw new Error(`Parameter "action" is required for "fetchSaga" with key ${key}.`);
         }
