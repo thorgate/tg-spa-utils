@@ -9,7 +9,7 @@ import { call, put } from 'redux-saga/effects';
 import { Query, Resource, ResourceMethods } from 'tg-resources';
 
 import { entitiesActions, EntityStatus } from './entitiesReducer';
-import { FetchMeta, FetchSaga, MatchToAction } from './types';
+import { FetchMeta, FetchSaga, InitialAction } from './types';
 
 
 export type SerializeData = (result: any, listSchema: schema.Entity[]) => ReturnType<typeof normalize>;
@@ -138,13 +138,14 @@ export function createFetchSaga<
         }
     }
 
-    const asInitialWorker = (matchToAction: MatchToAction<T, KW, Params, Data>) => {
-        if (!isFunction(matchToAction as any)) {
+    const asInitialWorker = (initialAction: InitialAction<T, KW, Params, Data>) => {
+        if (!isFunction(initialAction as any)) {
             throw new Error('Parameter "matchToAction" is required for "asInitialWorker".');
         }
 
         return function* initialWorker(matchObj: match<Params> | null) {
-            yield call(fetchSaga, matchObj, matchToAction(matchObj));
+            const action = yield call(initialAction, matchObj);
+            yield call(fetchSaga, matchObj, action);
         };
     };
 

@@ -24,7 +24,7 @@ export interface FetchAction<T extends string, KW extends Kwargs<KW> = {}, Data 
 }
 
 
-export type MatchToAction<
+export type InitialAction<
     T extends string,
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {},
@@ -39,5 +39,5 @@ export interface FetchSaga<
 > {
     (matchObj: match<Params> | null, action: ActionType<T, FetchMeta, KW, Data>): SagaIterator;
 
-    asInitialWorker: (matchToAction: MatchToAction<T, KW, Params, Data>) => (matchObj: match<Params> | null) => SagaIterator;
+    asInitialWorker: (initialAction: InitialAction<T, KW, Params, Data>) => (matchObj: match<Params> | null) => SagaIterator;
 }

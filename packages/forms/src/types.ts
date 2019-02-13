@@ -10,12 +10,23 @@ export type SaveMeta<Values> =
     OptionalMap<Omit<FormikProps<Values>, 'setErrors' | 'setStatus' | 'setSubmitting'>>;
 
 
+export type DeleteMeta<Values> =
+    Pick<FormikProps<Values>, 'setStatus'> &
+    OptionalMap<Omit<FormikProps<Values>, 'setStatus'>>;
+
+
 export type SaveActionType<
     T extends string,
     Values,
     KW extends Kwargs<KW> = {}
 > = ActionType<T, SaveMeta<Values>, KW, Values>;
 
+
+export interface DeleteAction<T extends string, Values, KW extends Kwargs<KW> = {}> {
+    (payload: ActionPayload<KW, Values>, meta?: DeleteMeta<Values>): ActionType<T, SaveMeta<Values>, KW, Values>;
+
+    getType?: () => T;
+}
 
 export interface SaveAction<T extends string, Values, KW extends Kwargs<KW> = {}> {
     (payload: ActionPayload<KW, Values>, meta: SaveMeta<Values>): ActionType<T, SaveMeta<Values>, KW, Values>;
