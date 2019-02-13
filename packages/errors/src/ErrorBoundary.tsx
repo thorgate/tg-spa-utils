@@ -63,11 +63,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             );
         }
 
+        const validErrorWithoutStatus = error && typeof error.statusCode === 'undefined';
         const validErrorWithStatus = (
             error && error.statusCode && !(ignoreStatusCodes as number[]).includes(error.statusCode)
         );
 
-        if (error || validErrorWithStatus) {
+        if (validErrorWithoutStatus || validErrorWithStatus) {
             return (
                 <ErrorHandler error={error as ErrorResponse} />
             );
