@@ -6,7 +6,7 @@ import { normalize, schema } from 'normalizr';
 import { match } from 'react-router';
 import { SagaIterator } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
-import { Query, Resource, ResourceMethods } from 'tg-resources';
+import { Resource, ResourceMethods } from 'tg-resources';
 
 import { entitiesActions, EntityStatus } from './entitiesReducer';
 import { FetchMeta, FetchSaga, InitialAction } from './types';
@@ -34,9 +34,9 @@ export interface NormalizedFetchOptions<
 
     timeoutMs?: number;
 
-    mutateKwargs?: (matchObj: match<Params> | null, kwargs: KW | null) => (any | SagaIterator);
-    mutateQuery?: (matchObj: match<Params> | null, query: Query | null) => (any | SagaIterator);
-    mutateResponse?: (result: any) => (any | SagaIterator);
+    mutateKwargs?: (matchObj: match<Params> | null, action: ActionType<T, FetchMeta, KW, Data>) => (any | SagaIterator);
+    mutateQuery?: (matchObj: match<Params> | null, action: ActionType<T, FetchMeta, KW, Data>) => (any | SagaIterator);
+    mutateResponse?: (result: any, action: ActionType<T, FetchMeta, KW, Data>) => (any | SagaIterator);
 }
 
 
@@ -92,7 +92,7 @@ export function createFetchSaga<
 
         let result = response;
         if (mutateResponse) {
-            result = yield call(mutateResponse, result);
+            result = yield call(mutateResponse, result, action);
         }
 
         if (meta.asDetails || useDetails) {

@@ -3,7 +3,7 @@ import { Kwargs } from '@thorgate/spa-is';
 import { match } from 'react-router';
 import { SagaIterator } from 'redux-saga';
 import { call, delay, race } from 'redux-saga/effects';
-import { Query, Resource, ResourceMethods } from 'tg-resources';
+import { Resource, ResourceMethods } from 'tg-resources';
 
 import { ActionType, ResourceSaga } from './types';
 
@@ -28,8 +28,8 @@ export interface ResourceSagaOptions<
     timeoutMessage?: string;
     timeoutMs?: number;
 
-    mutateKwargs?: (matchObj: match<Params> | null, kwargs: KW | null) => (any | SagaIterator);
-    mutateQuery?: (matchObj: match<Params> | null, query: Query | null) => (any | SagaIterator);
+    mutateKwargs?: (matchObj: match<Params> | null, action: ActionType<T, Meta, KW, Data>) => (any | SagaIterator);
+    mutateQuery?: (matchObj: match<Params> | null, action: ActionType<T, Meta, KW, Data>) => (any | SagaIterator);
 }
 
 
@@ -60,11 +60,11 @@ export function createResourceSaga<
         let { kwargs = null, query = null } = payload;
 
         if (mutateKwargs) {
-            kwargs = yield call(mutateKwargs, matchObj, kwargs);
+            kwargs = yield call(mutateKwargs, matchObj, action);
         }
 
         if (mutateQuery) {
-            query = yield call(mutateQuery, matchObj, query);
+            query = yield call(mutateQuery, matchObj, action);
         }
 
         if (resource) {

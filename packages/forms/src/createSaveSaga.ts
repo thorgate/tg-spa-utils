@@ -4,7 +4,7 @@ import { Kwargs } from '@thorgate/spa-is';
 import { match } from 'react-router';
 import { SagaIterator } from 'redux-saga';
 import { call } from 'redux-saga/effects';
-import { Query, Resource, ResourcePostMethods } from 'tg-resources';
+import { Resource, ResourcePostMethods } from 'tg-resources';
 
 import { FormErrorHandlerOptions, formErrorsHandler } from './formErrors';
 import { defaultMessages, ErrorMessages } from './messages';
@@ -28,8 +28,8 @@ export interface CreateFormSaveSagaOptions<
     messages?: ErrorMessages;
     timeoutMs?: number;
 
-    mutateKwargs?: (matchObj: match<Params> | null, kwargs: KW | null) => (any | SagaIterator);
-    mutateQuery?: (matchObj: match<Params> | null, query: Query | null) => (any | SagaIterator);
+    mutateKwargs?: (matchObj: match<Params> | null, action: SaveActionType<T, Values, KW>) => (any | SagaIterator);
+    mutateQuery?: (matchObj: match<Params> | null, action: SaveActionType<T, Values, KW>) => (any | SagaIterator);
 }
 
 
