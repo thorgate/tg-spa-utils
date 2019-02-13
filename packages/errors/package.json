@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-errors",
-  "version": "1.0.0-alpha.14",
+  "version": "1.0.0-alpha.19",
   "private": false,
   "publishConfig": {
     "access": "public"
