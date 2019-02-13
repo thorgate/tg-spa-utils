@@ -1,6 +1,6 @@
 import { buildUrlCache } from 'tg-named-routes';
 
-import { simulateLogin, simulateLogout } from '../sagas/auth';
+import { simulateApiError, simulateLogin, simulateLogout } from '../sagas/auth';
 import simulateWatcher from '../sagas/simulateWatcher';
 
 import App from './App';
@@ -8,6 +8,7 @@ import Home from './Home';
 import PageNotFound from './PageNotFound';
 import RedirectHome from './RedirectHome';
 import Restricted from './Restricted';
+import RestrictedRedirect from './RestrictedRedirect';
 import SimulatedError from './SimulateError';
 
 
@@ -25,6 +26,13 @@ const routes = [
             exact: true,
             component: Restricted,
             name: 'restricted',
+            initial: simulateApiError,
+        }, {
+            path: '/home-redirect',
+            exact: true,
+            component: RestrictedRedirect,
+            name: 'restricted-redirect',
+            initial: simulateApiError,
         }, {
             path: '/login',
             exact: true,

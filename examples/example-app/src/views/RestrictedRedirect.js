@@ -1,7 +1,7 @@
 import React from 'react';
 
 import './Home.css';
-import { loginRequired } from '../permissions';
+import { loginRequiredRedirect } from '../permissions';
 import { withView } from '../withView';
 
 
@@ -17,4 +17,4 @@ class Restricted extends React.Component {
     }
 }
 
-export default withView(loginRequired()(Restricted));
+export default withView(loginRequiredRedirect()(Restricted));

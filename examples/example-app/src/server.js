@@ -47,6 +47,8 @@ server
     .disable('x-powered-by')
     .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
     .get('/*', asyncWrapper(async (req, res) => {
+        console.log(`GET: ${req.originalUrl}`);
+
         const { store } = configureStore({}, {
             location: req.originalUrl,
         });
@@ -67,6 +69,7 @@ server
         );
 
         if (context.url) {
+            console.log(`Redirecting to: ${context.url}`);
             res.redirect(context.url);
         } else {
             const header = Helmet.renderStatic();

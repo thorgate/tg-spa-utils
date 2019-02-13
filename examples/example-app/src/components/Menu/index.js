@@ -15,6 +15,9 @@ const MenuBase = ({ isAuthenticated }) => (
             <NamedLink name="restricted">Restricted</NamedLink>
         </li>
         <li>
+            <NamedLink name="restricted-redirect">Restricted Redirect</NamedLink>
+        </li>
+        <li>
             {isAuthenticated ? (
                 <NamedLink name="logout">Logout</NamedLink>
             ) : (

@@ -4,7 +4,8 @@ import { PermissionCheck, PermissionCheckFn, PermissionCheckProps } from './Perm
 
 
 export type CreateDecoratorOptions = Pick<
-    PermissionCheckProps, 'redirectRouteName' | 'PermissionDeniedComponent' | 'hideWithoutPermissions' | 'permissionDeniedStatusCodes'
+    PermissionCheckProps,
+    'redirectRouteName' | 'PermissionDeniedComponent' |'hideWithoutPermissions' | 'permissionDeniedStatusCodes' | 'redirectParam'
 >;
 
 /**

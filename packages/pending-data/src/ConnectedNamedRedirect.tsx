@@ -1,3 +1,4 @@
+import { isNode } from '@thorgate/spa-is';
 import { getLocation, RouterState } from 'connected-react-router';
 import { LocationState } from 'history';
 import React, { FC } from 'react';
@@ -13,7 +14,7 @@ interface ConnectedRedirectProps extends NamedRedirectProps, RouteComponentProps
 
 const ConnectedRedirectBase: FC<ConnectedRedirectProps> = (props) => {
     const { location, routerLocation, ...rest } = props;
-    if (location.key !== routerLocation.key) {
+    if (location.key !== routerLocation.key && !isNode()) {
         return null;
     }
 

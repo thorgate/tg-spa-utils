@@ -10,6 +10,9 @@ import { DefaultPermissionDenied } from './DefaultPermissionDenied';
 import { getUser, isAuthenticated, User, UserState } from './userReducer';
 
 
+export const DefaultRedirectParam = 'next';
+
+
 export type PermissionCheckFn<P = any> = (params: P & PermissionCheckProps) => boolean;
 
 export interface PermissionCheckProps extends NamedRouteConfigComponentProps {
@@ -17,6 +20,7 @@ export interface PermissionCheckProps extends NamedRouteConfigComponentProps {
     isAuthenticated: boolean;
     error: ErrorType;
     redirectRouteName?: string;
+    redirectParam?: string;
     permissionCheck: PermissionCheckFn;
     PermissionDeniedComponent?: ComponentType;
     hideWithoutPermissions?: boolean;
@@ -30,6 +34,7 @@ class PermissionCheckBase extends Component<PermissionCheckProps> {
         permissionDeniedStatusCodes: [401, 403],
         PermissionDeniedComponent: DefaultPermissionDenied,
         hideWithoutPermissions: false,
+        redirectParam: DefaultRedirectParam,
         error: null,
     };
 
@@ -48,11 +53,12 @@ class PermissionCheckBase extends Component<PermissionCheckProps> {
         const hasPermission = this.hasPermission();
 
         if (!hasPermission && redirectRouteName && !PermissionDeniedComponent) {
+            const redirectParam = this.props.redirectParam || DefaultRedirectParam;
             return (
                 <ConnectedNamedRedirect
                     push={false}
                     toName={redirectRouteName}
-                    toQuery={{ next: stringifyLocation(location) }}
+                    toQuery={{ [redirectParam]: stringifyLocation(location) }}
                     toState={{ permissionDenied: true }}
                 />
             );

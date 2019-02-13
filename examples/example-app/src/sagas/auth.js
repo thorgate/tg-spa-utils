@@ -1,5 +1,6 @@
-import { userActions } from '@thorgate/spa-permissions';
-import { delay, put } from 'redux-saga/effects';
+import { isAuthenticated, userActions } from '@thorgate/spa-permissions';
+import { delay, put, select } from 'redux-saga/effects';
+import { InvalidResponseCode } from 'tg-resources';
 
 
 export function* simulateLogin() {
@@ -14,4 +15,13 @@ export function* simulateLogout() {
     yield delay(300);
     yield put(userActions.resetUser());
     console.log('Logged out');
+}
+
+
+export function* simulateApiError() {
+    const loggedIn = yield select(isAuthenticated);
+
+    if (!loggedIn) {
+        throw new InvalidResponseCode(401);
+    }
 }

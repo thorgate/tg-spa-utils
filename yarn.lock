@@ -1453,7 +1453,7 @@
   resolved "https://registry.yarnpkg.com/@tg-resources/is/-/is-3.1.0.tgz#b90ec84bc964ca033d3f52d659302d9a5295db89"
   integrity sha512-6pWbkfHr0HZHacMnUVUR7c2UoX91wrx7/Qg975CFF9iQlfatesnu0sFgmPRj7yQ2Ffu20flWL1SxKMhfX1xICw==
 
-"@tg-resources/redux-saga-router@^3.1.0", "@tg-resources/redux-saga-router@^3.1.1":
+"@tg-resources/redux-saga-router@^3.1.1":
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/@tg-resources/redux-saga-router/-/redux-saga-router-3.1.1.tgz#0b797c8a9c0c5eac8a28dbd31c8d44ba5670e06f"
   integrity sha512-RKtYRh7hEEZ861uM+GaBdGOasYOAKxjCOlK94v1stCUASFWZZrbN1GXC00RzOBMK2akN9cyVPnUJKLGr46Mqdg==
@@ -1562,10 +1562,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-redux@^6.0.10":
-  version "6.0.13"
-  resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-6.0.13.tgz#490ace7b49e57281edf85671bb455b31cdfa7d0b"
-  integrity sha512-69lPYT69CSvzQ75Ut4MfT+oQU9TAjCycdL6BQOrPztqbzdhzSe1d4Qj8vrMkTOm454Xz151zh+YT6S4t2OBopw==
+"@types/react-redux@^7.0.1":
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/@types/react-redux/-/react-redux-7.0.1.tgz#9dd2503be7a9861c5a092bf1c5050b7ade4dc62e"
+  integrity sha512-+DIH7TI2MT4Ke4lOrRMgNy//DzTDIzv5QwkJSD6AVrlsIgzf7yMM0JoWL5wJUXYwKQ2f1FgvwlvIVGD2QWQnew==
   dependencies:
     "@types/react" "*"
     redux "^4.0.0"
@@ -9489,7 +9489,7 @@ react-is@^16.5.2, react-is@^16.6.3, react-is@^16.7.0, react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.1.tgz#a80141e246eb894824fb4f2901c0c50ef31d4cdb"
   integrity sha512-ioMCzVDWvCvKD8eeT+iukyWrBGrA3DiFYkXfBsVYIRdaREZuBjENG+KjrikavCLasozqRWTwFUagU/O4vPpRMA==
 
-react-redux@^6.0.0-beta.3:
+react-redux@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-6.0.0.tgz#09e86eeed5febb98e9442458ad2970c8f1a173ef"
   integrity sha512-EmbC3uLl60pw2VqSSkj6HpZ6jTk12RMrwXMBdYtM6niq0MdEaRq9KYCwpJflkOZj349BLGQm1MI/JO1W96kLWQ==
@@ -10951,7 +10951,7 @@ text-table@0.2.0, text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-tg-resources@^3.1.0, tg-resources@^3.1.1:
+tg-resources@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/tg-resources/-/tg-resources-3.1.1.tgz#a7838dced598a2d3be91f58ed55dc8a6b428be4e"
   integrity sha512-VlmeqWxvWOla7gdh0ZX3C7FWwe66FhAnodS2eaM7pE60BoUOXNw/DWSjwx2wTi+L9q3g6NrPNIQWiKfAHQen1g==
