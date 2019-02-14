@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-permissions",
-  "version": "1.0.0-alpha.20",
+  "version": "1.0.0-alpha.21",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -37,7 +37,7 @@
   "dependencies": {
     "@thorgate/spa-components": "^1.0.0-alpha.7",
     "@thorgate/spa-errors": "^1.0.0-alpha.20",
-    "@thorgate/spa-pending-data": "^1.0.0-alpha.14",
+    "@thorgate/spa-pending-data": "^1.0.0-alpha.21",
     "tg-named-routes": "^1.0.0-alpha.6",
     "typesafe-actions": "^3.0.0",
     "warning": "^4.0.2"
