@@ -1,6 +1,6 @@
 {
   "name": "tg-named-routes",
-  "version": "1.0.0-alpha.6",
+  "version": "1.0.0-alpha.22",
   "private": false,
   "publishConfig": {
     "access": "public"
