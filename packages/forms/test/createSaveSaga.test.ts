@@ -5,7 +5,7 @@ import { ConfigureStore, configureStore } from '@thorgate/test-store';
 import { delay } from 'redux-saga/effects';
 import { NetworkError } from 'tg-resources';
 
-import { createFormSaveSaga, createSaveAction, defaultMessages, SaveMeta } from '../src';
+import { createFormSaveSaga, createSaveAction, defaultMessages, SaveMeta, SaveSaga } from '../src';
 
 
 function testReducer(state: any = null, action: any) {
@@ -28,7 +28,7 @@ beforeEach(() => {
 
 
 const expectSaveResponse = async (
-    saveSaga: ReturnType<typeof createFormSaveSaga>,
+    saveSaga: SaveSaga<any, any, any, any, any>,
     payload: ActionPayload<any>,
     meta: SaveMeta<any>,
     data: any = null
