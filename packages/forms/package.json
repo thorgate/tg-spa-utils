@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-forms",
-  "version": "1.0.0-alpha.22",
+  "version": "1.0.0-alpha.23",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -31,8 +31,8 @@
     "tg-resources": "^3.1.1"
   },
   "dependencies": {
-    "@thorgate/create-resource-saga": "^1.0.0-alpha.18",
-    "@thorgate/spa-errors": "^1.0.0-alpha.22",
+    "@thorgate/create-resource-saga": "^1.0.0-alpha.23",
+    "@thorgate/spa-errors": "^1.0.0-alpha.23",
     "@thorgate/spa-is": "^1.0.0-alpha.14",
     "typesafe-actions": "^3.0.0"
   },
