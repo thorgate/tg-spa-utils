@@ -2,8 +2,19 @@ import React, { FC, ReactNode } from 'react';
 
 
 export interface MessagePanelProps {
+    /**
+     * Message panel title prop
+     */
     title?: string;
+
+    /**
+     * Message panel description prop
+     */
     description?: string | ReactNode;
+
+    /**
+     * React children
+     */
     children?: ReactNode;
 }
 

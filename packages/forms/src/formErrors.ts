@@ -1,17 +1,16 @@
-import { FormikErrors } from 'formik';
 import { SagaIterator } from 'redux-saga';
 import { call } from 'redux-saga/effects';
 import {
     InvalidResponseCode,
     ListValidationError,
     NetworkError,
-    ResourceErrorInterface,
     SingleValidationError,
     ValidationErrorInterface,
     ValidationErrorType,
 } from 'tg-resources';
 
-import { defaultMessages, ErrorMessages } from './messages';
+import { defaultMessages } from './messages';
+import { FormErrorHandlerOptions, NestedErrorType } from './types';
 
 
 const isValidationError = (error: any): error is ValidationErrorInterface => (
@@ -26,26 +25,12 @@ const isNetworkError = (error: any): error is NetworkError => (
     error.isNetworkError
 );
 
-export interface FormErrorHandlerOptions<Values> {
-    setErrors: (errors: FormikErrors<Values>) => void | Iterator<any>;
-    setStatus: (status?: any) => void | Iterator<any>;
-
-    error: ResourceErrorInterface;
-    messages?: ErrorMessages;
-}
-
 
 interface ErrorMapping {
     field: string;
     error: ValidationErrorType;
 }
 
-
-export interface NestedError {
-    [key: string]: null | string | NestedError[] | NestedError;
-}
-
-export type NestedErrorType = string | null | NestedError;
 
 export function reduceNestedErrors(error: ValidationErrorType): NestedErrorType {
     if (!error || !error.hasError()) {
@@ -110,6 +95,8 @@ export function* formErrorsHandler<Values>(options: FormErrorHandlerOptions<Valu
         yield call(setErrors, fields);
     } else {
         // Fallback to status error
-        yield call(setStatus, `${error}`);
+        yield call(setStatus, {
+            message: `${error}`,
+        });
     }
 }

@@ -31,8 +31,8 @@
   "peerDependencies": {
     "connected-react-router": "^6.2.2",
     "history": "^4.7.2",
-    "react": ">=16.4.0",
-    "react-dom": ">=16.4.0",
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0",
     "react-redux": "^6.0.0",
     "react-router": "^4.4.0-beta.6",
     "redux": "^4.0.1"

@@ -100,8 +100,8 @@ const selectEntityOrder = (state: EntitiesState, key: string) => selectOrder(sta
 const selectArchived = (state: EntitiesState) => state.archived;
 const selectArchivedEntities = (state: EntitiesState, key: string) => selectArchived(state)[key] || [];
 
-const selectStatus = (state: EntitiesState) => state.status;
-const selectEntitiesStatus = (state: EntitiesState, key: string) => selectStatus(state)[key] || EntityStatus.NotLoaded;
+const selectStatuses = (state: EntitiesState) => state.status;
+const selectEntitiesStatus = (state: EntitiesState, key: string) => selectStatuses(state)[key] || EntityStatus.NotLoaded;
 
 
 const initialState: EntitiesState = {
@@ -245,25 +245,64 @@ export interface EntitiesRootState {
 }
 
 
+/**
+ * Select entities root state.
+ */
 const selectEntitiesRoot = <S extends EntitiesRootState>(state: S) => state.entities;
 
 
 export const entitiesSelectors = {
     selectEntitiesRoot,
 
+    /**
+     * Select entities data.
+     * @param state
+     */
     selectEntities: <S extends EntitiesRootState>(state: S) => selectEntities(selectEntitiesRoot(state)),
 
+    /**
+     * Select specific entity type.
+     * @param state
+     * @param key
+     */
     selectEntityType: <S extends EntitiesRootState>(state: S, key: string) => selectEntityType(selectEntitiesRoot(state), key),
 
+    /**
+     * Select entities order.
+     * @param state
+     */
     selectOrder: <S extends EntitiesRootState>(state: S) => selectOrder(selectEntitiesRoot(state)),
 
+    /**
+     * Select specific entity order.
+     * @param state
+     * @param key
+     */
     selectEntityOrder: <S extends EntitiesRootState>(state: S, key: string) => selectEntityOrder(selectEntitiesRoot(state), key),
 
+    /**
+     * Select entities archive.
+     * @param state
+     */
     selectArchived: <S extends EntitiesRootState>(state: S) => selectArchived(selectEntitiesRoot(state)),
 
+    /**
+     * Select specific archived entity order.
+     * @param state
+     * @param key
+     */
     selectArchivedEntities: <S extends EntitiesRootState>(state: S, key: string) => selectArchivedEntities(selectEntitiesRoot(state), key),
 
-    selectStatus: <S extends EntitiesRootState>(state: S) => selectStatus(selectEntitiesRoot(state)),
+    /**
+     * Select entities statuses.
+     * @param state
+     */
+    selectStatuses: <S extends EntitiesRootState>(state: S) => selectStatuses(selectEntitiesRoot(state)),
 
+    /**
+     * Select specific entity status.
+     * @param state
+     * @param key
+     */
     selectEntitiesStatus: <S extends EntitiesRootState>(state: S, key: string) => selectEntitiesStatus(selectEntitiesRoot(state), key),
 };

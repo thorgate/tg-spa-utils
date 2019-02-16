@@ -44,17 +44,18 @@ export default function* formWatcherSaga() {
 Use the saga you created as watcher saga for the view. Pass the action creator as handleSubmit prop to withFormik:
 
 ```js
+import { connect } from 'react-redux';
 import { withFormik } from 'formik';
 import { saveForm } from 'sagas/form/saveFormSaga';
 
 ...
 
-export const ComponentForm = withFormik({
+export const ComponentForm = connect()(withFormik({
     ...
     
     handleSubmit: (values, { props, ...formik }) => (
-        saveForm({ data: values }, formik)
+        props.dispatch(saveForm({ data: values }, formik))
     ),
-})(Component);
+})(Component));
 
 ```

@@ -4,7 +4,7 @@ type StorageType = Storage | null;
 export class SafeStorage {
     protected storageObject: StorageType;
 
-    constructor(storageObject: StorageType) {
+    constructor(storageObject: StorageType = null) {
         this.storageObject = storageObject;
     }
 

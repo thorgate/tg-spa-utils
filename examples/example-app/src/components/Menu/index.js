@@ -12,6 +12,9 @@ const MenuBase = ({ isAuthenticated }) => (
             <NamedLink name="home">Home</NamedLink>
         </li>
         <li>
+            <NamedLink name="home-long">Simulate long loading</NamedLink>
+        </li>
+        <li>
             <NamedLink name="restricted">Restricted</NamedLink>
         </li>
         <li>

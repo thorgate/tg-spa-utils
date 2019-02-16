@@ -74,6 +74,6 @@ describe('createDeleteAction works', () => {
 
         expect(() => {
             deleteAction({ data: {} });
-        }).toThrow('Delete action "@@tg-spa-forms-delete/TEST_DATA" is misconfiguration. setStatus is required.');
+        }).toThrow('Delete action "@@tg-spa-forms-delete/TEST_DATA" misconfiguration. setStatus is required.');
     });
 });

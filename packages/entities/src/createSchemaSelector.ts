@@ -3,8 +3,14 @@ import { denormalize, schema } from 'normalizr';
 import { EntitiesData, EntitiesRootState, entitiesSelectors } from './entitiesReducer';
 
 
-// Future me: Create promised based selector to send fetch action and resolve when specific action is resolved
-// Second part requires worker - left for future package / release
+/**
+ * Create entity list memoized selector.
+ *  If empty list is used, default order from matching entity is returned
+ *
+ *  Memoization is based on previously used id and entities storage
+ *
+ * @param entitySchema
+ */
 export function createSchemaSelector<RType = any>(entitySchema: schema.Entity) {
     let prevIds: Array<string | number> = [];
     let prevArchived: string[] = [];
@@ -47,6 +53,13 @@ export function createSchemaSelector<RType = any>(entitySchema: schema.Entity) {
 }
 
 
+/**
+ * Create single entity memoized selector
+ *
+ *  Memoization is based on previously used id and entities storage
+ *
+ * @param entitySchema
+ */
 export function createDetailSchemaSelector<RType = any>(entitySchema: schema.Entity) {
     let prevId: string;
     let prevEntities: EntitiesData;

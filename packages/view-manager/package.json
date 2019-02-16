@@ -25,17 +25,17 @@
     "lib"
   ],
   "peerDependencies": {
-    "redux": "^4.0.1"
+    "connected-react-router": "^6.2.2",
+    "history": "^4.7.2",
+    "react-router": "^4.4.0-beta.6",
+    "react-router-config": "^4.4.0-beta.6",
+    "redux": "^4.0.1",
+    "redux-saga": "^1.0.0"
   },
   "dependencies": {
     "@thorgate/spa-errors": "^1.0.0-alpha.22",
     "@thorgate/spa-is": "^1.0.0-alpha.14",
     "@thorgate/spa-pending-data": "^1.0.0-alpha.22",
-    "connected-react-router": "^6.2.2",
-    "history": "^4.7.2",
-    "react-router": "^4.4.0-beta.6",
-    "react-router-config": "^4.4.0-beta.6",
-    "redux-saga": "^1.0.0",
     "tg-named-routes": "^1.0.0-alpha.22",
     "typescript-tuple": "^2.1.0",
     "warning": "^4.0.2"

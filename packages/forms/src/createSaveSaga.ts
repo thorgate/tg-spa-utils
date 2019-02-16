@@ -1,36 +1,12 @@
-import { SagaResource } from '@tg-resources/redux-saga-router';
 import { createResourceSaga } from '@thorgate/create-resource-saga';
 import { Kwargs } from '@thorgate/spa-is';
 import { match } from 'react-router';
-import { SagaIterator } from 'redux-saga';
 import { call } from 'redux-saga/effects';
-import { Resource, ResourcePostMethods } from 'tg-resources';
+import { Resource } from 'tg-resources';
 
-import { FormErrorHandlerOptions, formErrorsHandler } from './formErrors';
-import { defaultMessages, ErrorMessages } from './messages';
-import { SaveActionType, SaveSaga } from './types';
-
-
-export interface CreateFormSaveSagaOptions<
-    Values,
-    T extends string,
-    Klass extends Resource,
-    KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {}
-> {
-    resource?: Klass | SagaResource<Klass>;
-    method?: ResourcePostMethods;
-
-    apiSaveHook?: (matchObj: match<Params> | null, action: SaveActionType<T, Values, KW>) => (any | SagaIterator);
-    successHook: (result: any, matchObj: match<Params> | null, action: SaveActionType<T, Values, KW>) => (any | SagaIterator);
-    errorHook?: (options: FormErrorHandlerOptions<Values>) => (void | SagaIterator);
-
-    messages?: ErrorMessages;
-    timeoutMs?: number;
-
-    mutateKwargs?: (matchObj: match<Params> | null, action: SaveActionType<T, Values, KW>) => (any | SagaIterator);
-    mutateQuery?: (matchObj: match<Params> | null, action: SaveActionType<T, Values, KW>) => (any | SagaIterator);
-}
+import { formErrorsHandler } from './formErrors';
+import { defaultMessages } from './messages';
+import { CreateFormSaveSagaOptions, CreateFormSaveSagaReconfigureOptions, SaveActionType, SaveSaga } from './types';
 
 
 export const createFormSaveSaga = <
@@ -38,49 +14,70 @@ export const createFormSaveSaga = <
     T extends string,
     Klass extends Resource,
     KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {}
->(options: CreateFormSaveSagaOptions<Values, T, Klass, KW, Params>): SaveSaga<T, Values, KW, Params> => {
+    Params extends Kwargs<Params> = {},
+>(options: CreateFormSaveSagaOptions<Values, T, Klass, KW, Params>): SaveSaga<T, Values, Klass, KW, Params> => {
     const {
-        resource,
-        method = 'post',
-        apiSaveHook,
-        errorHook = formErrorsHandler,
         messages = defaultMessages,
-        successHook,
-        timeoutMs,
-        mutateKwargs,
-        mutateQuery,
+        ...baseOptions
     } = options;
 
-    const resourceSaga = createResourceSaga({
-        resource,
-        method,
-        apiHook: apiSaveHook,
-        successHook,
-        timeoutMessage: 'Timeout reached, form save failed',
-        timeoutMs,
-        mutateKwargs,
-        mutateQuery,
-    });
+    function createCloneableSaga(config: CreateFormSaveSagaReconfigureOptions<Values, T, Klass, KW, Params> = {}) {
+        const configuration = { ...baseOptions, ...config };
 
-    return function* formSaveSaga(matchObj: match<Params> | null, action: SaveActionType<T, Values, KW>) {
-        if (!(action as any)) {
-            throw new Error('Action is required for formSaveSaga');
+        const {
+            resource,
+            method = 'post',
+            mutateKwargs,
+            mutateQuery,
+            apiSaveHook,
+            successHook,
+            timeoutMs,
+        } = configuration;
+
+        const saga = createResourceSaga({
+            timeoutMessage: 'Timeout reached, form save failed',
+            resource,
+            method,
+            mutateKwargs,
+            mutateQuery,
+            apiHook: apiSaveHook,
+            successHook,
+            timeoutMs,
+        });
+
+        function* formSaveSaga(matchObj: match<Params> | null, action: SaveActionType<T, Values, KW>) {
+            if (!(action as any)) {
+                throw new Error('Action is required for formSaveSaga');
+            }
+
+            try {
+                yield call(saga, matchObj, action);
+
+            } catch (error) {
+                yield call(config.errorHook || formErrorsHandler, {
+                    messages,
+                    error,
+                    setErrors: action.meta.setErrors,
+                    setStatus: action.meta.setStatus,
+                });
+
+                // Help with debugging by logging the error occurred
+                if (process.env.NODE_ENV !== 'production') {
+                    console.log(error);
+                }
+            } finally {
+                action.meta.setSubmitting(false);
+            }
         }
 
-        try {
-            yield call(resourceSaga, matchObj, action);
+        return Object.assign(
+            formSaveSaga, {
+                cloneSaga: <T0 extends string>(override: CreateFormSaveSagaReconfigureOptions<Values, T0, Klass, KW, Params> = {}) => (
+                    createCloneableSaga(override as CreateFormSaveSagaReconfigureOptions<Values, T, Klass, KW, Params>) as any
+                ) as SaveSaga<T0, Values, Klass, KW, Params>
+            }
+        );
+    }
 
-        } catch (error) {
-            yield call(errorHook, {
-                messages,
-                error,
-                setErrors: action.meta.setErrors,
-                setStatus: action.meta.setStatus,
-            });
-
-        } finally {
-            action.meta.setSubmitting(false);
-        }
-    };
+    return createCloneableSaga();
 };

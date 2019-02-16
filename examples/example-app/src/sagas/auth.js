@@ -3,6 +3,10 @@ import { delay, put, select } from 'redux-saga/effects';
 import { InvalidResponseCode } from 'tg-resources';
 
 
+export function* simulateLoading() {
+    yield delay(3000);
+}
+
 export function* simulateLogin() {
     console.log('Starting login simulation');
     yield delay(300);

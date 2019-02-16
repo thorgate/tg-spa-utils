@@ -335,6 +335,34 @@ describe('reducer works', () => {
         expectEntities(normalizedData);
     });
 
+    test('purgeOrder works', () => {
+        const data = generateArticles(5, 5);
+
+        // const firstId = data[0].id;
+
+        const normalizedData = normalize(data, [article]);
+
+        // expect initial data to be correct
+        store.dispatch(entitiesActions.setEntities({
+            key: article.key,
+            entities: normalizedData.entities,
+            order: normalizedData.result,
+        }));
+        expectGlobalEntities(normalizedData);
+        expectEntities(normalizedData);
+
+        // Expect purge to work
+        store.dispatch(entitiesActions.purgeOrder({ key: article.key }));
+        expectGlobalEntities(normalizedData, {
+            order: {
+                [article.key]: [],
+            },
+        });
+        expectEntities(normalizedData, {
+            order: [],
+        });
+    });
+
     test('clearEntities works', () => {
         const normalizedData = normalize(generateArticles(5, 5), [article]);
 

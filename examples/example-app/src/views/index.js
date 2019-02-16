@@ -1,6 +1,6 @@
 import { buildUrlCache } from 'tg-named-routes';
 
-import { simulateApiError, simulateLogin, simulateLogout } from '../sagas/auth';
+import { simulateApiError, simulateLoading, simulateLogin, simulateLogout } from '../sagas/auth';
 import simulateWatcher from '../sagas/simulateWatcher';
 
 import App from './App';
@@ -21,6 +21,12 @@ const routes = [
             exact: true,
             component: Home,
             name: 'home',
+        }, {
+            path: '/long',
+            exact: true,
+            component: Home,
+            initial: simulateLoading,
+            name: 'home-long',
         }, {
             path: '/home',
             exact: true,

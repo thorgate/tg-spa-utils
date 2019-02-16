@@ -1,7 +1,4 @@
-export interface ErrorMessages {
-    network: string;
-    invalidResponseCode: string;
-}
+import { ErrorMessages } from './types';
 
 
 export const defaultMessages: ErrorMessages = {

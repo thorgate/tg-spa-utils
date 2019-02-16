@@ -29,14 +29,14 @@
     "lib"
   ],
   "peerDependencies": {
-    "react": ">=16.4.0",
-    "react-dom": ">=16.4.0"
+    "react": ">=16.8.0",
+    "react-dom": ">=16.4.0",
+    "react-router": "^4.4.0-beta.6",
+    "redux": "^4.0.1"
   },
   "dependencies": {
     "@thorgate/spa-components": "^1.0.0-alpha.22",
     "@thorgate/spa-is": "^1.0.0-alpha.14",
-    "react-router": "^4.4.0-beta.6",
-    "redux": "^4.0.1",
     "tg-named-routes": "^1.0.0-alpha.22",
     "typesafe-actions": "^3.0.0",
     "warning": "^4.0.2"

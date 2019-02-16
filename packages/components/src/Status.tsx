@@ -3,7 +3,14 @@ import { Route } from 'react-router';
 
 
 export interface StatusProps {
+    /**
+     * Status code to pass to React-Router staticContext
+     */
     code?: number;
+
+    /**
+     * React children
+     */
     children?: ReactNode;
 }
 

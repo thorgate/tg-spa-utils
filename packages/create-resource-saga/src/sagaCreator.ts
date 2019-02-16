@@ -1,95 +1,96 @@
-import { resourceEffectFactory, SagaResource } from '@tg-resources/redux-saga-router';
+import { resourceEffectFactory } from '@tg-resources/redux-saga-router';
 import { Kwargs } from '@thorgate/spa-is';
 import { match } from 'react-router';
-import { SagaIterator } from 'redux-saga';
 import { call, delay, race } from 'redux-saga/effects';
-import { Resource, ResourceMethods } from 'tg-resources';
+import { Resource } from 'tg-resources';
 
-import { ResourceActionType, ResourceSaga } from './types';
+import { MetaOptions, ResourceActionType, ResourceSaga, ResourceSagaOptions } from './types';
 
 
 export const DEFAULT_TIMEOUT = 3000;
 
 
-export interface ResourceSagaOptions<
-    T extends string,
-    Klass extends Resource,
-    Meta extends {} = {},
-    KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {},
-    Data = any,
-> {
-    resource?: Klass | SagaResource<Klass>;
-    method?: ResourceMethods;
-
-    apiHook?: (matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>) => (any | SagaIterator);
-    successHook: (result: any, matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>) => (any | SagaIterator);
-
-    timeoutMessage?: string;
-    timeoutMs?: number;
-
-    mutateKwargs?: (matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>) => (any | SagaIterator);
-    mutateQuery?: (matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>) => (any | SagaIterator);
-}
-
-
+/**
+ * Create resource saga with pre-defined settings.
+ * @param options - Options to configure resource saga
+ */
 export function createResourceSaga<
     T extends string,
     Klass extends Resource,
-    Meta extends {} = {},
+    Meta extends MetaOptions = {},
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {},
     Data = any,
->(options: ResourceSagaOptions<T, Klass, Meta, KW, Params, Data>): ResourceSaga<T, Meta, KW, Params> {
-    const {
-        resource,
-        method = 'fetch',
-        apiHook,
-        successHook,
-        timeoutMessage = 'Timeout reached, resource saga failed',
-        timeoutMs = DEFAULT_TIMEOUT,
-        mutateKwargs,
-        mutateQuery,
-    } = options;
+>(options: ResourceSagaOptions<T, Klass, Meta, KW, Params, Data>): ResourceSaga<T, Klass, Meta, KW, Params> {
+    function createCloneableSaga<T0 extends string = T>(config: ResourceSagaOptions<T0, Klass, Meta, KW, Params, Data> = {}) {
+        const baseConfig = { ...options, ...config };
 
-    return function* resourceSaga(matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>) {
-        const { payload = {} } = action;
+        const {
+            timeoutMessage = 'Timeout reached, resource saga failed',
+            timeoutMs = DEFAULT_TIMEOUT,
 
-        let resourceEffect: any;
+            resource,
+            method = 'fetch',
+            apiHook,
+            mutateKwargs,
+            mutateQuery,
+            successHook,
+        } = baseConfig;
 
-        let { kwargs = null, query = null } = payload;
+        function* resourceSaga(
+            matchObj: match<Params> | null,
+            action: ResourceActionType<T0, Meta, KW, Data>
+        ) {
+            const { payload = {} } = action;
 
-        if (mutateKwargs) {
-            kwargs = yield call(mutateKwargs, matchObj, action);
-        }
+            let resourceEffect: any;
 
-        if (mutateQuery) {
-            query = yield call(mutateQuery, matchObj, action);
-        }
+            let { kwargs = null, query = null } = payload;
 
-        if (resource) {
-            resourceEffect = resourceEffectFactory(resource, method, {
-                kwargs,
-                query,
-                data: payload.data,
-                attachments: payload.attachments,
-                requestConfig: { initializeSaga: false }, // Disable initialized saga in this context
+            if (mutateKwargs) {
+                kwargs = yield call(mutateKwargs, matchObj, action);
+            }
+
+            if (mutateQuery) {
+                query = yield call(mutateQuery, matchObj, action);
+            }
+
+            if (resource) {
+                resourceEffect = resourceEffectFactory(resource, method, {
+                    kwargs,
+                    query,
+                    data: payload.data,
+                    attachments: payload.attachments,
+                    requestConfig: { initializeSaga: false }, // Disable initialized saga in this context
+                });
+            } else if (apiHook) {
+                resourceEffect = call(apiHook, matchObj, action);
+            } else {
+                throw new Error('Misconfiguration: "resource" or "apiFetchHook" is required');
+            }
+
+            const { response, timeout } = yield race({
+                timeout: delay(timeoutMs, true),
+                response: resourceEffect,
             });
-        } else if (apiHook) {
-            resourceEffect = call(apiHook, matchObj, action);
-        } else {
-            throw new Error('Misconfiguration: "resource" or "apiFetchHook" is required');
+
+            if (timeout) {
+                throw new Error(timeoutMessage);
+            }
+
+            if (successHook) {
+                yield call(successHook, response, matchObj, action);
+            }
         }
 
-        const { response, timeout } = yield race({
-            timeout: delay(timeoutMs, true),
-            response: resourceEffect,
-        });
+        return Object.assign(
+            resourceSaga, {
+                cloneSaga: <T1 extends string>(override: ResourceSagaOptions<T1, Klass, Meta, KW, Params, Data>) => (
+                    createCloneableSaga<T1>(override)
+                )
+            },
+        );
+    }
 
-        if (timeout) {
-            throw new Error(timeoutMessage);
-        }
-
-        yield call(successHook, response, matchObj, action);
-    };
+    return createCloneableSaga<T>();
 }

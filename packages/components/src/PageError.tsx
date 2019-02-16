@@ -6,9 +6,24 @@ import { Status } from './Status';
 
 
 export interface PageErrorProps {
+    /**
+     * Status code
+     */
     statusCode?: number;
+
+    /**
+     * Page error title
+     */
     title?: string;
+
+    /**
+     * Page error description
+     */
     description?: string | ReactNode | null;
+
+    /**
+     * React children
+     */
     children?: ReactNode;
 }
 

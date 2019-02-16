@@ -1,5 +1,3 @@
-export * from '@thorgate/create-resource-saga';
-
 export * from '@thorgate/spa-components';
 
 export * from '@thorgate/spa-entities';
@@ -7,6 +5,10 @@ export * from '@thorgate/spa-entities';
 export * from '@thorgate/spa-errors';
 
 export * from '@thorgate/spa-forms';
+
+export * from '@thorgate/spa-hooks';
+
+export * from '@thorgate/spa-is';
 
 export * from '@thorgate/spa-pending-data';
 

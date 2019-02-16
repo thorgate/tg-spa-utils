@@ -5,6 +5,13 @@ import { createAction } from 'typesafe-actions';
 import { FetchAction, FetchMeta } from './types';
 
 
+/**
+ * Action creator matching signature:
+ *
+ *   (payload, meta) => ({ type, payload, meta })
+ *
+ * @param type - Action type
+ */
 export const createFetchAction = <
     T extends string, KW extends Kwargs<KW> = {}, Data = any
 >(type: T): FetchAction<T, KW, Data> => (

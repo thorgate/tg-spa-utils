@@ -64,7 +64,7 @@ describe('createFormSaveSaga works', () => {
         }, actions);
 
         expect(actions.setStatus.mock.calls).toEqual([
-            ['Error: Misconfiguration: "resource" or "apiFetchHook" is required'],
+            [{ message: 'Error: Misconfiguration: "resource" or "apiFetchHook" is required' }],
         ]);
     });
 
@@ -109,7 +109,7 @@ describe('createFormSaveSaga works', () => {
         await expectSaveResponse(saveSaga, { data: {} }, actions);
 
         expect(actions.setStatus.mock.calls).toEqual([
-            ['Error: Timeout reached, form save failed'],
+            [{ message: 'Error: Timeout reached, form save failed' }],
         ]);
     });
 });

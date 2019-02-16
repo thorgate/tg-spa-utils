@@ -8,9 +8,10 @@ import {
     createFetchAction,
     createFetchSaga,
     createSchemaSelector,
+    entitiesSelectors,
+    EntityStatus,
     FetchMeta,
-    saveResult,
-    saveResults
+    FetchSaga,
 } from '../src';
 import { article, generateArticles } from './createTestData';
 import { reducer, State } from './reducer';
@@ -25,7 +26,7 @@ beforeEach(() => {
 const actionCreator = createFetchAction('TEST_DATA');
 
 const expectResponse = async (
-    fetchSaga: ReturnType<typeof createFetchSaga>,
+    fetchSaga: FetchSaga<any, any, any, any, any>,
     schemaSelector: ReturnType<typeof createSchemaSelector>,
     payload: any = {},
     meta: FetchMeta = {},
@@ -70,6 +71,17 @@ describe('createFetchSaga works', () => {
         await expectResponse(fetchSaga, schemaSelector, {}, { callback }, data);
 
         expect(callback.mock.calls.length).toEqual(1);
+
+        expect(entitiesSelectors.selectEntitiesStatus(store.getState(), article.key)).toEqual(EntityStatus.Fetched);
+
+        // Empty clone does not mutate original with no arguments
+        await expectResponse(fetchSaga.cloneSaga(), schemaSelector, {}, { callback }, data);
+
+        expect(callback.mock.calls.length).toEqual(2);
+
+        expect(entitiesSelectors.selectStatuses(store.getState())).toEqual({
+            [article.key]: EntityStatus.Fetched,
+        });
     });
 
     test('with SagaResource as details', async () => {
@@ -103,19 +115,37 @@ describe('createFetchSaga works', () => {
         );
     });
 
-    test('saveResults', async () => {
+    test('saveMany', async () => {
         const schemaSelector = createSchemaSelector(article);
         const data = generateArticles(100, 5);
 
-        await store.sagaMiddleware.run(saveResults, article.key, data, [article]);
+        const resource = new SagaResource('/test', null, DummyResource);
+        resource.resource.Data = data;
+
+        const fetchSaga = createFetchSaga({
+            resource,
+            key: article.key,
+            listSchema: [article],
+        });
+
+        await store.sagaMiddleware.run(fetchSaga.saveMany, data);
         expect(schemaSelector(store.getState())).toEqual(data);
     });
 
-    test('saveResults w/ update', async () => {
+    test('saveMany w/ single entity update', async () => {
         const schemaSelector = createSchemaSelector(article);
         const data = generateArticles(100, 5);
 
-        await store.sagaMiddleware.run(saveResults, article.key, data, [article]);
+        const resource = new SagaResource('/test', null, DummyResource);
+        resource.resource.Data = data;
+
+        const fetchSaga = createFetchSaga({
+            resource,
+            key: article.key,
+            listSchema: [article],
+        });
+
+        await store.sagaMiddleware.run(fetchSaga.saveMany, data);
         expect(schemaSelector(store.getState())).toEqual(data);
 
         const firstArticle = {
@@ -124,8 +154,15 @@ describe('createFetchSaga works', () => {
             title: 'Updated title',
         };
 
-        await store.sagaMiddleware.run(saveResult, article.key, firstArticle, article);
+        await store.sagaMiddleware.run(fetchSaga.save, firstArticle);
         expect(schemaSelector(store.getState())).toEqual([firstArticle, ...data.slice(1)]);
+
+        resource.resource.Data = data[0];
+        await expectResponse(
+            fetchSaga.cloneSaga({
+                mutateResponse: (res: any) => [res],
+            }), schemaSelector, {}, {}, [data[0]],
+        );
     });
 
     test('with Resource', async () => {
@@ -219,5 +256,38 @@ describe('createFetchSaga works', () => {
 
         const error = getError(store.getState());
         expect(error && error.message).toEqual('NetworkError');
+    });
+
+    test('initial worker wrong config', () => {
+        const resource = new SagaResource('/test', null, DummyResource);
+        resource.resource.Error = new Error();
+
+        const fetchSaga = createFetchSaga({
+            resource,
+            key: article.key,
+            listSchema: [article],
+        });
+
+        expect(() => {
+            fetchSaga.asInitialWorker('asd' as any);
+        }).toThrow(/Parameter "initialAction" is required for "asInitialWorker"./);
+    });
+
+    test('initial worker w/ error handling', (done) => {
+        const resource = new SagaResource('/test', null, DummyResource);
+        resource.resource.Error = new Error();
+
+        const fetchSaga = createFetchSaga({
+            resource,
+            key: article.key,
+            listSchema: [article],
+        }).asInitialWorker(() => actionCreator({}));
+
+        store.sagaMiddleware.run(fetchSaga, null).toPromise()
+            .then(() => done(new Error('Should throw')))
+            .catch((err: any) => {
+                expect(err.toString()).toEqual('NetworkError');
+                done();
+            });
     });
 });
