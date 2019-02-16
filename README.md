@@ -1,6 +1,6 @@
 [![Build Status][travis-image]][travis-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
-[![NPM version][npm-rpltc-image]][npm-rpltc-url]
+[![NPM version][npm-image]][npm-url]
 
 
 # Thorgate's collection of utility packages for Single-page applications
@@ -55,8 +55,8 @@ Please check the [contributing guidelines](CONTRIBUTING.md) if you proceed with 
 MIT © [Thorgate](http://github.com/thorgate)
 
 
-[npm-rpltc-url]: https://npmjs.org/package/razzle-plugin-long-term-caching
-[npm-rpltc-image]: https://img.shields.io/npm/v/razzle-plugin-long-term-caching.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/tg-spa-utils
+[npm-image]: https://img.shields.io/npm/v/tg-spa-utils.svg?style=flat-square
 
 [coveralls-url]: https://coveralls.io/github/thorgate/tg-spa-utils?branch=master
 [coveralls-image]: https://coveralls.io/repos/github/thorgate/tg-spa-utils/badge.svg?branch=master
