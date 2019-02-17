@@ -27,6 +27,6 @@ export const useTimeout = (callback: () => void, delay?: number) => {
             return () => clearInterval(id);
         }
 
-        return () => null;
+        return undefined;
     }, [delay]);
 };

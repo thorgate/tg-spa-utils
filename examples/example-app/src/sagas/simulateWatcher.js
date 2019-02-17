@@ -5,8 +5,9 @@ export default function* simulateWatcher() {
     console.log('started watcher');
 
     while (true) {
-        console.log('started');
+        console.log('ping');
 
-        yield delay(2000);
+        yield delay(10000);
+        console.log('pong');
     }
 }

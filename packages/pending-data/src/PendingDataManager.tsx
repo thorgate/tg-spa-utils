@@ -1,5 +1,5 @@
-import memoize from 'memoize-one';
-import React, { CSSProperties, FC, Fragment, ReactNode } from 'react';
+import { Location, locationsAreEqual } from 'history';
+import React, { Component, CSSProperties, Fragment, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { Route, RouteComponentProps, withRouter } from 'react-router';
 import { LoadingBar } from 'tg-loading-bar';
@@ -14,34 +14,48 @@ export interface PendingDataManagerProps extends RouteComponentProps {
     loadingBarStyle?: CSSProperties;
 }
 
-type MemoizeArgs = [PendingDataManagerProps];
+interface PendingDataManagerState {
+    storedLocation: Location;
+}
 
-const showCurrentLocation = (newArgs: MemoizeArgs, lastArgs: MemoizeArgs) => (
-    newArgs.length === 1 && newArgs.length === lastArgs.length && (
-        newArgs[0].location.key !== lastArgs[0].location.key && newArgs[0].isDataLoading && !newArgs[0].isDisabled
-    )
-);
+class PendingDataManagerBase extends Component<PendingDataManagerProps, PendingDataManagerState> {
 
-const getLocation = memoize((props: PendingDataManagerProps) => props.location, showCurrentLocation);
+    public state: PendingDataManagerState = {
+        storedLocation: this.props.location,
+    };
 
+    public componentDidUpdate(prevProps: PendingDataManagerProps) {
+        const notLoading = prevProps.isDataLoading && !this.props.isDataLoading;
+        const locationChange = !locationsAreEqual(this.state.storedLocation, this.props.location) && !this.props.isDataLoading;
 
-const PendingDataManagerBase: FC<PendingDataManagerProps> = (props: PendingDataManagerProps) => {
-    const { location, children, isDataLoading } = props;
-    const currentLocation = getLocation(props);
+        if (notLoading || locationChange) {
+            this.setState({ storedLocation: this.props.location });
+        }
+    }
 
-    return (
-        <Fragment>
-            <LoadingBar
-                key="loading-bar"
-                simulate={true}
-                isLoading={currentLocation.key !== location.key || isDataLoading}
-                style={props.loadingBarStyle}
-            />
-            <Route key="route" location={currentLocation} render={() => children} />
-        </Fragment>
-    );
-};
+    public render() {
+        const { location, children, isDataLoading, isDisabled } = this.props;
+        const { storedLocation } = this.state;
 
+        const isViewPending = !locationsAreEqual(storedLocation, location) && !isDisabled;
+
+        return (
+            <Fragment>
+                <LoadingBar
+                    key="loading-bar"
+                    simulate={true}
+                    isLoading={isViewPending || isDataLoading}
+                    style={this.props.loadingBarStyle}
+                />
+                <Route
+                    key="route"
+                    location={isDisabled ? location : storedLocation}
+                    render={() => children}
+                />
+            </Fragment>
+        );
+    }
+}
 
 const mapStateToProps = <T extends LoadingState>(state: T) => ({
     isDataLoading: isLoading(state),

@@ -38,6 +38,6 @@ export const useInterval = (callback: () => void, delay: number | null, cleanup:
             };
         }
 
-        return () => null;
+        return undefined;
     }, [delay]);
 };

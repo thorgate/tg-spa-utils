@@ -38,7 +38,6 @@
     "redux": "^4.0.1"
   },
   "dependencies": {
-    "memoize-one": "^5.0.0",
     "tg-loading-bar": "^1.0.0-alpha.23",
     "tg-named-routes": "^1.0.0-alpha.24"
   },

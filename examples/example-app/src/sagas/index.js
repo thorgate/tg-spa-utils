@@ -6,7 +6,7 @@ import routes from '../views';
 
 
 export default function* rootSaga(hot = false) {
-    yield fork(ViewManager, routes);
+    yield fork(ViewManager, routes, { allowLogger: true });
 
     if (process.env.NODE_ENV !== 'production' && hot) {
         const location = yield select(getLocation);

@@ -9,7 +9,7 @@ class Home extends React.Component {
         return (
             <div className="Home">
                 <p className="Home-intro">
-                    Hello I'm home. Meow.
+                    I take longer to load.
                 </p>
             </div>
         );

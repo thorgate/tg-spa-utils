@@ -23,6 +23,8 @@ export function* simulateLogout() {
 
 
 export function* simulateApiError() {
+    yield delay(30);
+
     const loggedIn = yield select(isAuthenticated);
 
     if (!loggedIn) {

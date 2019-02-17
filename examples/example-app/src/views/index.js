@@ -5,6 +5,7 @@ import simulateWatcher from '../sagas/simulateWatcher';
 
 import App from './App';
 import Home from './Home';
+import HomeLoading from './HomeLoading';
 import PageNotFound from './PageNotFound';
 import RedirectHome from './RedirectHome';
 import Restricted from './Restricted';
@@ -24,7 +25,7 @@ const routes = [
         }, {
             path: '/long',
             exact: true,
-            component: Home,
+            component: HomeLoading,
             initial: simulateLoading,
             name: 'home-long',
         }, {
