@@ -1,4 +1,4 @@
-import { createResourceSaga } from '@thorgate/create-resource-saga';
+import { createResourceSaga, StringOrSymbol } from '@thorgate/create-resource-saga';
 import { errorActions } from '@thorgate/spa-errors';
 import { isFunction, Kwargs } from '@thorgate/spa-is';
 import { normalize, schema } from 'normalizr';
@@ -11,8 +11,10 @@ import { entitiesActions, EntityStatus } from './entitiesReducer';
 import {
     CreateFetchSagaOptions,
     CreateFetchSagaOverrideOptions,
+    EntitiesResourceType,
     FetchActionType,
-    FetchMeta, FetchSaga,
+    FetchMeta,
+    FetchSaga,
     InitialAction,
     SerializeData
 } from './types';
@@ -59,13 +61,11 @@ export function* saveResult(
 }
 
 
-export function createFetchSaga<
-    T extends string,
-    Klass extends Resource,
+export function createFetchSaga<Klass extends Resource,
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {},
     Data = any,
->(options: CreateFetchSagaOptions<T, Klass, KW, Params, Data>): FetchSaga<T, Klass, KW, Params, Data> {
+    >(options: CreateFetchSagaOptions<Klass, KW, Params, Data>): FetchSaga<Klass, KW, Params, Data> {
     const {
         key,
         listSchema,
@@ -74,8 +74,8 @@ export function createFetchSaga<
         ...baseOptions
     } = options;
 
-    function createCloneableSaga(config: CreateFetchSagaOverrideOptions<T, Klass, KW, Params, Data> = {}) {
-        const baseConfig = { ...baseOptions, ...config };
+    function createCloneableSaga(config: CreateFetchSagaOverrideOptions<Klass, KW, Params, Data> = {}) {
+        const mergedOptions = { ...baseOptions, ...config };
 
         const {
             resource,
@@ -87,9 +87,9 @@ export function createFetchSaga<
             successHook,
             useDetails,
             timeoutMs,
-        } = baseConfig;
+        } = mergedOptions;
 
-        function* saveHook(response: any, matchObj: match<Params> | null, action: FetchActionType<T, KW, Data>) {
+        function* saveHook(response: any, matchObj: match<Params> | null, action: FetchActionType<StringOrSymbol, KW, Data>) {
             const { meta = {} } = action;
 
             let result = response;
@@ -108,7 +108,7 @@ export function createFetchSaga<
             }
         }
 
-        const saga = createResourceSaga<T, Klass, FetchMeta, KW, Params, Data>({
+        const saga = createResourceSaga<EntitiesResourceType, Klass, KW, Params, Data, FetchMeta>({
             resource,
             method,
             apiHook: apiFetchHook,
@@ -119,37 +119,48 @@ export function createFetchSaga<
             timeoutMessage: `TimeoutError: NormalizedFetch saga timed out for key: ${key}`,
         });
 
-        function* fetchSaga(matchObj: match<Params> | null, action: FetchActionType<T, KW, Data>) {
+        function* fetchSaga(matchObj: match<Params> | null, action: FetchActionType<StringOrSymbol, KW, Data>) {
             if (!(action as any)) {
                 throw new Error(`Parameter "action" is required for "fetchSaga" with key ${key}.`);
             }
 
-            const { meta = {} } = action;
+            try {
+                const { meta = {} } = action;
 
-            yield put(entitiesActions.setEntitiesStatus({ key, status: EntityStatus.Fetching }));
+                yield put(entitiesActions.setEntitiesStatus({ key, status: EntityStatus.Fetching }));
 
-            // Execute processing saga
-            yield call(saga, matchObj, action);
+                // Execute processing saga
+                yield call(saga, matchObj, action);
 
-            // If callback was added call the function
-            if (isFunction(meta.callback)) {
-                meta.callback();
+                // If callback was added call the function
+                if (isFunction(meta.callback)) {
+                    meta.callback();
+                }
+                yield put(entitiesActions.setEntitiesStatus({ key, status: EntityStatus.Fetched }));
+            } catch (error) {
+                // On errors mark saga as failed
+                yield put(entitiesActions.setEntitiesStatus({ key, status: EntityStatus.NotLoaded }));
+
+                throw error;
             }
-            yield put(entitiesActions.setEntitiesStatus({ key, status: EntityStatus.Fetched }));
         }
 
-        function* fetchSagaWithErrorGuard(matchObj: match<Params> | null, action: FetchActionType<T, KW, Data>) {
+        function* fetchSagaWithErrorGuard(matchObj: match<Params> | null, action: FetchActionType<StringOrSymbol, KW, Data>) {
             try {
                 yield call(fetchSaga, matchObj, action);
             } catch (error) {
                 yield put(errorActions.setError(error));
+
+                if (process.env.NODE_ENV !== 'production') {
+                    console.log(error);
+                }
             }
         }
 
         return Object.assign(
             fetchSagaWithErrorGuard,
             {
-                asInitialWorker: (initialAction: InitialAction<T, KW, Params, Data>) => {
+                asInitialWorker: (initialAction: InitialAction<StringOrSymbol, KW, Params, Data>) => {
                     if (!isFunction(initialAction as any)) {
                         throw new Error('Parameter "initialAction" is required for "asInitialWorker".');
                     }
@@ -160,17 +171,21 @@ export function createFetchSaga<
                     };
                 },
 
-                cloneSaga: <T1 extends string>(override: CreateFetchSagaOverrideOptions<T1, Klass, KW, Params, Data> = {}) => (
-                    createCloneableSaga(override as CreateFetchSagaOverrideOptions<T, Klass, KW, Params, Data>) as any
-                ) as FetchSaga<T1, Klass, KW, Params, Data>,
+                cloneSaga: (override: CreateFetchSagaOverrideOptions<Klass, KW, Params, Data> = {}) => (
+                    createCloneableSaga(override)
+                ),
+
+                getConfiguration: () => ({ ...mergedOptions, key, listSchema, serializeData }),
 
                 * saveMany(result: any, meta: FetchMeta = {}) {
                     yield call(saveResults, key, result, listSchema, meta, serializeData);
                 },
+                saveManyEffect: (result: any, meta: FetchMeta = {}) => call(saveResults, key, result, listSchema, meta, serializeData),
 
                 * save(result: any, meta: FetchMeta = {}) {
                     yield call(saveResult, key, result, listSchema[0], meta, serializeData);
                 },
+                saveEffect: (result: any, meta: FetchMeta = {}) => call(saveResult, key, result, listSchema[0], meta, serializeData),
             },
         );
     }

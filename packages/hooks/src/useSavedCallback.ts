@@ -10,17 +10,17 @@ import { MutableRefObject, useEffect, useRef } from 'react';
 export const useSavedCallback = <T extends (...args: any[]) => any>(callback: T) => {
     const savedCallback: MutableRefObject<T | null> = useRef(callback);
 
+    // Update ref when callback is changed
+    useEffect(() => {
+        savedCallback.current = callback;
+    }, [callback]);
+
     // Remove callback when component un-mounts
     useEffect(() => {
         return () => {
             savedCallback.current = null;
         };
     }, []);
-
-    // Update ref when callback is changed
-    useEffect(() => {
-        savedCallback.current = callback;
-    }, [callback]);
 
     return savedCallback;
 };

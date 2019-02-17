@@ -26,7 +26,7 @@ beforeEach(() => {
 const actionCreator = createFetchAction('TEST_DATA');
 
 const expectResponse = async (
-    fetchSaga: FetchSaga<any, any, any, any, any>,
+    fetchSaga: FetchSaga<any, any, any, any>,
     schemaSelector: ReturnType<typeof createSchemaSelector>,
     payload: any = {},
     meta: FetchMeta = {},

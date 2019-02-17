@@ -1,9 +1,13 @@
-import { ActionPayload, ResourceActionType, ResourceSagaOptions } from '@thorgate/create-resource-saga';
+import { ResourcePayloadMetaAction, ResourceSagaOptions, StringOrSymbol } from '@thorgate/create-resource-saga';
 import { Kwargs, Omit, OptionalMap } from '@thorgate/spa-is';
 import { FormikErrors, FormikProps } from 'formik';
 import { match } from 'react-router';
 import { SagaIterator } from 'redux-saga';
 import { Resource, ResourceErrorInterface, ResourcePostMethods } from 'tg-resources';
+
+
+export const FormsResource = '@@thorgate/spa-entities';
+export type FormsResourceType = typeof FormsResource;
 
 
 export interface StatusMessage {
@@ -51,32 +55,20 @@ export type DeleteMeta<Values> =
 
 
 export type SaveActionType<
-    T extends string,
+    T extends StringOrSymbol,
     Values,
     KW extends Kwargs<KW> = {}
-> = ResourceActionType<T, SaveMeta<Values>, KW, Values>;
+> = ResourcePayloadMetaAction<FormsResourceType, T, KW, Values, SaveMeta<Values>>;
 
-
-export interface DeleteAction<T extends string, Values, KW extends Kwargs<KW> = {}> {
-    (payload: ActionPayload<KW, Values>, meta?: DeleteMeta<Values>): ResourceActionType<T, SaveMeta<Values>, KW, Values>;
-
-    getType?: () => T;
-}
-
-export interface SaveAction<T extends string, Values, KW extends Kwargs<KW> = {}> {
-    (payload: ActionPayload<KW, Values>, meta: SaveMeta<Values>): ResourceActionType<T, SaveMeta<Values>, KW, Values>;
-
-    getType?: () => T;
-}
 
 export interface CreateFormSaveSagaOptions<
     Values,
-    T extends string,
     Klass extends Resource,
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {}
 > extends Omit<
-    ResourceSagaOptions<T, Klass, SaveMeta<Values>, KW, Params, Values>, 'apiHook' | 'timeoutMessage' | 'successHook' | 'method'
+    ResourceSagaOptions<FormsResourceType, Klass, KW, Params, Values, SaveMeta<Values>>,
+    'apiHook' | 'timeoutMessage' | 'successHook' | 'method'
 > {
     /**
      * tg-resource method to call `resource` with.
@@ -90,7 +82,7 @@ export interface CreateFormSaveSagaOptions<
      * @param matchObj
      * @param action
      */
-    apiSaveHook?: (matchObj: match<Params> | null, action: SaveActionType<T, Values, KW>) => (any | SagaIterator);
+    apiSaveHook?: (matchObj: match<Params> | null, action: SaveActionType<StringOrSymbol, Values, KW>) => (any | SagaIterator);
 
     /**
      * Successful request handler. This is only called when saving was successful, e.g resource or apiSaveHook did not throw any errors.
@@ -99,7 +91,7 @@ export interface CreateFormSaveSagaOptions<
      * @param matchObj
      * @param action
      */
-    successHook: (result: any, matchObj: match<Params> | null, action: SaveActionType<T, Values, KW>) => (any | SagaIterator);
+    successHook: (result: any, matchObj: match<Params> | null, action: SaveActionType<StringOrSymbol, Values, KW>) => (any | SagaIterator);
 
     /**
      * Error handler called when `resource` or `apiSaveHook` throws any error.
@@ -116,23 +108,37 @@ export interface CreateFormSaveSagaOptions<
 
 export type CreateFormSaveSagaReconfigureOptions<
     Values,
-    T extends string,
     Klass extends Resource,
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {}
-> = Partial<Omit<CreateFormSaveSagaOptions<Values, T, Klass, KW, Params>, 'messages'>>;
+> = Partial<Omit<CreateFormSaveSagaOptions<Values, Klass, KW, Params>, 'messages'>>;
 
 
 export interface SaveSaga<
-    T extends string,
     Values,
     Klass extends Resource,
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {}
 > {
-    (matchObj: match<Params> | null, action: ResourceActionType<T, SaveMeta<Values>, KW, Values>): SagaIterator;
+    /**
+     * Resource saga to handle sending data to server using formik forms.
+     *
+     * @param matchObj
+     * @param action
+     */
+    (matchObj: match<Params> | null, action: SaveActionType<StringOrSymbol, Values, KW>): SagaIterator;
 
-    cloneSaga: <T0 extends string>(
-        config: CreateFormSaveSagaReconfigureOptions<Values, T0, Klass, KW, Params>
-    ) => SaveSaga<T0, Values, Klass, KW, Params>;
+    /**
+     * Clone configured saga and create new saga with updated values.
+     *
+     * @param config - Configuration options
+     */
+    cloneSaga: (
+        config: CreateFormSaveSagaReconfigureOptions<Values, Klass, KW, Params>
+    ) => SaveSaga<Values, Klass, KW, Params>;
+
+    /**
+     * Get currently used resource saga config.
+     */
+    getConfiguration: () => CreateFormSaveSagaOptions<Values, Klass, KW, Params>;
 }

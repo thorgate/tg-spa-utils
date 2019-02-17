@@ -4,7 +4,8 @@ import { match } from 'react-router';
 import { call, delay, race } from 'redux-saga/effects';
 import { Resource } from 'tg-resources';
 
-import { MetaOptions, ResourceActionType, ResourceSaga, ResourceSagaOptions } from './types';
+import { validateResourceAction } from './actionCheck';
+import { ResourcePayloadMetaAction, ResourceSaga, ResourceSagaOptions, StringOrSymbol } from './types';
 
 
 export const DEFAULT_TIMEOUT = 3000;
@@ -15,15 +16,15 @@ export const DEFAULT_TIMEOUT = 3000;
  * @param options - Options to configure resource saga
  */
 export function createResourceSaga<
-    T extends string,
+    ResourceType extends StringOrSymbol,
     Klass extends Resource,
-    Meta extends MetaOptions = {},
-    KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {},
+    KW extends Kwargs<KW>,
+    Params extends Kwargs<Params>,
     Data = any,
->(options: ResourceSagaOptions<T, Klass, Meta, KW, Params, Data>): ResourceSaga<T, Klass, Meta, KW, Params> {
-    function createCloneableSaga<T0 extends string = T>(config: ResourceSagaOptions<T0, Klass, Meta, KW, Params, Data> = {}) {
-        const baseConfig = { ...options, ...config };
+    Meta = undefined,
+>(options: ResourceSagaOptions<ResourceType, Klass, KW, Params, Data, Meta>): ResourceSaga<ResourceType, Klass, KW, Params, Data, Meta> {
+    function createCloneableSaga(config: ResourceSagaOptions<ResourceType, Klass, KW, Params, Data, Meta> = {}) {
+        const mergedOptions = { ...options, ...config };
 
         const {
             timeoutMessage = 'Timeout reached, resource saga failed',
@@ -35,13 +36,17 @@ export function createResourceSaga<
             mutateKwargs,
             mutateQuery,
             successHook,
-        } = baseConfig;
+        } = mergedOptions;
 
         function* resourceSaga(
             matchObj: match<Params> | null,
-            action: ResourceActionType<T0, Meta, KW, Data>
+            action: ResourcePayloadMetaAction<ResourceType, StringOrSymbol, KW, Data, Meta>
         ) {
-            const { payload = {} } = action;
+            // Expect action created with createResourceAction
+            validateResourceAction(action.type, 'type', 'Action');
+            validateResourceAction(action.resourceType, 'resourceType', 'Action');
+
+            const { payload } = action;
 
             let resourceEffect: any;
 
@@ -85,12 +90,14 @@ export function createResourceSaga<
 
         return Object.assign(
             resourceSaga, {
-                cloneSaga: <T1 extends string>(override: ResourceSagaOptions<T1, Klass, Meta, KW, Params, Data>) => (
-                    createCloneableSaga<T1>(override)
-                )
+                cloneSaga: (override: ResourceSagaOptions<ResourceType, Klass, KW, Params, Data, Meta>) => (
+                    createCloneableSaga(override)
+                ),
+
+                getConfiguration: () => ({ ...mergedOptions, method, timeoutMs, timeoutMessage }),
             },
         );
     }
 
-    return createCloneableSaga<T>();
+    return createCloneableSaga();
 }

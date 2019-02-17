@@ -73,22 +73,6 @@ export function cleanPathName(separator: string, namespace: string | null, pathN
 }
 
 /**
- * Dynamically rebuild route config.
- *
- *  This helper is to have better support for splitting routes across multiple files.
- *  Currently there is only support for using default or named `routeConfig` exports.
- *
- * @param rootRouteConfigModule Root route config module path.
- * @param [separator=':'] URL separator
- * @param [useDefaultExport=true] Use default export or CJs
- */
-export function rebuildUrlCache(rootRouteConfigModule: string, separator: string = ':', useDefaultExport: boolean = true) {
-    const routeConfigModule = require(rootRouteConfigModule);
-    const routeConfig = useDefaultExport ? routeConfigModule.default : routeConfigModule.routeConfig;
-    buildUrlCache(routeConfig, separator);
-}
-
-/**
  * Generate named path resolve and pattern cache.
  * Routes are built recursively.
  *

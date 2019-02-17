@@ -1,8 +1,7 @@
-import { ActionPayload } from '@thorgate/create-resource-saga';
+import { createResourceAction, ResourceActionPayload } from '@thorgate/create-resource-saga';
 import { Kwargs } from '@thorgate/spa-is';
-import { createAction } from 'typesafe-actions';
 
-import { DeleteAction, DeleteMeta, SaveAction, SaveMeta, StatusMessage } from './types';
+import { DeleteMeta, FormsResource, SaveMeta, StatusMessage } from './types';
 
 
 export const setErrorsNoop = (_0: any) => null;
@@ -12,16 +11,16 @@ export const setSubmittingNoop = (_0: boolean) => null;
 /**
  * Action creator matching signature:
  *
- *   (payload, formikActions) => ({ type, payload, formikActions })
+ *   (payload, formikActions) => ({ type, resourceType, payload, formikActions })
  *
  * @param type - Action type
  * @param setStatus - Default setStatus handler
  */
 export const createDeleteAction = <
     T extends string, Values, KW extends Kwargs<KW> = {}
->(type: T, setStatus?: (status?: StatusMessage) => any): DeleteAction<T, Values, KW> => (
-    createAction(type, (resolve) => (
-        (payload: ActionPayload<KW, Values>, meta?: DeleteMeta<Values>) => {
+>(type: T, setStatus?: (status?: StatusMessage) => any) => (
+    createResourceAction(FormsResource, type, (resolve) => (
+        (payload: ResourceActionPayload<KW, Values>, meta?: DeleteMeta<Values>) => {
             let setStatusHandler: (status?: StatusMessage) => any;
             if (meta) {
                 setStatusHandler = meta.setStatus;
@@ -44,14 +43,12 @@ export const createDeleteAction = <
 /**
  * Action creator matching signature:
  *
- *   (payload, formikActions) => ({ type, payload, meta: formikActions })
+ *   (payload, formikActions) => ({ type, resourceType, payload, meta: formikActions })
  *
  * @param type - Action type
  */
-export const createSaveAction = <
-    T extends string, Values, KW extends Kwargs<KW> = {}
->(type: T): SaveAction<T, Values, KW> => (
-    createAction(type, (resolve) => (
-        (payload: ActionPayload<KW, Values>, meta: SaveMeta<Values>) => resolve(payload, meta)
+export const createSaveAction = <T extends string, Values, KW extends Kwargs<KW> = {}>(type: T) => (
+    createResourceAction(FormsResource, type, (resolve) => (
+        (payload: ResourceActionPayload<KW, Values>, meta: SaveMeta<Values>) => resolve(payload, meta)
     ))
 );

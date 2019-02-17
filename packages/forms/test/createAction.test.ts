@@ -1,4 +1,4 @@
-import { createDeleteAction, createSaveAction, setErrorsNoop, setSubmittingNoop } from '../src';
+import { createDeleteAction, createSaveAction, FormsResource, setErrorsNoop, setSubmittingNoop } from '../src';
 
 
 describe('createSaveAction works', () => {
@@ -14,6 +14,7 @@ describe('createSaveAction works', () => {
         expect(saveAction({
             data: {},
         }, actions)).toEqual({
+            resourceType: FormsResource,
             type: '@@tg-spa-forms-save/TEST_DATA',
             payload: {
                 data: {},
@@ -39,6 +40,7 @@ describe('createDeleteAction works', () => {
         expect(deleteAction({
             data: {},
         })).toEqual({
+            resourceType: FormsResource,
             type: '@@tg-spa-forms-delete/TEST_DATA',
             payload: {
                 data: {},
@@ -61,6 +63,7 @@ describe('createDeleteAction works', () => {
         expect(deleteAction({
             data: {},
         }, { setStatus })).toEqual({
+            resourceType: FormsResource,
             type: '@@tg-spa-forms-delete/TEST_DATA',
             payload: {
                 data: {},

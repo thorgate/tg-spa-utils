@@ -1,4 +1,4 @@
-import { createResourceSaga } from '@thorgate/create-resource-saga';
+import { createResourceSaga, StringOrSymbol } from '@thorgate/create-resource-saga';
 import { Kwargs } from '@thorgate/spa-is';
 import { match } from 'react-router';
 import { call } from 'redux-saga/effects';
@@ -11,18 +11,17 @@ import { CreateFormSaveSagaOptions, CreateFormSaveSagaReconfigureOptions, SaveAc
 
 export const createFormSaveSaga = <
     Values,
-    T extends string,
     Klass extends Resource,
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {},
->(options: CreateFormSaveSagaOptions<Values, T, Klass, KW, Params>): SaveSaga<T, Values, Klass, KW, Params> => {
+>(options: CreateFormSaveSagaOptions<Values, Klass, KW, Params>): SaveSaga<Values, Klass, KW, Params> => {
     const {
         messages = defaultMessages,
         ...baseOptions
     } = options;
 
-    function createCloneableSaga(config: CreateFormSaveSagaReconfigureOptions<Values, T, Klass, KW, Params> = {}) {
-        const configuration = { ...baseOptions, ...config };
+    function createCloneableSaga(config: CreateFormSaveSagaReconfigureOptions<Values, Klass, KW, Params> = {}) {
+        const mergedOptions = { ...baseOptions, ...config };
 
         const {
             resource,
@@ -32,7 +31,7 @@ export const createFormSaveSaga = <
             apiSaveHook,
             successHook,
             timeoutMs,
-        } = configuration;
+        } = mergedOptions;
 
         const saga = createResourceSaga({
             timeoutMessage: 'Timeout reached, form save failed',
@@ -45,7 +44,7 @@ export const createFormSaveSaga = <
             timeoutMs,
         });
 
-        function* formSaveSaga(matchObj: match<Params> | null, action: SaveActionType<T, Values, KW>) {
+        function* formSaveSaga(matchObj: match<Params> | null, action: SaveActionType<StringOrSymbol, Values, KW>) {
             if (!(action as any)) {
                 throw new Error('Action is required for formSaveSaga');
             }
@@ -72,9 +71,11 @@ export const createFormSaveSaga = <
 
         return Object.assign(
             formSaveSaga, {
-                cloneSaga: <T0 extends string>(override: CreateFormSaveSagaReconfigureOptions<Values, T0, Klass, KW, Params> = {}) => (
-                    createCloneableSaga(override as CreateFormSaveSagaReconfigureOptions<Values, T, Klass, KW, Params>) as any
-                ) as SaveSaga<T0, Values, Klass, KW, Params>
+                cloneSaga: (override: CreateFormSaveSagaReconfigureOptions<Values, Klass, KW, Params> = {}) => (
+                    createCloneableSaga(override)
+                ),
+
+                getConfiguration: () => ({ ...mergedOptions, messages, method }),
             }
         );
     }

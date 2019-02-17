@@ -34,6 +34,10 @@
   "dependencies": {
     "@thorgate/spa-is": "^1.0.0-alpha.14"
   },
+  "devDependencies": {
+    "@thorgate/test-resource": "^1.0.0-alpha.14",
+    "@thorgate/test-store": "^1.0.0-alpha.7"
+  },
   "scripts": {
     "clean": "rimraf ./lib",
     "lint": "tslint -p tsconfig.lint.json",

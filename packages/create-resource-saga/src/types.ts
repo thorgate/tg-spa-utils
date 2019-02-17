@@ -8,12 +8,10 @@ import { Attachments, Query, Resource, ResourceMethods } from 'tg-resources';
 /**
  * Resource action payload
  */
-export interface ActionPayload<
-    KW extends Kwargs<KW> = {}, Data = any
-> {
+export interface ResourceActionPayload<KW extends Kwargs<KW>, Data> {
     kwargs?: KW | null;
     query?: Query | null;
-    data?: Data;
+    data?: Data | null;
     attachments?: Attachments | null;
     method?: ResourceMethods;
 }
@@ -25,25 +23,38 @@ export interface MetaOptions {
     [key: string]: any;
 }
 
-/**
- * Resource action type expected by ResourceSaga
- */
-export interface ResourceActionType <
-    T extends string, Meta extends MetaOptions = {}, KW extends Kwargs<KW> = {}, Data = any
-> {
-    type: T;
-    payload: ActionPayload<KW, Data>;
-    meta: Meta;
+
+export type StringOrSymbol = string | symbol;
+
+export interface ActionCreator<ResourceType extends StringOrSymbol, T extends StringOrSymbol> {
+    (...args: any[]): { type: T; resourceType: ResourceType };
+
+    getType?: () => T;
+    getResourceType?: () => ResourceType;
 }
 
 
+// Based on `typesafe-actions` payload meta actions
+// Resource version adds restriction based on IOType instead of type
+// This is to support more swappable actions and limit action to specific IO type instead of action type
+export type ResourcePayloadMetaAction<
+    ResourceType extends StringOrSymbol,
+    T extends StringOrSymbol,
+    KW extends Kwargs<KW>,
+    Data,
+    Meta = undefined
+> = Meta extends undefined
+  ? { type: T; payload: ResourceActionPayload<KW, Data>; resourceType: ResourceType }
+  : { type: T; payload: ResourceActionPayload<KW, Data>; meta: Meta; resourceType: ResourceType };
+
+
 export interface ResourceSagaOptions<
-    T extends string,
+    ResourceType extends StringOrSymbol,
     Klass extends Resource,
-    Meta extends MetaOptions = {},
-    KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {},
+    KW extends Kwargs<KW>,
+    Params extends Kwargs<Params>,
     Data = any,
+    Meta = undefined,
 > {
     /**
      * tg-resources instance used for handling request
@@ -64,7 +75,9 @@ export interface ResourceSagaOptions<
      * @param matchObj - React-router match
      * @param action - Resource action
      */
-    apiHook?: (matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>) => (any | SagaIterator);
+    apiHook?: (
+        matchObj: match<Params> | null, action: ResourcePayloadMetaAction<ResourceType, StringOrSymbol, KW, Data, Meta>
+    ) => (any | SagaIterator);
 
     /**
      * Success handler called when requests succeeds
@@ -73,7 +86,9 @@ export interface ResourceSagaOptions<
      * @param matchObj
      * @param action
      */
-    successHook?: (result: any, matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>) => (any | SagaIterator);
+    successHook?: (
+        result: any, matchObj: match<Params> | null, action: ResourcePayloadMetaAction<ResourceType, StringOrSymbol, KW, Data, Meta>
+    ) => (any | SagaIterator);
 
     /**
      * Mutate kwargs passed to `resource` instance
@@ -81,7 +96,9 @@ export interface ResourceSagaOptions<
      * @param matchObj
      * @param action
      */
-    mutateKwargs?: (matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>) => (any | SagaIterator);
+    mutateKwargs?: (
+        matchObj: match<Params> | null, action: ResourcePayloadMetaAction<ResourceType, StringOrSymbol, KW, Data, Meta>
+    ) => (any | SagaIterator);
 
     /**
      * Mutate query passed to `resource` instance
@@ -89,7 +106,9 @@ export interface ResourceSagaOptions<
      * @param matchObj
      * @param action
      */
-    mutateQuery?: (matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>) => (any | SagaIterator);
+    mutateQuery?: (
+        matchObj: match<Params> | null, action: ResourcePayloadMetaAction<ResourceType, StringOrSymbol, KW, Data, Meta>
+    ) => (any | SagaIterator);
 
     /**
      * Error message thrown when timeout occurs
@@ -108,12 +127,12 @@ export interface ResourceSagaOptions<
  * Resource processing saga created with `createResourceSaga`
  */
 export interface ResourceSaga<
-    T extends string,
+    ResourceType extends StringOrSymbol,
     Klass extends Resource,
-    Meta extends {} = {},
-    KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {},
-    Data = any,
+    KW extends Kwargs<KW>,
+    Params extends Kwargs<Params>,
+    Data,
+    Meta,
 > {
     /**
      * Resource processing saga created with `createResourceSaga`
@@ -121,15 +140,17 @@ export interface ResourceSaga<
      * @param matchObj
      * @param action
      */
-    (matchObj: match<Params> | null, action: ResourceActionType<T, Meta, KW, Data>): SagaIterator;
+    (matchObj: match<Params> | null, action: ResourcePayloadMetaAction<ResourceType, StringOrSymbol, KW, Data, Meta>): SagaIterator;
 
     /**
      * Create new processing saga with changed configuration options.
      *   Options default to initial configuration if value is not provided.
      *
-     * @param overrides - Configuration overrides to change
+     * @param override - Configuration overrides to change
      */
-    cloneSaga<T0 extends string>(
-        overrides: ResourceSagaOptions<T0, Klass, Meta, KW, Params, Data>
-    ): ResourceSaga<T0, Klass, Meta, KW, Params, Data>;
+    cloneSaga: (
+        override: ResourceSagaOptions<ResourceType, Klass, KW, Params, Data, Meta>
+    ) => ResourceSaga<ResourceType, Klass, KW, Params, Data, Meta>;
+
+    getConfiguration: () => ResourceSagaOptions<ResourceType, Klass, KW, Params, Data, Meta>;
 }

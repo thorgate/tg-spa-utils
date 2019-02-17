@@ -33,8 +33,7 @@
   "dependencies": {
     "@thorgate/create-resource-saga": "^1.0.0-alpha.23",
     "@thorgate/spa-errors": "^1.0.0-alpha.23",
-    "@thorgate/spa-is": "^1.0.0-alpha.14",
-    "typesafe-actions": "^3.0.0"
+    "@thorgate/spa-is": "^1.0.0-alpha.14"
   },
   "scripts": {
     "clean": "rimraf ./lib",
