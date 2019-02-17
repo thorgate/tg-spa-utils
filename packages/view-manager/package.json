@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-view-manager",
-  "version": "1.0.0-alpha.24",
+  "version": "1.0.0-alpha.25",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -35,7 +35,7 @@
   "dependencies": {
     "@thorgate/spa-errors": "^1.0.0-alpha.24",
     "@thorgate/spa-is": "^1.0.0-alpha.14",
-    "@thorgate/spa-pending-data": "^1.0.0-alpha.24",
+    "@thorgate/spa-pending-data": "^1.0.0-alpha.25",
     "tg-named-routes": "^1.0.0-alpha.24",
     "typescript-tuple": "^2.1.1",
     "warning": "^4.0.2"

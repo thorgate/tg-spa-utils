@@ -1,6 +1,6 @@
 {
   "name": "tg-spa-utils",
-  "version": "1.0.0-alpha.24",
+  "version": "1.0.0-alpha.25",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -29,12 +29,12 @@
     "@thorgate/spa-entities": "^1.0.0-alpha.24",
     "@thorgate/spa-errors": "^1.0.0-alpha.24",
     "@thorgate/spa-forms": "^1.0.0-alpha.24",
-    "@thorgate/spa-hooks": "^1.0.0-alpha.24",
+    "@thorgate/spa-hooks": "^1.0.0-alpha.25",
     "@thorgate/spa-is": "^1.0.0-alpha.14",
-    "@thorgate/spa-pending-data": "^1.0.0-alpha.24",
-    "@thorgate/spa-permissions": "^1.0.0-alpha.24",
-    "@thorgate/spa-view": "^1.0.0-alpha.24",
-    "@thorgate/spa-view-manager": "^1.0.0-alpha.24"
+    "@thorgate/spa-pending-data": "^1.0.0-alpha.25",
+    "@thorgate/spa-permissions": "^1.0.0-alpha.25",
+    "@thorgate/spa-view": "^1.0.0-alpha.25",
+    "@thorgate/spa-view-manager": "^1.0.0-alpha.25"
   },
   "scripts": {
     "clean": "rimraf ./lib",
