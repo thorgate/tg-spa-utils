@@ -29,6 +29,7 @@ export const createFormSaveSaga = <
             mutateKwargs,
             mutateQuery,
             apiSaveHook,
+            errorHook,
             successHook,
             timeoutMs,
         } = mergedOptions;
@@ -53,7 +54,7 @@ export const createFormSaveSaga = <
                 yield call(saga, matchObj, action);
 
             } catch (error) {
-                yield call(config.errorHook || formErrorsHandler, {
+                yield call(errorHook || formErrorsHandler, {
                     messages,
                     error,
                     setErrors: action.meta.setErrors,
