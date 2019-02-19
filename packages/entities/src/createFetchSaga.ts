@@ -94,7 +94,7 @@ export function createFetchSaga<Klass extends Resource,
 
             let result = response;
             if (mutateResponse) {
-                result = yield call(mutateResponse, result, action);
+                result = yield call(mutateResponse, result, matchObj, action);
             }
 
             if (meta.asDetails || useDetails) {

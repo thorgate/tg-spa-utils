@@ -111,9 +111,12 @@ export interface CreateFetchSagaOptions<
     /**
      * Mutate response before serializing it.
      * @param result
+     * @param matchObj
      * @param action
      */
-    mutateResponse?: (result: any, action: FetchActionType<StringOrSymbol, KW, Data>) => (any | SagaIterator);
+    mutateResponse?: (
+        result: any, matchObj: match<Params> | null, action: FetchActionType<StringOrSymbol, KW, Data>
+    ) => (any | SagaIterator);
 }
 
 export type CreateFetchSagaOverrideOptions<
