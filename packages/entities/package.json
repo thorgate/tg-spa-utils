@@ -31,9 +31,9 @@
     "tg-resources": "^3.1.1"
   },
   "dependencies": {
-    "@thorgate/create-resource-saga": "^1.0.0-alpha.24",
-    "@thorgate/spa-errors": "^1.0.0-alpha.24",
-    "@thorgate/spa-is": "^1.0.0-alpha.14",
+    "@thorgate/create-resource-saga": "1.0.0-alpha.24",
+    "@thorgate/spa-errors": "1.0.0-alpha.24",
+    "@thorgate/spa-is": "1.0.0-alpha.14",
     "typesafe-actions": "^3.1.0"
   },
   "devDependencies": {

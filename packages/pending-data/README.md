@@ -7,18 +7,23 @@ loading status of the app in Redux state.
 
 ## Usage:
 
-In your `Routes.js`:
+Some where in your app:
 ```js
 import { isViewLoading, loadingActions } from '@thorgate/spa-pending-data';
+import { getLocation } from 'connected-react-router';
 import { select, take } from 'redux-saga/effects';
 
 export function* waitLoadingDone() {
-    const isLoading = yield select(isViewLoading);
+    const location = yield select(getLocation);
+    const loadedView = yield select(getLoadedView);
 
-    if (!isLoading) {
+    if (loadedView === location.key) {
         return;
     }
 
-    yield take(loadingActions.finishLoadingView);
+    yield take(loadingActions.setLoadedView.getType());
 }
 ```
+
+
+`PendingDataManager` is designed to show previous location until `loadingActions.setLoadedView` is set to currently active location in `react-router` context.

@@ -91,8 +91,6 @@ export function* ViewManagerWorker(
     options: ViewManagerOptions = {}, runningWatchers: RunningWatcherTasks = {}
 ): SagaIterator {
     try {
-        yield put(loadingActions.startLoadingView());
-
         if (process.env.NODE_ENV !== 'production' && options.allowLogger) {
             console.log('Starting loading location', location);
         }
@@ -121,7 +119,7 @@ export function* ViewManagerWorker(
     } catch (err) {
         yield put(errorActions.setError(err));
     } finally {
-        yield put(loadingActions.finishLoadingView());
+        yield put(loadingActions.setLoadedView(location.key));
     }
 }
 

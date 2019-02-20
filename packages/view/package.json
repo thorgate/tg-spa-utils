@@ -36,10 +36,10 @@
     "redux": "^4.0.1"
   },
   "dependencies": {
-    "@thorgate/spa-errors": "^1.0.0-alpha.24",
-    "@thorgate/spa-is": "^1.0.0-alpha.14",
-    "@thorgate/spa-permissions": "^1.0.0-alpha.25",
-    "tg-named-routes": "^1.0.0-alpha.24"
+    "@thorgate/spa-errors": "1.0.0-alpha.24",
+    "@thorgate/spa-is": "1.0.0-alpha.14",
+    "@thorgate/spa-permissions": "1.0.0-alpha.25",
+    "tg-named-routes": "1.0.0-alpha.24"
   },
   "scripts": {
     "clean": "rimraf ./lib",

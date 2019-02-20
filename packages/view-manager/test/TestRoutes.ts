@@ -1,18 +1,21 @@
-import { isViewLoading, loadingActions } from '@thorgate/spa-pending-data';
+import { getLoadedView, loadingActions } from '@thorgate/spa-pending-data';
+import { getLocation } from 'connected-react-router';
 import { delay, put, select, take } from 'redux-saga/effects';
+import { getType } from 'typesafe-actions';
 
 import { MatchWithRoute, takeEveryWithMatch, takeLatestWithMatch, takeLeadingWithMatch } from '../src';
 import { setResponse } from './reducer';
 
 
 export function* waitLoadingDone() {
-    const isLoading = yield select(isViewLoading);
+    const location = yield select(getLocation);
+    const loadedView = yield select(getLoadedView);
 
-    if (!isLoading) {
+    if (loadedView === location.key) {
         return;
     }
 
-    yield take(loadingActions.finishLoadingView);
+    yield take(getType(loadingActions.setLoadedView));
 }
 
 function* dummyInitialLanding() {

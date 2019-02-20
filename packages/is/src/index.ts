@@ -54,11 +54,13 @@ export const isIterable = (it: any): it is Iterable<any> => (
 export const isIterator = (it: any): it is Iterator<any> => it && is.function(it.next) && is.function(it.throw);
 
 type IsSagaFn<T> = T extends SagaFn ? T : never;
-
 export const isSaga = <T>(fn: T): fn is IsSagaFn<T> => is.function(fn);
 
 type IsFunction<T> = T extends (...args: any[]) => any ? T : never;
 export const isFunction = <T extends {} | null | undefined>(value: T): value is IsFunction<T> => is.function(value);
+
+type IsNumber<T> = T extends number ? T : never;
+export const isNumber = <T>(value: T): value is IsNumber<T> => is.number(value);
 
 export const isRouteSagaObject = (obj: any): obj is RouteSagaObject<any[]> => (
     is.object(obj) && 'saga' in obj && isSaga(obj.saga)

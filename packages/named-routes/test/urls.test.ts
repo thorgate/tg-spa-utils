@@ -1,4 +1,4 @@
-import { buildUrlCache, getUrlNames, resetUrlCache, resolvePath, resolvePattern } from '../src';
+import { buildUrlCache, getUrlNames, resetUrlCache, resolvePath, resolvePattern, stringifyLocation } from '../src';
 
 
 const routes = [
@@ -78,10 +78,10 @@ describe('Named paths', () => {
 
     test('Path matches :: params', () => {
         expect(() => { resolvePath('root:params'); }).toThrow();
-        expect(resolvePath('root:params', {id: 1})).toMatchObject({
+        expect(resolvePath('root:params', { id: 1 })).toMatchObject({
             pathname: '/param/1', search: '', state: null, hash: '',
         });
-        expect(resolvePath('root:params', {id: 1}, 'test')).toMatchObject({
+        expect(resolvePath('root:params', { id: 1 }, 'test')).toMatchObject({
             pathname: '/param/1', search: 'test', state: null, hash: '',
         });
         expect(resolvePattern('root:params')).toEqual('/param/:id/:pk?');
@@ -89,5 +89,9 @@ describe('Named paths', () => {
 
     test('Correct route names generated', () => {
         expect(getUrlNames()).toEqual(['root', 'root:home', 'root:params', 'test']);
+    });
+
+    test('Location serialize works', () => {
+        expect(stringifyLocation(resolvePath('root:params', { id: 1 }, 'test'))).toEqual('/param/1?test');
     });
 });

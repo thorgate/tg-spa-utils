@@ -1,5 +1,6 @@
 import { getError } from '@thorgate/spa-errors';
 import { ConfigureStore, configureStore } from '@thorgate/test-store';
+import { routerMiddleware } from 'connected-react-router';
 import { createMemoryHistory } from 'history';
 import { END } from 'redux-saga';
 import { buildUrlCache, resetUrlCache } from 'tg-named-routes';
@@ -14,7 +15,7 @@ let store: ConfigureStore<State>;
 const history = createMemoryHistory({ initialEntries: ['/'] });
 
 beforeEach(() => {
-    store = configureStore(rootReducer(history));
+    store = configureStore(rootReducer(history), routerMiddleware(history));
 
     resetUrlCache();
     buildUrlCache(routes);
@@ -36,6 +37,7 @@ describe('ViewManager works', () => {
         store.dispatch(createLocationAction({
             action: 'PUSH',
             location: {
+                key: 'home',
                 pathname: '/home',
                 search: '',
                 hash: '',
@@ -49,6 +51,7 @@ describe('ViewManager works', () => {
         store.dispatch(createLocationAction({
             action: 'PUSH',
             location: {
+                key: '.',
                 pathname: '/',
                 search: '',
                 hash: '',
@@ -61,6 +64,7 @@ describe('ViewManager works', () => {
         store.dispatch(createLocationAction({
             action: 'PUSH',
             location: {
+                key: 'root',
                 pathname: '/root',
                 search: '',
                 hash: '',
@@ -73,6 +77,7 @@ describe('ViewManager works', () => {
         store.dispatch(createLocationAction({
             action: 'PUSH',
             location: {
+                key: 'error',
                 pathname: '/error',
                 search: '',
                 hash: '',

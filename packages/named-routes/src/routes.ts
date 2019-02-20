@@ -72,6 +72,7 @@ export function cleanPathName(separator: string, namespace: string | null, pathN
     return routeName.replace(`${separator}${separator}`, `${separator}`);
 }
 
+
 /**
  * Generate named path resolve and pattern cache.
  * Routes are built recursively.
@@ -106,6 +107,7 @@ export function buildUrlCache(
     });
 }
 
+
 /**
  * Get list of url names.
  *
@@ -115,6 +117,7 @@ export function getUrlNames(): string[] {
     return Object.keys(urlMapCache);
 }
 
+
 /**
  * Reset URL cache.
  *
@@ -123,6 +126,7 @@ export function getUrlNames(): string[] {
 export function resetUrlCache() {
     urlMapCache = {};
 }
+
 
 /**
  * Resolve url name to valid path.
@@ -176,6 +180,11 @@ export function resolvePath(
 }
 
 
+/**
+ * Resolve route pattern
+ *
+ * @param name
+ */
 export function resolvePattern(name: string): string {
     if (!Object.keys(urlMapCache).length) {
         throw new Error('Missing route data, did you call `rebuildUrlCache`');
@@ -189,6 +198,11 @@ export function resolvePattern(name: string): string {
 }
 
 
+/**
+ * Serialize location object to string
+ *
+ * @param location
+ */
 export function stringifyLocation(location: Location): string {
     let path = location.pathname;
 

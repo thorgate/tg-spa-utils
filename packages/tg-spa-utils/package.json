@@ -25,16 +25,16 @@
     "lib"
   ],
   "dependencies": {
-    "@thorgate/spa-components": "^1.0.0-alpha.24",
-    "@thorgate/spa-entities": "^1.0.0-alpha.27",
-    "@thorgate/spa-errors": "^1.0.0-alpha.24",
+    "@thorgate/spa-components": "1.0.0-alpha.24",
+    "@thorgate/spa-entities": "1.0.0-alpha.27",
+    "@thorgate/spa-errors": "1.0.0-alpha.24",
     "@thorgate/spa-forms": "1.0.0-alpha.26",
-    "@thorgate/spa-hooks": "^1.0.0-alpha.25",
-    "@thorgate/spa-is": "^1.0.0-alpha.14",
-    "@thorgate/spa-pending-data": "^1.0.0-alpha.25",
-    "@thorgate/spa-permissions": "^1.0.0-alpha.25",
-    "@thorgate/spa-view": "^1.0.0-alpha.25",
-    "@thorgate/spa-view-manager": "^1.0.0-alpha.25"
+    "@thorgate/spa-hooks": "1.0.0-alpha.25",
+    "@thorgate/spa-is": "1.0.0-alpha.14",
+    "@thorgate/spa-pending-data": "1.0.0-alpha.25",
+    "@thorgate/spa-permissions": "1.0.0-alpha.25",
+    "@thorgate/spa-view": "1.0.0-alpha.25",
+    "@thorgate/spa-view-manager": "1.0.0-alpha.25"
   },
   "scripts": {
     "clean": "rimraf ./lib",
