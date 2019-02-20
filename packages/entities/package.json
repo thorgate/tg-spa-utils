@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-entities",
-  "version": "1.0.0-alpha.27",
+  "version": "1.0.0-alpha.28",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -31,14 +31,14 @@
     "tg-resources": "^3.1.1"
   },
   "dependencies": {
-    "@thorgate/create-resource-saga": "1.0.0-alpha.24",
-    "@thorgate/spa-errors": "1.0.0-alpha.24",
-    "@thorgate/spa-is": "1.0.0-alpha.14",
+    "@thorgate/create-resource-saga": "1.0.0-alpha.28",
+    "@thorgate/spa-errors": "1.0.0-alpha.28",
+    "@thorgate/spa-is": "1.0.0-alpha.28",
     "typesafe-actions": "^3.1.0"
   },
   "devDependencies": {
     "@thorgate/test-resource": "^1.0.0-alpha.14",
-    "@thorgate/test-store": "^1.0.0-alpha.7"
+    "@thorgate/test-store": "1.0.0-alpha.28"
   },
   "scripts": {
     "clean": "rimraf ./lib",

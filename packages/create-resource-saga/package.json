@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/create-resource-saga",
-  "version": "1.0.0-alpha.24",
+  "version": "1.0.0-alpha.28",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -32,11 +32,11 @@
     "tg-resources": "^3.1.1"
   },
   "dependencies": {
-    "@thorgate/spa-is": "1.0.0-alpha.14"
+    "@thorgate/spa-is": "1.0.0-alpha.28"
   },
   "devDependencies": {
     "@thorgate/test-resource": "^1.0.0-alpha.14",
-    "@thorgate/test-store": "^1.0.0-alpha.7"
+    "@thorgate/test-store": "1.0.0-alpha.28"
   },
   "scripts": {
     "clean": "rimraf ./lib",

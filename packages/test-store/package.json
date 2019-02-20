@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/test-store",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0-alpha.28",
   "private": false,
   "publishConfig": {
     "access": "public"

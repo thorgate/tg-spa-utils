@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-permissions",
-  "version": "1.0.0-alpha.25",
+  "version": "1.0.0-alpha.28",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -35,10 +35,10 @@
     "redux": "^4.0.1"
   },
   "dependencies": {
-    "@thorgate/spa-components": "1.0.0-alpha.24",
-    "@thorgate/spa-errors": "1.0.0-alpha.24",
-    "@thorgate/spa-pending-data": "1.0.0-alpha.25",
-    "tg-named-routes": "1.0.0-alpha.24",
+    "@thorgate/spa-components": "1.0.0-alpha.28",
+    "@thorgate/spa-errors": "1.0.0-alpha.28",
+    "@thorgate/spa-pending-data": "1.0.0-alpha.28",
+    "tg-named-routes": "1.0.0-alpha.28",
     "typesafe-actions": "^3.1.0",
     "warning": "^4.0.2"
   },
