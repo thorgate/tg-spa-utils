@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-components",
-  "version": "1.0.0-alpha.28",
+  "version": "1.0.0-alpha.29",
   "private": false,
   "publishConfig": {
     "access": "public"

@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-view-manager",
-  "version": "1.0.0-alpha.28",
+  "version": "1.0.0-alpha.29",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -33,7 +33,7 @@
     "redux-saga": "^1.0.0"
   },
   "dependencies": {
-    "@thorgate/spa-errors": "1.0.0-alpha.28",
+    "@thorgate/spa-errors": "1.0.0-alpha.29",
     "@thorgate/spa-is": "1.0.0-alpha.28",
     "@thorgate/spa-pending-data": "1.0.0-alpha.28",
     "tg-named-routes": "1.0.0-alpha.28",

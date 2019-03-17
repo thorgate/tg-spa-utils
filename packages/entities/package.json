@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-entities",
-  "version": "1.0.0-alpha.28",
+  "version": "1.0.0-alpha.29",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@thorgate/create-resource-saga": "1.0.0-alpha.28",
-    "@thorgate/spa-errors": "1.0.0-alpha.28",
+    "@thorgate/spa-errors": "1.0.0-alpha.29",
     "@thorgate/spa-is": "1.0.0-alpha.28",
     "typesafe-actions": "^3.1.0"
   },
