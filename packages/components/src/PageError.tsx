@@ -1,5 +1,4 @@
 import React, { FC, ReactNode } from 'react';
-import Helmet from 'react-helmet';
 
 import { MessagePanel } from './MessagePanel';
 import { Status } from './Status';
@@ -31,7 +30,6 @@ export interface PageErrorProps {
 export const PageError: FC<PageErrorProps> = ({ title, description, children, statusCode }) => (
     <Status code={statusCode}>
         <MessagePanel title={title} description={description}>
-            <Helmet title={title} />
             {children}
         </MessagePanel>
     </Status>
