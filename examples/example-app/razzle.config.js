@@ -4,7 +4,7 @@ module.exports = {
     plugins: [{
         name: 'long-term-caching',
         options: {
-            aggressiveCaching: true,
+            cachingOptions: 'split-size',
         },
     }],
 };

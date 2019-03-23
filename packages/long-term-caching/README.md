@@ -50,9 +50,19 @@ module.exports = {
 
 Customize runtime chunk behaviour, this is directly provided to Webpack config
 
-**aggressiveCaching: _boolean_** (defaults: false)
+**cachingOptions: _boolean_ _object_ _string_** (defaults: false)
 
-Enable per-package vendor (node_modules) splitting for bigger initial download but smaller patches later on. This option works best with HTTP/2.
+- false: Use single vendors chunk.
+- true: Enable per-package vendor (node_modules) splitting for bigger initial download but smaller patches later on. This option works best with HTTP/2.
+- 'split-size': Use Webpack automatic size limiting options based on `sizeOptions`.
+- Object: Manually decide how vendor packages are split. Example structure `{ [chunkName]: Array | Regex }` 
+- Array: Manually decide how vendor packages are split. Example structure `[ package names used splitting ]` 
+
+**vendorsChunkName: _string_** (defaults: 'vendors')
+
+**sizeOptions: _Object_** (defaults: { minSize: 30000, maxSize: 200000 })
+
+Vendors chunk name.
 
 ## License
 

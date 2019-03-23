@@ -1,5 +1,6 @@
 import { SagaResource } from '@tg-resources/redux-saga-router';
 import { getError } from '@thorgate/spa-errors';
+import { article, generateArticles } from '@thorgate/test-data';
 import { DummyResource } from '@thorgate/test-resource';
 import { ConfigureStore, configureStore } from '@thorgate/test-store';
 import { delay } from 'redux-saga/effects';
@@ -13,7 +14,6 @@ import {
     FetchMeta,
     FetchSaga,
 } from '../src';
-import { article, generateArticles } from './createTestData';
 import { reducer, State } from './reducer';
 
 

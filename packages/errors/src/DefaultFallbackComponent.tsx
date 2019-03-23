@@ -1,5 +1,5 @@
 import { PageError } from '@thorgate/spa-components';
-import React, { ComponentType, ErrorInfo, FC, Fragment } from 'react';
+import React, { ComponentClass, ComponentType, ErrorInfo, FC, Fragment } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
 
 import { ErrorResponse } from './errorReducer';
@@ -40,4 +40,4 @@ const DefaultErrorHandler: FC<ErrorComponentProps & RouteComponentProps> = ({ er
 );
 
 
-export const DefaultFallback = withRouter(DefaultErrorHandler);
+export const DefaultFallback: ComponentClass<ErrorComponentProps> = withRouter(DefaultErrorHandler);

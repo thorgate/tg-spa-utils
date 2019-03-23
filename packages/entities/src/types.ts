@@ -1,4 +1,5 @@
-import { MetaOptions, ResourcePayloadMetaAction, ResourceSagaOptions, StringOrSymbol } from '@thorgate/create-resource-saga';
+import { ResourceActionPayload, ResourcePayloadMetaAction, ResourceSagaOptions, StringOrSymbol } from '@thorgate/create-resource-saga';
+import { FetchMeta as MetaOptions } from '@thorgate/spa-entities-reducer';
 import { Kwargs, Omit } from '@thorgate/spa-is';
 import { normalize, schema } from 'normalizr';
 import { match } from 'react-router';
@@ -18,36 +19,6 @@ export type SerializeData = (result: any, listSchema: schema.Entity[]) => Return
  */
 export interface FetchMeta extends MetaOptions {
     /**
-     * Preserve existing entities.
-     *  Default: true
-     */
-    preserveExisting?: boolean;
-
-    /**
-     * Merge existing entities.
-     *  Default: false
-     */
-    mergeEntities?: boolean;
-
-    /**
-     * Preserve existing order, only update existing entities.
-     *  Default: false
-     */
-    preserveOrder?: boolean;
-
-    /**
-     * Append order to existing order.
-     *  Default: false
-     */
-    updateOrder?: boolean;
-
-    /**
-     * Remove existing archived entities.
-     *  Default: false
-     */
-    clearArchived?: boolean;
-
-    /**
      * Treat fetched result as single entity.
      *  Enabled preserveOrder=true by default.
      */
@@ -65,6 +36,19 @@ export type FetchActionType<
     KW extends Kwargs<KW> = {},
     Data = any
 > = ResourcePayloadMetaAction<EntitiesResourceType, T, KW, Data, FetchMeta>;
+
+
+export interface FetchAction<
+    T extends StringOrSymbol,
+    KW extends Kwargs<KW> = {},
+    Data = any
+> {
+    (payload?: ResourceActionPayload<KW, Data>, meta?: FetchMeta): FetchActionType<T, KW, Data>;
+
+    getType?: () => T;
+    getResourceType?: () => EntitiesResourceType;
+}
+
 
 export interface CreateFetchSagaOptions<
     Klass extends Resource,

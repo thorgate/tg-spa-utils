@@ -31,12 +31,12 @@ export interface RouteSagaObject<U extends any[]> {
     args?: U;
 }
 
-type HasChildrenRenderProp<T, P> = T extends { children: P } ? T : never;
+type HasRenderProp<T, P> = T extends { render: P } ? T : never;
 export const hasRenderPropFn = <T extends {}, P>(value: T): value is HasRenderProp<T, P> => (
     'render' in value && is.function((value as HasRenderProp<T, P>).render)
 );
 
-type HasRenderProp<T, P> = T extends { render: P } ? T : never;
+type HasChildrenRenderProp<T, P> = T extends { children: P } ? T : never;
 export const hasChildrenRenderPropFn = <T extends {}, P>(value: T): value is HasChildrenRenderProp<T, P> => (
     'children' in value && is.function((value as HasChildrenRenderProp<T, P>).children)
 );

@@ -1,3 +1,4 @@
+import { article, comment, generateArticles, generateComments, user } from '@thorgate/test-data';
 import { ConfigureStore, configureStore } from '@thorgate/test-store';
 import * as normalizr from 'normalizr';
 
@@ -7,7 +8,6 @@ import {
     entitiesActions,
 } from '../src';
 
-import { article, comment, generateArticles, generateComments, user } from './createTestData';
 import { reducer, State } from './reducer';
 
 

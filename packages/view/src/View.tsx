@@ -2,7 +2,7 @@ import {
     ComponentErrorCallback, ErrorBoundary, ErrorComponent, ErrorState, ErrorType, getError
 } from '@thorgate/spa-errors';
 import { getUser, isAuthenticated, User, UserState } from '@thorgate/spa-permissions';
-import React, { Component, ComponentType, ReactNode } from 'react';
+import React, { Component, ComponentClass, ComponentType, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { NamedRouteConfigComponentProps } from 'tg-named-routes';
@@ -21,7 +21,7 @@ export interface ViewProvidedProps {
 
 export type UserUpdateCallback = (user: User) => void;
 
-export interface ViewProps extends ViewProvidedProps, NamedRouteConfigComponentProps {
+export interface ViewProps {
     className?: string | null;
     NotFoundComponent?: ComponentType;
 
@@ -31,6 +31,9 @@ export interface ViewProps extends ViewProvidedProps, NamedRouteConfigComponentP
     onUserUpdate?: UserUpdateCallback;
 
     children?: ReactNode;
+}
+
+interface ViewInternalProps extends ViewProps, ViewProvidedProps, NamedRouteConfigComponentProps {
 }
 
 interface ViewBaseSnapshot {
@@ -50,7 +53,7 @@ function shouldHandleScrollRestoration(): boolean {
 }
 
 
-class ViewBase extends Component<ViewProps, never, ViewSnapshot> {
+class ViewBase extends Component<ViewInternalProps, never, ViewSnapshot> {
     public static defaultProps = {
         children: null,
         className: null,
@@ -65,7 +68,7 @@ class ViewBase extends Component<ViewProps, never, ViewSnapshot> {
         this.restoreScrollPosition();
     }
 
-    public getSnapshotBeforeUpdate(prevProps: ViewProps): ViewSnapshot {
+    public getSnapshotBeforeUpdate(prevProps: ViewInternalProps): ViewSnapshot {
         let snapshot: ViewSnapshot = null;
 
         if (prevProps.location.key !== this.props.location.key) {
@@ -203,4 +206,4 @@ const mapStateToProps = (state: ReduxState) => ({
     user: getUser(state),
 });
 
-export const View = withRouter(connect(mapStateToProps)(ViewBase));
+export const View: ComponentClass<ViewProps> = withRouter(connect(mapStateToProps)(ViewBase));

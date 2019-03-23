@@ -35,7 +35,7 @@ export interface ActionCreator<ResourceType extends StringOrSymbol, T extends St
 
 
 // Based on `typesafe-actions` payload meta actions
-// Resource version adds restriction based on IOType instead of type
+// Resource version adds restriction based on resourceType instead of type
 // This is to support more swappable actions and limit action to specific IO type instead of action type
 export type ResourcePayloadMetaAction<
     ResourceType extends StringOrSymbol,

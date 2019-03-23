@@ -1,7 +1,7 @@
 import { isNode } from '@thorgate/spa-is';
 import { getLocation, RouterState } from 'connected-react-router';
 import { LocationState } from 'history';
-import React, { FC } from 'react';
+import React, { ComponentClass, FC } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router';
 import { NamedRedirect, NamedRedirectProps } from 'tg-named-routes';
@@ -34,6 +34,6 @@ const mapStateToProps = (state: ExpectedAppState) => ({
     routerLocation: getLocation(state),
 });
 
-export const ConnectedNamedRedirect: FC<NamedRedirectProps> = withRouter(
+export const ConnectedNamedRedirect: ComponentClass<NamedRedirectProps> = withRouter(
     connect(mapStateToProps)(ConnectedRedirectBase),
-) as any;
+);
