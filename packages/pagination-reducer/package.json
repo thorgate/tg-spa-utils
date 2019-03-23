@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-pagination-reducer",
-  "version": "1.0.0-alpha.29",
+  "version": "1.0.0-alpha.30",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -20,13 +20,12 @@
     "url": "git+https://github.com/thorgate/tg-spa-utils.git"
   },
   "bugs": "https://github.com/thorgate/tg-spa-utils/issues",
-  "keywords": [
-  ],
+  "keywords": [],
   "files": [
     "lib"
   ],
   "dependencies": {
-    "@thorgate/spa-is": "1.0.0-alpha.28",
+    "@thorgate/spa-is": "1.0.0-alpha.30",
     "typesafe-actions": "^3.1.0"
   },
   "scripts": {

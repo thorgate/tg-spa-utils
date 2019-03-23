@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-view",
-  "version": "1.0.0-alpha.29",
+  "version": "1.0.0-alpha.30",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -36,10 +36,10 @@
     "redux": "^4.0.1"
   },
   "dependencies": {
-    "@thorgate/spa-errors": "1.0.0-alpha.29",
-    "@thorgate/spa-is": "1.0.0-alpha.28",
-    "@thorgate/spa-permissions": "1.0.0-alpha.29",
-    "tg-named-routes": "1.0.0-alpha.28"
+    "@thorgate/spa-errors": "1.0.0-alpha.30",
+    "@thorgate/spa-is": "1.0.0-alpha.30",
+    "@thorgate/spa-permissions": "1.0.0-alpha.30",
+    "tg-named-routes": "1.0.0-alpha.30"
   },
   "scripts": {
     "clean": "rimraf ./lib",

@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-forms",
-  "version": "1.0.0-alpha.29",
+  "version": "1.0.0-alpha.30",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -31,9 +31,9 @@
     "tg-resources": "^3.1.1"
   },
   "dependencies": {
-    "@thorgate/create-resource-saga": "1.0.0-alpha.28",
-    "@thorgate/spa-errors": "1.0.0-alpha.29",
-    "@thorgate/spa-is": "1.0.0-alpha.28"
+    "@thorgate/create-resource-saga": "1.0.0-alpha.30",
+    "@thorgate/spa-errors": "1.0.0-alpha.30",
+    "@thorgate/spa-is": "1.0.0-alpha.30"
   },
   "scripts": {
     "clean": "rimraf ./lib",

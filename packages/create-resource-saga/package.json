@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/create-resource-saga",
-  "version": "1.0.0-alpha.28",
+  "version": "1.0.0-alpha.30",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -32,7 +32,7 @@
     "tg-resources": "^3.1.1"
   },
   "dependencies": {
-    "@thorgate/spa-is": "1.0.0-alpha.28"
+    "@thorgate/spa-is": "1.0.0-alpha.30"
   },
   "devDependencies": {
     "@thorgate/test-resource": "1.0.0-alpha.14",
