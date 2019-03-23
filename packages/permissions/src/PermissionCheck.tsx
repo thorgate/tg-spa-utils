@@ -1,6 +1,6 @@
 import { ErrorState, ErrorType, getError } from '@thorgate/spa-errors';
 import { ConnectedNamedRedirect } from '@thorgate/spa-pending-data';
-import React, { Component, ComponentType, ReactNode } from 'react';
+import React, { Component, ComponentClass, ComponentType, ReactNode } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { NamedRouteConfigComponentProps, stringifyLocation } from 'tg-named-routes';
@@ -13,12 +13,9 @@ import { getUser, isAuthenticated, User, UserState } from './userReducer';
 export const DefaultRedirectParam = 'next';
 
 
-export type PermissionCheckFn<P = any> = (params: P & PermissionCheckProps) => boolean;
+export type PermissionCheckFn<P = any> = (params: P & PermissionCheckInternalProps) => boolean;
 
-export interface PermissionCheckProps extends NamedRouteConfigComponentProps {
-    user: User;
-    isAuthenticated: boolean;
-    error: ErrorType;
+export interface PermissionCheckProps {
     redirectRouteName?: string;
     redirectParam?: string;
     permissionCheck: PermissionCheckFn;
@@ -29,7 +26,18 @@ export interface PermissionCheckProps extends NamedRouteConfigComponentProps {
 }
 
 
-class PermissionCheckBase extends Component<PermissionCheckProps> {
+interface StateProps {
+    user: User;
+    isAuthenticated: boolean;
+    error: ErrorType;
+}
+
+
+interface PermissionCheckInternalProps extends PermissionCheckProps, StateProps, NamedRouteConfigComponentProps {
+}
+
+
+class PermissionCheckBase extends Component<PermissionCheckInternalProps> {
     public static defaultProps = {
         permissionDeniedStatusCodes: [401, 403],
         PermissionDeniedComponent: DefaultPermissionDenied,
@@ -38,7 +46,7 @@ class PermissionCheckBase extends Component<PermissionCheckProps> {
         error: null,
     };
 
-    constructor(props: PermissionCheckProps) {
+    constructor(props: PermissionCheckInternalProps) {
         super(props);
 
         if (!this.props.redirectRouteName && !this.props.PermissionDeniedComponent) {
@@ -100,4 +108,4 @@ const mapStateToProps = (state: ReduxState) => ({
 });
 
 
-export const PermissionCheck = withRouter(connect(mapStateToProps)(PermissionCheckBase));
+export const PermissionCheck: ComponentClass<PermissionCheckProps> = withRouter(connect(mapStateToProps)(PermissionCheckBase));

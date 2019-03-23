@@ -1,6 +1,7 @@
 import { createMemoryHistory, History, Location } from 'history';
 import 'jest-dom/extend-expect';
-import { cleanup, testHook } from 'react-testing-library';
+import { renderHook } from 'react-hooks-testing-library';
+import { cleanup } from 'react-testing-library';
 
 import { usePendingLocation } from '../src/usePendingLocation';
 
@@ -16,7 +17,7 @@ describe('usePendingLocation', () => {
     test('initial location set correctly', () => {
         let storedLocation: Location = { ...history.location };
 
-        testHook(() => {
+        renderHook(() => {
             storedLocation = usePendingLocation({ ...history.location }, history.location.key);
         });
 
@@ -27,7 +28,7 @@ describe('usePendingLocation', () => {
         let storedLocation: Location = { ...history.location };
         let loadingKey = history.location.key;
 
-        const { rerender } = testHook(() => {
+        const { rerender } = renderHook(() => {
             storedLocation = usePendingLocation({ ...history.location }, loadingKey, true);
         });
 
@@ -47,7 +48,7 @@ describe('usePendingLocation', () => {
         let storedLocation: Location = { ...history.location };
         let loadingKey = history.location.key;
 
-        const { rerender } = testHook(() => {
+        const { rerender } = renderHook(() => {
             storedLocation = usePendingLocation({ ...history.location }, loadingKey);
         });
 

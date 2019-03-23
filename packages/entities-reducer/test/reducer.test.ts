@@ -1,16 +1,22 @@
+import { article, comment, generateArticles, user } from '@thorgate/test-data';
 import { ConfigureStore, configureStore } from '@thorgate/test-store';
 import { normalize } from 'normalizr';
+import { combineReducers } from 'redux';
 
 import {
     entitiesActions,
+    entitiesReducer,
+    EntitiesRootState,
     entitiesSelectors,
 } from '../src';
 
-import { article, comment, generateArticles, user } from './createTestData';
-import { reducer, State } from './reducer';
+
+const reducer = combineReducers({
+    entities: entitiesReducer,
+});
 
 
-let store: ConfigureStore<State>;
+let store: ConfigureStore<EntitiesRootState>;
 
 beforeEach(() => {
     store = configureStore(reducer);
