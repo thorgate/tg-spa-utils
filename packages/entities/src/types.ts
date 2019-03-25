@@ -1,5 +1,5 @@
 import { ResourceActionPayload, ResourcePayloadMetaAction, ResourceSagaOptions, StringOrSymbol } from '@thorgate/create-resource-saga';
-import { FetchMeta as MetaOptions } from '@thorgate/spa-entities-reducer';
+import { EntitiesMeta } from '@thorgate/spa-entities-reducer';
 import { Kwargs, Omit } from '@thorgate/spa-is';
 import { normalize, schema } from 'normalizr';
 import { match } from 'react-router';
@@ -17,7 +17,7 @@ export type SerializeData = (result: any, listSchema: schema.Entity[]) => Return
 /**
  * Normalized fetch options
  */
-export interface FetchMeta extends MetaOptions {
+export interface FetchMeta extends EntitiesMeta {
     /**
      * Treat fetched result as single entity.
      *  Enabled preserveOrder=true by default.

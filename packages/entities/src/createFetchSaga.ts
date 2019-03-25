@@ -1,4 +1,5 @@
 import { createResourceSaga, StringOrSymbol } from '@thorgate/create-resource-saga';
+import { entitiesActions, EntityStatus } from '@thorgate/spa-entities-reducer';
 import { errorActions } from '@thorgate/spa-errors';
 import { isFunction, Kwargs } from '@thorgate/spa-is';
 import { normalize, schema } from 'normalizr';
@@ -7,7 +8,6 @@ import { SagaIterator } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
 import { Resource } from 'tg-resources';
 
-import { entitiesActions, EntityStatus } from './entitiesReducer';
 import {
     CreateFetchSagaOptions,
     CreateFetchSagaOverrideOptions,

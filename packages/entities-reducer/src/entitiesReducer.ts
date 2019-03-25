@@ -2,17 +2,17 @@ import { ActionType, createAction, getType } from 'typesafe-actions';
 
 import {
     EntitiesIdsPayload,
+    EntitiesMeta,
     EntitiesRootState,
     EntitiesState,
     EntitiesStatusPayload,
     EntityKeyPayload,
     EntityStatus,
-    FetchMeta,
     SetEntitiesPayload
 } from './types';
 
 
-const defaultActionMeta: FetchMeta = {
+const defaultActionMeta: EntitiesMeta = {
     preserveExisting: true,
     mergeEntities: false,
     preserveOrder: false,
@@ -22,7 +22,7 @@ const defaultActionMeta: FetchMeta = {
 
 export const entitiesActions = {
     setEntities: createAction('@@tg-spa-entities/SET_ENTITIES', (resolve) => (
-        (payload: SetEntitiesPayload, meta: FetchMeta = {}) => {
+        (payload: SetEntitiesPayload, meta: EntitiesMeta = {}) => {
             return resolve(payload, { ...defaultActionMeta, ...meta });
         }
     )),

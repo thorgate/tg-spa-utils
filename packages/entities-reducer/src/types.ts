@@ -53,7 +53,7 @@ export interface EntitiesRootState {
 /**
  * Normalized fetch options
  */
-export interface FetchMeta {
+export interface EntitiesMeta {
     /**
      * Preserve existing entities.
      *  Default: true
@@ -83,4 +83,6 @@ export interface FetchMeta {
      *  Default: false
      */
     clearArchived?: boolean;
+
+    [key: string]: any;
 }

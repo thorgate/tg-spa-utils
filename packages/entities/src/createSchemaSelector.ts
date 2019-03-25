@@ -1,6 +1,5 @@
+import { EntitiesData, EntitiesRootState, entitiesSelectors } from '@thorgate/spa-entities-reducer';
 import { denormalize, schema } from 'normalizr';
-
-import { EntitiesData, EntitiesRootState, entitiesSelectors } from './entitiesReducer';
 
 
 /**
