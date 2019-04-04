@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-pagination",
-  "version": "1.0.0-alpha.31",
+  "version": "1.0.0-alpha.32",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -32,7 +32,7 @@
     "tg-resources": "^3.1.1"
   },
   "dependencies": {
-    "@thorgate/spa-entities": "1.0.0-alpha.31",
+    "@thorgate/spa-entities": "1.0.0-alpha.32",
     "@thorgate/spa-is": "1.0.0-alpha.30",
     "@thorgate/spa-pagination-reducer": "1.0.0-alpha.30"
   },
