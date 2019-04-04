@@ -50,6 +50,9 @@ export interface FetchAction<
 }
 
 
+export type Key<Params extends Kwargs<Params> = {}> = string | ((matchObj: match<Params> | null) => string);
+
+
 export interface CreateFetchSagaOptions<
     Klass extends Resource,
     KW extends Kwargs<KW> = {},
@@ -61,7 +64,7 @@ export interface CreateFetchSagaOptions<
     /**
      * Entity key which is used for storage identifier
      */
-    key: string;
+    key: Key<Params>;
 
     /**
      * Normalizr Entity list schema
