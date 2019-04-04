@@ -16,18 +16,9 @@ import {
     FetchMeta,
     FetchSaga,
     InitialAction,
-    Key,
     SerializeData,
 } from './types';
-
-
-const GetKeyValue = (key: Key<any>, matchObj: match<any> | null): string => {
-    if (isFunction(key)) {
-        return key(matchObj);
-    }
-
-    return key;
-};
+import { GetKeyValue } from './utils';
 
 
 /**

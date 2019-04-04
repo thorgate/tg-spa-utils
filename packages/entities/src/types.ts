@@ -1,5 +1,5 @@
 import { ResourceActionPayload, ResourcePayloadMetaAction, ResourceSagaOptions, StringOrSymbol } from '@thorgate/create-resource-saga';
-import { EntitiesMeta } from '@thorgate/spa-entities-reducer';
+import { EntitiesMeta, EntitiesRootState } from '@thorgate/spa-entities-reducer';
 import { Kwargs, Omit } from '@thorgate/spa-is';
 import { normalize, schema } from 'normalizr';
 import { match } from 'react-router';
@@ -50,7 +50,19 @@ export interface FetchAction<
 }
 
 
-export type Key<Params extends Kwargs<Params> = {}> = string | ((matchObj: match<Params> | null) => string);
+export type KeyFn<Params extends Kwargs<Params> = {}> = (matchObj: match<Params> | null) => string;
+export type Key<Params extends Kwargs<Params> = {}> = string | KeyFn<Params>;
+
+
+export type ListSchemaSelector<RType> = <S extends EntitiesRootState>(state: S, ids?: Array<string | number>) => RType[];
+export type ListMatchSchemaSelector<
+    RType
+> = <S extends EntitiesRootState>(state: S, matchObj: match<any> | null, ids?: Array<string | number>) => RType[];
+
+export type DetailSchemaSelector<RType> = <S extends EntitiesRootState>(state: S, id?: string | number) => RType | null;
+export type DetailMatchSchemaSelector<
+    RType
+> = <S extends EntitiesRootState>(state: S, matchObj: match<any> | null, id?: string | number) => RType | null;
 
 
 export interface CreateFetchSagaOptions<
