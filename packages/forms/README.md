@@ -59,3 +59,10 @@ export const ComponentForm = connect()(withFormik({
 })(Component));
 
 ```
+
+In case you can't or don't want to use formik, you can also pass error handling functions to the action creator. Anything passed with the action will override these. Note that `setStatus` must be provided in at least one way.
+
+```
+const setStatus = (status) => console.log(status);
+export const saveForm = createSaveAction('@@sagas/form/SAVE', { setStatus });
+```
