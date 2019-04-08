@@ -7,8 +7,8 @@ import { DetailMatchSchemaSelector, DetailSchemaSelector, Key, KeyFn, ListMatchS
 import { GetKeyValue } from './utils';
 
 
-export function createSchemaSelector<RType = any>(entitySchema: schema.Entity, key?: KeyFn<any>): ListMatchSchemaSelector<RType>;
 export function createSchemaSelector<RType = any>(entitySchema: schema.Entity, key?: string): ListSchemaSelector<RType>;
+export function createSchemaSelector<RType = any>(entitySchema: schema.Entity, key?: KeyFn<any>): ListMatchSchemaSelector<RType>;
 
 /**
  * Create entity list memoized selector.
@@ -72,8 +72,8 @@ export function createSchemaSelector<RType = any>(entitySchema: schema.Entity, k
 }
 
 
-export function createDetailSchemaSelector<RType = any>(entitySchema: schema.Entity, key?: KeyFn<any>): DetailMatchSchemaSelector<RType>;
 export function createDetailSchemaSelector<RType = any>(entitySchema: schema.Entity, key?: string): DetailSchemaSelector<RType>;
+export function createDetailSchemaSelector<RType = any>(entitySchema: schema.Entity, key?: KeyFn<any>): DetailMatchSchemaSelector<RType>;
 
 
 /**
