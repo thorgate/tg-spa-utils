@@ -32,7 +32,7 @@ const pushDataToStore = (schema: any, data: any) => {
 // TODO: mock with real implementation `denormalize` and inspect that it is not called second time
 describe('createSchemaSelector works', () => {
     test('root schema selector works', () => {
-        const schemaSelector = createSchemaSelector(article);
+        const schemaSelector = createSchemaSelector(article, article.key);
 
         const data = generateArticles(15, 15);
         pushDataToStore(article, data);
@@ -43,7 +43,7 @@ describe('createSchemaSelector works', () => {
     });
 
     test('specific ids w/ archive', () => {
-        const schemaSelector = createSchemaSelector(comment);
+        const schemaSelector = createSchemaSelector(comment, comment.key);
 
         const data = generateComments(15);
         pushDataToStore(comment, data);
@@ -62,7 +62,7 @@ describe('createSchemaSelector works', () => {
     });
 
     test('detail selector works', () => {
-        const schemaSelector = createDetailSchemaSelector(article);
+        const schemaSelector = createDetailSchemaSelector(article, article.key);
 
         const data = generateArticles(15, 15);
         pushDataToStore(article, data);
@@ -75,7 +75,7 @@ describe('createSchemaSelector works', () => {
     });
 
     test('detail selector ignores archived', () => {
-        const schemaSelector = createDetailSchemaSelector(comment);
+        const schemaSelector = createDetailSchemaSelector(comment, comment.key);
 
         const data = generateComments(15);
         pushDataToStore(comment, data);
@@ -95,13 +95,13 @@ describe('createSchemaSelector works', () => {
     });
 
     test('list :: missing key returns empty', () => {
-        const schemaSelector = createSchemaSelector(user);
+        const schemaSelector = createSchemaSelector(user, user.key);
 
         expect(schemaSelector(store.getState())).toEqual([]);
     });
 
     test('detail :: missing key returns null', () => {
-        const schemaSelector = createDetailSchemaSelector(user);
+        const schemaSelector = createDetailSchemaSelector(user, user.key);
 
         expect(schemaSelector(store.getState(), 1)).toEqual(null);
     });
