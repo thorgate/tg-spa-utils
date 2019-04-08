@@ -65,11 +65,20 @@ export type DetailMatchSchemaSelector<
 > = <S extends EntitiesRootState>(state: S, matchObj: match<any> | null, id?: string | number) => RType | null;
 
 
+export interface FetchRelatedField<Klass extends Resource> {
+    idKwarg: string;
+    resource: Klass;
+}
+
+export type FetchRelatedFields<Data, Klass extends Resource> = { [K in keyof Data]?: Klass | FetchRelatedField<Klass>; };
+
+
 export interface CreateFetchSagaOptions<
     Klass extends Resource,
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {},
-    Data = any
+    Data = any,
+    Structure = any
 > extends Omit<
     ResourceSagaOptions<EntitiesResourceType, Klass, KW, Params, Data, FetchMeta>, 'apiHook' | 'timeoutMessage' | 'successHook'
 > {
@@ -94,10 +103,10 @@ export interface CreateFetchSagaOptions<
      * @param matchObj
      * @param action
      */
-    apiFetchHook?: (matchObj: match<Params> | null, action: FetchActionType<StringOrSymbol, KW, Data>) => (any | SagaIterator);
+    apiFetchHook?: (matchObj: match<Params> | null, action: FetchActionType<StringOrSymbol, KW, Data>) => (Structure | SagaIterator);
 
     /**
-     * Successful request handler. This is only called when saving was successful, e.g resource or apiFetchHook did not throw any errors.
+     * Successful request handler. This is only called when fetching was successful, e.g resource or apiFetchHook did not throw any errors.
      *
      * @param result
      * @param matchObj
@@ -108,22 +117,41 @@ export interface CreateFetchSagaOptions<
     serializeData?: SerializeData;
 
     /**
+     * Definition of related fields that will be fetched separately.
+     *  - Any of the related fields will use specified resource to fetch extra data.
+     *  - List responses will use `${idKwarg}__in` query to fetch extra data. Use `lazy=true` to disable this.
+     *
+     *  `idKwarg` defaults to `pk`
+     */
+    relatedFields?: FetchRelatedFields<Data, Klass>;
+
+    /**
+     * Control related fetching.
+     *  - If `false`, related fields are collected together and fetched with `${idKwarg}__in` query.
+     *  - If `true`, related fields are fetched with `kwargs={ [idKwarg]: value }`
+     *
+     *  `idKwarg` defaults to `pk`
+     */
+    relatedLazy?: boolean;
+
+    /**
      * Mutate response before serializing it.
      * @param result
      * @param matchObj
      * @param action
      */
     mutateResponse?: (
-        result: any, matchObj: match<Params> | null, action: FetchActionType<StringOrSymbol, KW, Data>
-    ) => (any | SagaIterator);
+        result: Structure, matchObj: match<Params> | null, action: FetchActionType<StringOrSymbol, KW, Data>
+    ) => (Structure | SagaIterator);
 }
 
 export type CreateFetchSagaOverrideOptions<
     Klass extends Resource,
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {},
-    Data = any
-> = Partial<Omit<CreateFetchSagaOptions<Klass, KW, Params, Data>, 'key' | 'listSchema' | 'serializeData'>>;
+    Data = any,
+    Structure = any
+> = Partial<Omit<CreateFetchSagaOptions<Klass, KW, Params, Data, Structure>, 'key' | 'listSchema' | 'serializeData'>>;
 
 
 export type InitialAction<
@@ -138,7 +166,8 @@ export interface FetchSaga<
     Klass extends Resource,
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {},
-    Data = any
+    Data = any,
+    Structure = any
 > {
     /**
      * Resource saga to handle fetching data from api and normalize it with `normalizr`
@@ -177,26 +206,26 @@ export interface FetchSaga<
      * @param result
      * @param meta
      */
-    saveMany: (result: any, meta?: FetchMeta) => SagaIterator;
+    saveMany: (result: Structure[], meta?: FetchMeta) => SagaIterator;
 
     /**
      * Bound helper to save results using pre-defined config.
      * @param result
      * @param meta
      */
-    saveManyEffect: (result: any, meta?: FetchMeta) => CallEffect;
+    saveManyEffect: (result: Structure[], meta?: FetchMeta) => CallEffect;
 
     /**
      * Bound helper to save result using pre-defined config.
      * @param result
      * @param meta
      */
-    save: (result: any, meta?: FetchMeta) => SagaIterator;
+    save: (result: Structure, meta?: FetchMeta) => SagaIterator;
 
     /**
      * Bound helper to save result using pre-defined config.
      * @param result
      * @param meta
      */
-    saveEffect: (result: any, meta?: FetchMeta) => CallEffect;
+    saveEffect: (result: Structure, meta?: FetchMeta) => CallEffect;
 }

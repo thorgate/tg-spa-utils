@@ -1,4 +1,4 @@
-import { ResourcePayloadMetaAction, ResourceSagaOptions, StringOrSymbol } from '@thorgate/create-resource-saga';
+import { ResourceActionPayload, ResourcePayloadMetaAction, ResourceSagaOptions, StringOrSymbol } from '@thorgate/create-resource-saga';
 import { Kwargs, Omit, OptionalMap } from '@thorgate/spa-is';
 import { FormikErrors, FormikProps } from 'formik';
 import { match } from 'react-router';
@@ -60,6 +60,17 @@ export type SaveActionType<
     KW extends Kwargs<KW> = {}
 > = ResourcePayloadMetaAction<FormsResourceType, T, KW, Values, SaveMeta<Values>>;
 
+
+export interface SaveAction<
+    T extends StringOrSymbol,
+    Values,
+    KW extends Kwargs<KW> = {},
+> {
+    (payload: ResourceActionPayload<KW, Values>, meta: SaveMeta<Values>): SaveActionType<T, Values, KW>;
+
+    getType?: () => T;
+    getResourceType?: () => FormsResourceType;
+}
 
 export interface CreateFormSaveSagaOptions<
     Values,

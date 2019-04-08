@@ -61,7 +61,7 @@ export function createResourceSaga<
             }
 
             if (resource) {
-                resourceEffect = resourceEffectFactory(resource, method, {
+                resourceEffect = resourceEffectFactory(resource, payload.method || method, {
                     kwargs,
                     query,
                     data: payload.data,

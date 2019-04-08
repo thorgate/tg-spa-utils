@@ -29,9 +29,9 @@ import { GetKeyValue } from './utils';
  * @param meta
  * @param serialize
  */
-export function* saveResults(
+export function* saveResults<Structure = any>(
     key: string,
-    result: any[],
+    result: Structure[],
     listSchema: [schema.Entity],
     meta: FetchMeta = {},
     serialize: SerializeData = normalize
@@ -51,9 +51,9 @@ export function* saveResults(
  * @param meta
  * @param serialize
  */
-export function* saveResult(
+export function* saveResult<Structure = any>(
     key: string,
-    result: any,
+    result: Structure,
     detailSchema: schema.Entity,
     meta: FetchMeta = {},
     serialize: SerializeData = normalize
@@ -66,7 +66,8 @@ export function createFetchSaga<Klass extends Resource,
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {},
     Data = any,
-    >(options: CreateFetchSagaOptions<Klass, KW, Params, Data>): FetchSaga<Klass, KW, Params, Data> {
+    Structure = any,
+    >(options: CreateFetchSagaOptions<Klass, KW, Params, Data>): FetchSaga<Klass, KW, Params, Data, Structure> {
     const {
         key,
         listSchema,
@@ -75,7 +76,7 @@ export function createFetchSaga<Klass extends Resource,
         ...baseOptions
     } = options;
 
-    function createCloneableSaga(config: CreateFetchSagaOverrideOptions<Klass, KW, Params, Data> = {}) {
+    function createCloneableSaga(config: CreateFetchSagaOverrideOptions<Klass, KW, Params, Data, Structure> = {}) {
         const mergedOptions = { ...baseOptions, ...config };
 
         const {
@@ -96,6 +97,9 @@ export function createFetchSaga<Klass extends Resource,
             const keyValue = GetKeyValue(key, matchObj);
 
             let result = response;
+
+            // TODO: Fetch related fields if present in data.
+
             if (mutateResponse) {
                 result = yield call(mutateResponse, result, matchObj, action);
             }
@@ -176,7 +180,7 @@ export function createFetchSaga<Klass extends Resource,
                     };
                 },
 
-                cloneSaga: (override: CreateFetchSagaOverrideOptions<Klass, KW, Params, Data> = {}) => (
+                cloneSaga: (override: CreateFetchSagaOverrideOptions<Klass, KW, Params, Data, Structure> = {}) => (
                     createCloneableSaga(override)
                 ),
 

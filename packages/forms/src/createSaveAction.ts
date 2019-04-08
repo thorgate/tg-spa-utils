@@ -1,7 +1,7 @@
-import { createResourceAction, ResourceActionPayload } from '@thorgate/create-resource-saga';
+import { createResourceAction, ResourceActionPayload, StringOrSymbol } from '@thorgate/create-resource-saga';
 import { Kwargs } from '@thorgate/spa-is';
 
-import { DeleteMeta, FormsResource, SaveMeta, StatusMessage } from './types';
+import { DeleteMeta, FormsResource, SaveAction, SaveMeta, StatusMessage } from './types';
 
 
 export const setErrorsNoop = (_0: any) => null;
@@ -17,8 +17,8 @@ export const setSubmittingNoop = (_0: boolean) => null;
  * @param setStatus - Default setStatus handler
  */
 export const createDeleteAction = <
-    T extends string, Values, KW extends Kwargs<KW> = {}
->(type: T, setStatus?: (status?: StatusMessage) => any) => (
+    T extends StringOrSymbol, Values, KW extends Kwargs<KW> = {}
+>(type: T, setStatus?: (status?: StatusMessage) => any): SaveAction<T, Values, KW> => (
     createResourceAction(FormsResource, type, (resolve) => (
         (payload: ResourceActionPayload<KW, Values>, meta?: DeleteMeta<Values>) => {
             let setStatusHandler: (status?: StatusMessage) => any;
