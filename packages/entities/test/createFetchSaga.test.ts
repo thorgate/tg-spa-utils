@@ -13,6 +13,7 @@ import {
     EntityStatus,
     FetchMeta,
     FetchSaga,
+    ListSchemaSelector,
 } from '../src';
 import { reducer, State } from './reducer';
 
@@ -27,7 +28,7 @@ const actionCreator = createFetchAction('TEST_DATA');
 
 const expectResponse = async (
     fetchSaga: FetchSaga<any, any, any, any>,
-    schemaSelector: ReturnType<typeof createSchemaSelector>,
+    schemaSelector: ListSchemaSelector<any>,
     payload: any = {},
     meta: FetchMeta = {},
     data?: any
