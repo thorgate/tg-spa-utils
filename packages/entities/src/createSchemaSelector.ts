@@ -1,14 +1,24 @@
 import { EntitiesData, EntitiesRootState, entitiesSelectors } from '@thorgate/spa-entities-reducer';
 import { isFunction } from '@thorgate/spa-is';
 import { denormalize, schema } from 'normalizr';
-import { match } from 'react-router';
 
-import { DetailMatchSchemaSelector, DetailSchemaSelector, Key, KeyFn, ListMatchSchemaSelector, ListSchemaSelector } from './types';
+import {
+    DetailSchemaSelector,
+    Key,
+    KeyFn,
+    KeyOptions,
+    ListKeyOptionsSchemaSelector,
+    ListSchemaSelector,
+} from './types';
 import { GetKeyValue } from './utils';
 
 
-export function createSchemaSelector<RType = any>(entitySchema: schema.Entity, key?: string): ListSchemaSelector<RType>;
-export function createSchemaSelector<RType = any>(entitySchema: schema.Entity, key?: KeyFn<any>): ListMatchSchemaSelector<RType>;
+export function createSchemaSelector<
+    RType = any
+>(entitySchema: schema.Entity, key?: string): ListSchemaSelector<RType>;
+export function createSchemaSelector<
+    RType = any
+>(entitySchema: schema.Entity, key?: KeyFn): ListKeyOptionsSchemaSelector<RType>;
 
 /**
  * Create entity list memoized selector.
@@ -19,7 +29,7 @@ export function createSchemaSelector<RType = any>(entitySchema: schema.Entity, k
  * @param entitySchema
  * @param key
  */
-export function createSchemaSelector<RType = any>(entitySchema: schema.Entity, key: Key<any> = entitySchema.key) {
+export function createSchemaSelector<RType = any>(entitySchema: schema.Entity, key: Key = entitySchema.key) {
     let prevIds: Array<string | number> = [];
     let prevArchived: string[] = [];
     let prevEntities: EntitiesData;
@@ -60,8 +70,8 @@ export function createSchemaSelector<RType = any>(entitySchema: schema.Entity, k
     }
 
     if (isFunction(key)) {
-        return <S extends EntitiesRootState>(state: S, matchObj: match<any> | null, ids: Array<string | number> = []): RType[] => {
-            const keyValue = GetKeyValue(key, matchObj);
+        return <S extends EntitiesRootState>(state: S, keyOptions: KeyOptions | null, ids: Array<string | number> = []): RType[] => {
+            const keyValue = GetKeyValue(key, keyOptions);
             return baseSelector(state, ids, keyValue);
         };
     }
@@ -72,8 +82,9 @@ export function createSchemaSelector<RType = any>(entitySchema: schema.Entity, k
 }
 
 
-export function createDetailSchemaSelector<RType = any>(entitySchema: schema.Entity, key?: string): DetailSchemaSelector<RType>;
-export function createDetailSchemaSelector<RType = any>(entitySchema: schema.Entity, key?: KeyFn<any>): DetailMatchSchemaSelector<RType>;
+export function createDetailSchemaSelector<
+    RType = any
+>(entitySchema: schema.Entity): DetailSchemaSelector<RType>;
 
 
 /**
@@ -82,14 +93,13 @@ export function createDetailSchemaSelector<RType = any>(entitySchema: schema.Ent
  *  Memoization is based on previously used id and entities storage
  *
  * @param entitySchema
- * @param key
  */
-export function createDetailSchemaSelector<RType = any>(entitySchema: schema.Entity, key: Key<any> = entitySchema.key) {
+export function createDetailSchemaSelector<RType = any>(entitySchema: schema.Entity) {
     let prevId: string;
     let prevEntities: EntitiesData;
     let result: RType | null = null;
 
-    function baseSelector<S extends EntitiesRootState>(state: S, id: string | number, keyValue: string): RType | null {
+    return <S extends EntitiesRootState>(state: S, id: string | number): RType | null => {
         const selectId: string = typeof id === 'number' ? `${id}` : id;
 
         const entities = entitiesSelectors.selectEntities(state);
@@ -103,22 +113,11 @@ export function createDetailSchemaSelector<RType = any>(entitySchema: schema.Ent
         prevEntities = entities;
 
         // Return null if entity specified with key or id does not exist
-        if (!entities[keyValue] || !((entities[keyValue] || {})[selectId])) {
+        if (!entities[entitySchema.key] || !((entities[entitySchema.key] || {})[selectId])) {
             return null;
         }
 
         result = denormalize(selectId, entitySchema, entities) as RType;
         return result;
-    }
-
-    if (isFunction(key)) {
-        return <S extends EntitiesRootState>(state: S, matchObj: match<any> | null, id: string | number): RType | null => {
-            const keyValue = GetKeyValue(key, matchObj);
-            return baseSelector(state, id, keyValue);
-        };
-    }
-
-    return <S extends EntitiesRootState>(state: S, id: string | number): RType | null => {
-        return baseSelector(state, id, key);
     };
 }

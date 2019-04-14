@@ -14,6 +14,12 @@ export type EntitiesResourceType = typeof EntitiesResource;
 
 export type SerializeData = (result: any, listSchema: schema.Entity[]) => ReturnType<typeof normalize>;
 
+
+export interface KeyOptions {
+    [key: string]: any;
+}
+
+
 /**
  * Normalized fetch options
  */
@@ -28,6 +34,8 @@ export interface FetchMeta extends EntitiesMeta {
      * Callback called after processing is finished.
      */
     callback?: () => void;
+
+    keyOptions?: KeyOptions;
 }
 
 
@@ -50,19 +58,16 @@ export interface FetchAction<
 }
 
 
-export type KeyFn<Params extends Kwargs<Params> = {}> = (matchObj: match<Params> | null) => string;
-export type Key<Params extends Kwargs<Params> = {}> = string | KeyFn<Params>;
+export type KeyFn = (keyOptions: KeyOptions | null) => string;
+export type Key = string | KeyFn;
 
 
 export type ListSchemaSelector<RType> = <S extends EntitiesRootState>(state: S, ids?: Array<string | number>) => RType[];
-export type ListMatchSchemaSelector<
+export type ListKeyOptionsSchemaSelector<
     RType
-> = <S extends EntitiesRootState>(state: S, matchObj: match<any> | null, ids?: Array<string | number>) => RType[];
+> = <S extends EntitiesRootState>(state: S, keyOptions: KeyOptions | null, ids?: Array<string | number>) => RType[];
 
 export type DetailSchemaSelector<RType> = <S extends EntitiesRootState>(state: S, id?: string | number) => RType | null;
-export type DetailMatchSchemaSelector<
-    RType
-> = <S extends EntitiesRootState>(state: S, matchObj: match<any> | null, id?: string | number) => RType | null;
 
 
 export interface CreateFetchSagaOptions<
@@ -76,7 +81,7 @@ export interface CreateFetchSagaOptions<
     /**
      * Entity key which is used for storage identifier
      */
-    key: Key<Params>;
+    key: Key;
 
     /**
      * Normalizr Entity list schema
@@ -176,27 +181,31 @@ export interface FetchSaga<
      * Bound helper to save results using pre-defined config.
      * @param result
      * @param meta
+     * @param matchObj
      */
-    saveMany: (result: any, meta?: FetchMeta) => SagaIterator;
+    saveMany: (result: any, meta?: FetchMeta, matchObj?: match<Params> | null) => SagaIterator;
 
     /**
      * Bound helper to save results using pre-defined config.
      * @param result
      * @param meta
+     * @param matchObj
      */
-    saveManyEffect: (result: any, meta?: FetchMeta) => CallEffect;
+    saveManyEffect: (result: any, meta?: FetchMeta, matchObj?: match<Params> | null) => CallEffect;
 
     /**
      * Bound helper to save result using pre-defined config.
      * @param result
      * @param meta
+     * @param matchObj
      */
-    save: (result: any, meta?: FetchMeta) => SagaIterator;
+    save: (result: any, meta?: FetchMeta, matchObj?: match<Params> | null) => SagaIterator;
 
     /**
      * Bound helper to save result using pre-defined config.
      * @param result
      * @param meta
+     * @param matchObj
      */
-    saveEffect: (result: any, meta?: FetchMeta) => CallEffect;
+    saveEffect: (result: any, meta?: FetchMeta, matchObj?: match<Params> | null) => CallEffect;
 }
