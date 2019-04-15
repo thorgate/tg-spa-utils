@@ -1,5 +1,5 @@
 import { ResourcePayloadMetaAction, ResourceSagaOptions, StringOrSymbol } from '@thorgate/create-resource-saga';
-import { Kwargs, Omit, OptionalMap } from '@thorgate/spa-is';
+import { Kwargs, Omit } from '@thorgate/spa-is';
 import { FormikErrors, FormikProps } from 'formik';
 import { match } from 'react-router';
 import { SagaIterator } from 'redux-saga';
@@ -44,15 +44,9 @@ export interface NestedError {
 export type NestedErrorType = string | null | NestedError;
 
 
-export type SaveMeta<Values> =
-    Pick<FormikProps<Values>, 'setErrors' | 'setStatus' | 'setSubmitting'> &
-    OptionalMap<Omit<FormikProps<Values>, 'setErrors' | 'setStatus' | 'setSubmitting'>>;
-
-
-export type DeleteMeta<Values> =
-    Pick<FormikProps<Values>, 'setStatus'> &
-    OptionalMap<Omit<FormikProps<Values>, 'setStatus'>>;
-
+export interface SaveMeta<Values> extends Pick<FormikProps<Values>, 'setErrors' | 'setStatus' | 'setSubmitting'> {
+    [key: string]: any;
+}
 
 export type SaveActionType<
     T extends StringOrSymbol,

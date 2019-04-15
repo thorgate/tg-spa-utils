@@ -1,9 +1,10 @@
 import { createResourceAction, ResourceActionPayload } from '@thorgate/create-resource-saga';
-import { Kwargs } from '@thorgate/spa-is';
+import { Kwargs, OptionalMap } from '@thorgate/spa-is';
 
-import { DeleteMeta, FormsResource, SaveMeta, StatusMessage } from './types';
+import { FormsResource, SaveMeta } from './types';
 
 
+export const setStatusNoop = (_0: any) => null;
 export const setErrorsNoop = (_0: any) => null;
 export const setSubmittingNoop = (_0: boolean) => null;
 
@@ -11,44 +12,35 @@ export const setSubmittingNoop = (_0: boolean) => null;
 /**
  * Action creator matching signature:
  *
- *   (payload, formikActions) => ({ type, resourceType, payload, formikActions })
+ *   (payload, formikActions = {}) => ({ type, resourceType, payload, meta: formikActions })
+ *
+ * Uses defaultMeta as defaults in place of what formik would give in action.
+ * setStatus must be provided in either defaultMeta or action.
  *
  * @param type - Action type
- * @param setStatus - Default setStatus handler
+ * @param defaultMeta - Optional object similar to formikActions for error handling, in case formik cannot be used
  */
-export const createDeleteAction = <
+export const createSaveAction = <
     T extends string, Values, KW extends Kwargs<KW> = {}
->(type: T, setStatus?: (status?: StatusMessage) => any) => (
+>(
+    type: T,
+    defaultMeta: OptionalMap<SaveMeta<Values>> = {},
+) => (
     createResourceAction(FormsResource, type, (resolve) => (
-        (payload: ResourceActionPayload<KW, Values>, meta?: DeleteMeta<Values>) => {
-            let setStatusHandler: (status?: StatusMessage) => any;
-            if (meta) {
-                setStatusHandler = meta.setStatus;
-            } else if (setStatus) {
-                setStatusHandler = setStatus;
-            } else {
-                throw new Error(`Delete action "${type}" misconfiguration. setStatus is required.`);
+        (payload: ResourceActionPayload<KW, Values>, meta: OptionalMap<SaveMeta<Values>> = {}) => {
+            if (!defaultMeta.setStatus && !meta.setStatus) {
+                throw new Error(`Save/delete action "${type}" misconfiguration. setStatus is required.`);
             }
 
             return resolve(payload, {
-                setStatus: setStatusHandler,
+                setStatus: setStatusNoop,
                 setErrors: setErrorsNoop,
                 setSubmitting: setSubmittingNoop,
+                ...defaultMeta,
+                ...meta,
             });
         }
     ))
 );
 
-
-/**
- * Action creator matching signature:
- *
- *   (payload, formikActions) => ({ type, resourceType, payload, meta: formikActions })
- *
- * @param type - Action type
- */
-export const createSaveAction = <T extends string, Values, KW extends Kwargs<KW> = {}>(type: T) => (
-    createResourceAction(FormsResource, type, (resolve) => (
-        (payload: ResourceActionPayload<KW, Values>, meta: SaveMeta<Values>) => resolve(payload, meta)
-    ))
-);
+export const createDeleteAction = createSaveAction;
