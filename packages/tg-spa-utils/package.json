@@ -1,6 +1,6 @@
 {
   "name": "tg-spa-utils",
-  "version": "1.0.0-alpha.32",
+  "version": "1.0.0-alpha.33",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -26,9 +26,9 @@
   ],
   "dependencies": {
     "@thorgate/spa-components": "1.0.0-alpha.30",
-    "@thorgate/spa-entities": "1.0.0-alpha.32",
+    "@thorgate/spa-entities": "1.0.0-alpha.33",
     "@thorgate/spa-errors": "1.0.0-alpha.30",
-    "@thorgate/spa-forms": "1.0.0-alpha.30",
+    "@thorgate/spa-forms": "1.0.0-alpha.33",
     "@thorgate/spa-hooks": "1.0.0-alpha.30",
     "@thorgate/spa-is": "1.0.0-alpha.30",
     "@thorgate/spa-pending-data": "1.0.0-alpha.30",
