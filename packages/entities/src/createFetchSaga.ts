@@ -75,6 +75,10 @@ export function createFetchSaga<Klass extends Resource,
         ...baseOptions
     } = options;
 
+    function getKeyValue(matchObj: match<Params> | null, meta: FetchMeta) {
+        return GetKeyValue(key, (meta && meta.keyOptions) || (matchObj && matchObj.params));
+    }
+
     function createCloneableSaga(config: CreateFetchSagaOverrideOptions<Klass, KW, Params, Data> = {}) {
         const mergedOptions = { ...baseOptions, ...config };
 
@@ -93,7 +97,7 @@ export function createFetchSaga<Klass extends Resource,
         function* saveHook(response: any, matchObj: match<Params> | null, action: FetchActionType<StringOrSymbol, KW, Data>) {
             const { meta = {} } = action;
 
-            const keyValue = GetKeyValue(key, matchObj);
+            const keyValue = getKeyValue(matchObj, meta);
 
             let result = response;
             if (mutateResponse) {
@@ -127,11 +131,11 @@ export function createFetchSaga<Klass extends Resource,
                 throw new Error(`Parameter "action" is required for "fetchSaga" with key ${key}.`);
             }
 
-            const keyValue = GetKeyValue(key, matchObj);
+            const { meta = {} } = action;
+
+            const keyValue = getKeyValue(matchObj, meta);
 
             try {
-                const { meta = {} } = action;
-
                 yield put(entitiesActions.setEntitiesStatus({ key: keyValue, status: EntityStatus.Fetching }));
 
                 // Execute processing saga
@@ -183,20 +187,20 @@ export function createFetchSaga<Klass extends Resource,
                 getConfiguration: () => ({ ...mergedOptions, key, listSchema, serializeData }),
 
                 * saveMany(result: any, meta: FetchMeta = {}, matchObj: match<Params> | null = null) {
-                    const keyValue = GetKeyValue(key, matchObj);
+                    const keyValue = getKeyValue(matchObj, meta);
                     yield call(saveResults, keyValue, result, listSchema, meta, serializeData);
                 },
                 saveManyEffect: (result: any, meta: FetchMeta = {}, matchObj: match<Params> | null = null) => {
-                    const keyValue = GetKeyValue(key, matchObj);
+                    const keyValue = getKeyValue(matchObj, meta);
                     return call(saveResults, keyValue, result, listSchema, meta, serializeData);
                 },
 
                 * save(result: any, meta: FetchMeta = {}, matchObj: match<Params> | null = null) {
-                    const keyValue = GetKeyValue(key, matchObj);
+                    const keyValue = getKeyValue(matchObj, meta);
                     yield call(saveResult, keyValue, result, listSchema[0], meta, serializeData);
                 },
                 saveEffect: (result: any, meta: FetchMeta = {}, matchObj: match<Params> | null = null) => {
-                    const keyValue = GetKeyValue(key, matchObj);
+                    const keyValue = getKeyValue(matchObj, meta);
                     return call(saveResult, keyValue, result, listSchema[0], meta, serializeData);
                 },
             },

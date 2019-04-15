@@ -39,7 +39,7 @@ function* fetchArticleWatcher() {
 ## NormalizedFetchOptions
 
 - ``listSchema``: *(schema.Entity[])*: Required: List schema to be used for serialization
-- ``key``: *(string)*: Required: Field name under which key order is stored under
+- ``key``: *(string|Function)*: Required: Field name under which key order is stored under
 - ``resource``: *(Resource|SagaResource<Resource>)*: Resource instance used to fetch data
 - ``method``: *(ResourceMethods)*: Resource method used
 - ``apiFetchHook``: *((action: FetchActionType) => any | Iterator<any>)*: Custom fetch method. This can be used to customize response or dispatch additional actions. 

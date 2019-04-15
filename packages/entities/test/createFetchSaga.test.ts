@@ -6,6 +6,7 @@ import { ConfigureStore, configureStore } from '@thorgate/test-store';
 import { delay } from 'redux-saga/effects';
 
 import {
+    createDetailSchemaSelector,
     createFetchAction,
     createFetchSaga,
     createSchemaSelector,
@@ -203,6 +204,42 @@ describe('createFetchSaga works', () => {
         });
 
         await expectResponse(fetchSaga, schemaSelector, {}, { callback: 123 as any }, data);
+    });
+
+    test('with key fn', async () => {
+        const keyOptions = {
+            test: 1,
+        };
+
+        const key = (opts: any) => (
+            `${article.key}-${opts.test}`
+        );
+
+        const schemaSelector = createSchemaSelector(article, key);
+        const detailSelector = createDetailSchemaSelector(article);
+        const resource = new SagaResource('/test', null, DummyResource);
+        const data = generateArticles(100, 5);
+        resource.resource.Data = data;
+
+        function successHook(result: any, _0: any, _1: any) {
+            expect(result).toEqual(data);
+        }
+
+        const fetchSaga = createFetchSaga({
+            key,
+            listSchema: [article],
+            resource,
+            successHook,
+        });
+
+        await store.sagaMiddleware.run(fetchSaga, null, actionCreator({}, { keyOptions })).toPromise();
+
+        expect(getError(store.getState())).toEqual(null);
+        expect(schemaSelector(store.getState(), keyOptions)).toEqual(data);
+
+        // Detail selector will use direct access
+        const [first] = data;
+        expect(detailSelector(store.getState(), first.id)).toEqual(first);
     });
 
     test('with apiFetchHook', async () => {

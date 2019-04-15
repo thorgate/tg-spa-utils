@@ -62,7 +62,7 @@ describe('createSchemaSelector works', () => {
     });
 
     test('detail selector works', () => {
-        const schemaSelector = createDetailSchemaSelector(article, article.key);
+        const schemaSelector = createDetailSchemaSelector(article);
 
         const data = generateArticles(15, 15);
         pushDataToStore(article, data);
@@ -75,7 +75,7 @@ describe('createSchemaSelector works', () => {
     });
 
     test('detail selector ignores archived', () => {
-        const schemaSelector = createDetailSchemaSelector(comment, comment.key);
+        const schemaSelector = createDetailSchemaSelector(comment);
 
         const data = generateComments(15);
         pushDataToStore(comment, data);
@@ -101,7 +101,7 @@ describe('createSchemaSelector works', () => {
     });
 
     test('detail :: missing key returns null', () => {
-        const schemaSelector = createDetailSchemaSelector(user, user.key);
+        const schemaSelector = createDetailSchemaSelector(user);
 
         expect(schemaSelector(store.getState(), 1)).toEqual(null);
     });
