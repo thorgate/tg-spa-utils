@@ -14,7 +14,7 @@ export interface EntitiesData {
 }
 
 export interface EntitiesKeys {
-    [key: string]: string[] | undefined;
+    [key: string]: Array<string | number> | undefined;
 }
 
 export interface EntitiesStatus {
@@ -27,11 +27,11 @@ export interface EntityKeyPayload {
 
 export interface SetEntitiesPayload extends EntityKeyPayload {
     entities: any;
-    order: string | string[];
+    order: string | number | Array<string | number>;
 }
 
 export interface EntitiesIdsPayload extends EntityKeyPayload {
-    ids: string[];
+    ids: Array<string | number>;
 }
 
 export interface EntitiesStatusPayload extends EntityKeyPayload {

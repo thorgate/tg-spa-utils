@@ -53,7 +53,7 @@ describe('createFetchSaga works', () => {
 
         await expectResponse(fetchSaga, schemaSelector);
         expect(getError(store.getState())!.message)
-            .toEqual('Misconfiguration: "resource" or "apiFetchHook" is required');
+            .toEqual('Misconfiguration: "resource" or "apiHook" is required');
     });
 
     test('with SagaResource', async () => {

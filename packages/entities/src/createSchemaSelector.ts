@@ -31,7 +31,7 @@ export function createSchemaSelector<
  */
 export function createSchemaSelector<RType = any>(entitySchema: schema.Entity, key: Key = entitySchema.key) {
     let prevIds: Array<string | number> = [];
-    let prevArchived: string[] = [];
+    let prevArchived: Array<string | number> = [];
     let prevEntities: EntitiesData;
     let result: RType[] = [];
 
@@ -44,7 +44,7 @@ export function createSchemaSelector<RType = any>(entitySchema: schema.Entity, k
             selectedIds = entitiesSelectors.selectEntityOrder(state, keyValue);
         }
 
-        const archived = entitiesSelectors.selectArchivedEntities(state, keyValue);
+        const archived: Array<string | number> = entitiesSelectors.selectArchivedEntities(state, keyValue);
         const entities = entitiesSelectors.selectEntities(state);
 
         if (selectedIds === prevIds && archived === prevArchived && prevEntities === entities && result.length) {
@@ -61,7 +61,7 @@ export function createSchemaSelector<RType = any>(entitySchema: schema.Entity, k
         }
 
         result = denormalize(
-            selectedIds.filter((id) => !archived.includes(`${id}`)),
+            selectedIds.filter((id) => !archived.includes(id)),
             [entitySchema],
             entities,
         ) as RType[];
@@ -95,12 +95,12 @@ export function createDetailSchemaSelector<
  * @param entitySchema
  */
 export function createDetailSchemaSelector<RType = any>(entitySchema: schema.Entity) {
-    let prevId: string;
+    let prevId: string | number;
     let prevEntities: EntitiesData;
     let result: RType | null = null;
 
     return <S extends EntitiesRootState>(state: S, id: string | number): RType | null => {
-        const selectId: string = typeof id === 'number' ? `${id}` : id;
+        const selectId: string | number = id;
 
         const entities = entitiesSelectors.selectEntities(state);
 

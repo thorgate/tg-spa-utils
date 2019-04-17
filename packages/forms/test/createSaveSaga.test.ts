@@ -63,7 +63,7 @@ describe('createFormSaveSaga works', () => {
         }, actions);
 
         expect(actions.setStatus.mock.calls).toEqual([
-            [{ message: 'Error: Misconfiguration: "resource" or "apiFetchHook" is required' }],
+            [{ message: 'Error: Misconfiguration: "resource" or "apiHook" is required' }],
         ]);
     });
 

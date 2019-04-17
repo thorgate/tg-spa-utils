@@ -18,7 +18,7 @@ import {
     InitialAction,
     SerializeData,
 } from './types';
-import { GetKeyValue } from './utils';
+import { GetKeyValue, mergeKeyOptions } from './utils';
 
 
 /**
@@ -76,7 +76,7 @@ export function createFetchSaga<Klass extends Resource,
     } = options;
 
     function getKeyValue(matchObj: match<Params> | null, meta: FetchMeta) {
-        return GetKeyValue(key, (meta && meta.keyOptions) || (matchObj && matchObj.params));
+        return GetKeyValue(key, mergeKeyOptions(matchObj, meta && meta.keyOptions));
     }
 
     function createCloneableSaga(config: CreateFetchSagaOverrideOptions<Klass, KW, Params, Data> = {}) {
@@ -185,6 +185,8 @@ export function createFetchSaga<Klass extends Resource,
                 ),
 
                 getConfiguration: () => ({ ...mergedOptions, key, listSchema, serializeData }),
+
+                getKeyValue,
 
                 * saveMany(result: any, meta: FetchMeta = {}, matchObj: match<Params> | null = null) {
                     const keyValue = getKeyValue(matchObj, meta);

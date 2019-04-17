@@ -43,4 +43,18 @@ export const createSaveAction = <
     ))
 );
 
+/**
+ * Action creator matching signature:
+ *
+ *   (payload, formikActions = {}) => ({ type, resourceType, payload, meta: formikActions })
+ *
+ * Uses defaultMeta as defaults in place of what formik would give in action.
+ * setStatus must be provided in either defaultMeta or action.
+ *
+ * <b>Notice:</b> As this re-export of `createSaveAction`. Use it instead.
+ *
+ * @param type - Action type
+ * @param defaultMeta - Optional object similar to formikActions for error handling, in case formik cannot be used
+ * @deprecated
+ */
 export const createDeleteAction = createSaveAction;
