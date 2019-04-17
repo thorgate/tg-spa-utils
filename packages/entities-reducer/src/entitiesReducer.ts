@@ -57,10 +57,10 @@ const selectEntities = (state: EntitiesState) => state.data;
 const selectEntityType = (state: EntitiesState, key: string) => selectEntities(state)[key] || {};
 
 const selectOrder = (state: EntitiesState) => state.order;
-const selectEntityOrder = (state: EntitiesState, key: string) => selectOrder(state)[key] || [];
+const selectEntityOrder = (state: EntitiesState, key: string): Array<string | number> => selectOrder(state)[key] || [];
 
 const selectArchived = (state: EntitiesState) => state.archived;
-const selectArchivedEntities = (state: EntitiesState, key: string) => selectArchived(state)[key] || [];
+const selectArchivedEntities = (state: EntitiesState, key: string): Array<string | number> => selectArchived(state)[key] || [];
 
 const selectStatuses = (state: EntitiesState) => state.status;
 const selectEntitiesStatus = (state: EntitiesState, key: string) => selectStatuses(state)[key] || EntityStatus.NotLoaded;
@@ -83,7 +83,7 @@ export const entitiesReducer = (state: EntitiesState = initialState, action: Ent
                 ...state,
             };
 
-            let nextOrder: string[];
+            let nextOrder: Array<string | number>;
             if (meta && meta.preserveOrder) {
                 nextOrder = selectEntityOrder(state, payload.key);
             } else if (meta && meta.updateOrder) {

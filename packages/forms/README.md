@@ -1,8 +1,8 @@
-# `@thorgate/forms`
+# `@thorgate/spa-forms`
 
 > Helper for creating [Redux-Saga](https://github.com/redux-saga/redux-saga)s for saving forms
 
-Typical use-case is with forms done using Formik.
+Typical use-case is with forms done using [Formik](https://github.com/jaredpalmer/formik).
 
 ## Usage
 

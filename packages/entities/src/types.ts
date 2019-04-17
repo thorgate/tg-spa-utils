@@ -169,6 +169,8 @@ export interface FetchSaga<
      */
     getConfiguration: () => CreateFetchSagaOptions<Klass, KW, Params, Data>;
 
+    getKeyValue: (matchObj: match<Params> | null, meta: FetchMeta) => string;
+
     /**
      * Create `@thorgate/spa-view-manager` compatible initial worker saga.
      *   **Notice:** Saga created with `asInitialWorker` throws errors so `@thorgate/spa-view-manager` could catch them and stop loading.

@@ -42,7 +42,7 @@ describe('createResourceSaga', () => {
 
             done(new Error('Expected to fail for missing "resource" and "apiHook".'));
         } catch (error) {
-            expect(error.toString()).toEqual('Error: Misconfiguration: "resource" or "apiFetchHook" is required');
+            expect(error.toString()).toEqual('Error: Misconfiguration: "resource" or "apiHook" is required');
             done();
         }
     });

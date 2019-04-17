@@ -61,7 +61,7 @@ export function createResourceSaga<
             }
 
             if (resource) {
-                resourceEffect = resourceEffectFactory(resource, method, {
+                resourceEffect = resourceEffectFactory(resource, payload.method || method, {
                     kwargs,
                     query,
                     data: payload.data,
@@ -69,9 +69,11 @@ export function createResourceSaga<
                     requestConfig: { initializeSaga: false }, // Disable initialized saga in this context
                 });
             } else if (apiHook) {
-                resourceEffect = call(apiHook, matchObj, action);
+                resourceEffect = call(apiHook, matchObj, Object.assign({}, action, {
+                    payload: Object.assign({}, payload, { kwargs, query }),
+                }));
             } else {
-                throw new Error('Misconfiguration: "resource" or "apiFetchHook" is required');
+                throw new Error('Misconfiguration: "resource" or "apiHook" is required');
             }
 
             const { response, timeout } = yield race({
