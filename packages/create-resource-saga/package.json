@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/create-resource-saga",
-  "version": "1.0.0-alpha.30",
+  "version": "1.0.0-alpha.34",
   "private": false,
   "publishConfig": {
     "access": "public"

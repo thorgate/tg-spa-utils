@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-entities",
-  "version": "1.0.0-alpha.33",
+  "version": "1.0.0-alpha.34",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -32,8 +32,8 @@
     "tg-resources": "^3.1.1"
   },
   "dependencies": {
-    "@thorgate/create-resource-saga": "1.0.0-alpha.30",
-    "@thorgate/spa-entities-reducer": "1.0.0-alpha.31",
+    "@thorgate/create-resource-saga": "1.0.0-alpha.34",
+    "@thorgate/spa-entities-reducer": "1.0.0-alpha.34",
     "@thorgate/spa-errors": "1.0.0-alpha.30",
     "@thorgate/spa-is": "1.0.0-alpha.30",
     "typesafe-actions": "^3.1.0"

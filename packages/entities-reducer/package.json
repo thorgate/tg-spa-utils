@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-entities-reducer",
-  "version": "1.0.0-alpha.31",
+  "version": "1.0.0-alpha.34",
   "private": false,
   "publishConfig": {
     "access": "public"
