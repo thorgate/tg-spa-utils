@@ -62,12 +62,20 @@ export type KeyFn = (keyOptions: KeyOptions | null) => string;
 export type Key = string | KeyFn;
 
 
-export type ListSchemaSelector<RType> = <S extends EntitiesRootState>(state: S, ids?: Array<string | number>) => RType[];
-export type ListKeyOptionsSchemaSelector<
-    RType
-> = <S extends EntitiesRootState>(state: S, keyOptions: KeyOptions | null, ids?: Array<string | number>) => RType[];
+interface InvalidateExtension {
+    invalidate: () => void;
+}
 
-export type DetailSchemaSelector<RType> = <S extends EntitiesRootState>(state: S, id?: string | number) => RType | null;
+export interface ListSchemaSelector<RType> extends InvalidateExtension {
+    <S extends EntitiesRootState>(state: S, ids?: Array<string | number>): RType[];
+}
+export interface ListKeyOptionsSchemaSelector<RType> extends InvalidateExtension {
+    <S extends EntitiesRootState>(state: S, keyOptions: KeyOptions | null, ids?: Array<string | number>): RType[];
+}
+
+export interface DetailSchemaSelector<RType> extends InvalidateExtension {
+    <S extends EntitiesRootState>(state: S, id: string | number): RType | null;
+}
 
 
 export interface CreateFetchSagaOptions<
