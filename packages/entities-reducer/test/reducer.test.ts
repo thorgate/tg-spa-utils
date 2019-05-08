@@ -8,6 +8,7 @@ import {
     entitiesReducer,
     EntitiesRootState,
     entitiesSelectors,
+    EntityStatus,
 } from '../src';
 
 
@@ -80,11 +81,17 @@ describe('reducer works', () => {
     test('setEntities works w/ default meta args', () => {
         const normalizedData = normalize(generateArticles(5, 5), [article]);
 
+        store.dispatch(entitiesActions.setEntitiesStatus({ key: article.key, status: EntityStatus.Fetching }));
+        expect(entitiesSelectors.selectEntitiesStatus(store.getState(), article.key)).toEqual(EntityStatus.Fetching);
+
         store.dispatch(entitiesActions.setEntities({
             key: article.key,
             entities: normalizedData.entities,
             order: normalizedData.result,
         }));
+
+        store.dispatch(entitiesActions.setEntitiesStatus({ key: article.key, status: EntityStatus.Fetched }));
+        expect(entitiesSelectors.selectEntitiesStatus(store.getState(), article.key)).toEqual(EntityStatus.Fetched);
 
         // Expect entities to be created correctly
         expectGlobalEntities(normalizedData);
