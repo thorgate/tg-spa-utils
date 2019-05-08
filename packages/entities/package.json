@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-entities",
-  "version": "1.0.0-alpha.34",
+  "version": "1.0.0-alpha.35",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@thorgate/create-resource-saga": "1.0.0-alpha.34",
-    "@thorgate/spa-entities-reducer": "1.0.0-alpha.34",
+    "@thorgate/spa-entities-reducer": "1.0.0-alpha.35",
     "@thorgate/spa-errors": "1.0.0-alpha.30",
     "@thorgate/spa-is": "1.0.0-alpha.30",
     "lru-cache": "^5.1.1",
