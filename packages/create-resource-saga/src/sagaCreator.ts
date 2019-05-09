@@ -5,10 +5,8 @@ import { call, delay, race } from 'redux-saga/effects';
 import { Resource } from 'tg-resources';
 
 import { validateResourceAction } from './actionCheck';
+import { getBaseConfig } from './configuration';
 import { ResourcePayloadMetaAction, ResourceSaga, ResourceSagaOptions, StringOrSymbol } from './types';
-
-
-export const DEFAULT_TIMEOUT = 3000;
 
 
 /**
@@ -27,8 +25,8 @@ export function createResourceSaga<
         const mergedOptions = { ...options, ...config };
 
         const {
-            timeoutMessage = 'Timeout reached, resource saga failed',
-            timeoutMs = DEFAULT_TIMEOUT,
+            timeoutMessage = getBaseConfig('timeoutMessage'),
+            timeoutMs = getBaseConfig('timeoutMs'),
 
             resource,
             method = 'fetch',

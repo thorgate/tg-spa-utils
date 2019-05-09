@@ -4,8 +4,8 @@ import { match } from 'react-router';
 import { call } from 'redux-saga/effects';
 import { Resource } from 'tg-resources';
 
+import { getFormSagaConfig } from './configuration';
 import { formErrorsHandler } from './formErrors';
-import { defaultMessages } from './messages';
 import { CreateFormSaveSagaOptions, CreateFormSaveSagaReconfigureOptions, SaveActionType, SaveSaga } from './types';
 
 
@@ -16,7 +16,7 @@ export const createFormSaveSaga = <
     Params extends Kwargs<Params> = {},
 >(options: CreateFormSaveSagaOptions<Values, Klass, KW, Params>): SaveSaga<Values, Klass, KW, Params> => {
     const {
-        messages = defaultMessages,
+        messages = getFormSagaConfig('messages'),
         ...baseOptions
     } = options;
 
@@ -35,7 +35,7 @@ export const createFormSaveSaga = <
         } = mergedOptions;
 
         const saga = createResourceSaga({
-            timeoutMessage: 'Timeout reached, form save failed',
+            timeoutMessage: getFormSagaConfig('timeoutMessage'),
             resource,
             method,
             mutateKwargs,

@@ -2,6 +2,16 @@ export { createResourceAction, getResourceType } from './actionCreator';
 
 export { resourceAction } from './actionType';
 
-export { createResourceSaga, DEFAULT_TIMEOUT } from './sagaCreator';
+export { getBaseConfig, setBaseConfig } from './configuration';
 
-export { MetaOptions, ResourceActionPayload, ResourcePayloadMetaAction, ResourceSaga, ResourceSagaOptions, StringOrSymbol } from './types';
+export { createResourceSaga } from './sagaCreator';
+
+export {
+    MetaOptions,
+    ResourceActionPayload,
+    ResourcePayloadMetaAction,
+    ResourceSaga,
+    ResourceSagaConfig,
+    ResourceSagaOptions,
+    StringOrSymbol,
+} from './types';
