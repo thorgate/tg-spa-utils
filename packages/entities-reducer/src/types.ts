@@ -21,6 +21,14 @@ export interface EntitiesStatus {
     [key: string]: EntityStatus.NotLoaded | EntityStatus.Fetching | EntityStatus.Fetched | undefined;
 }
 
+export interface EntitiesMetaDataMap {
+    [key: string]: any | undefined;
+}
+
+export interface EntitiesMetaData {
+    [key: string]: EntitiesMetaDataMap | undefined;
+}
+
 export interface EntityKeyPayload {
     key: string;
 }
@@ -38,11 +46,16 @@ export interface EntitiesStatusPayload extends EntityKeyPayload {
     status: EntityStatus.NotLoaded | EntityStatus.Fetching | EntityStatus.Fetched;
 }
 
+export interface EntitiesMetaDataPayload extends EntityKeyPayload {
+    metaData: EntitiesMetaDataMap;
+}
+
 export interface EntitiesState {
     data: EntitiesData;
     order: EntitiesKeys;
     archived: EntitiesKeys;
     status: EntitiesStatus;
+    metaData: EntitiesMetaData;
 }
 
 export interface EntitiesRootState {
