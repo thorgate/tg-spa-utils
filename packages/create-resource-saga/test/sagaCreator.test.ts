@@ -3,7 +3,7 @@ import { DummyResource } from '@thorgate/test-resource';
 import { ConfigureStore, configureStore } from '@thorgate/test-store';
 import { delay } from 'redux-saga/effects';
 
-import { createResourceSaga } from '../src';
+import { createResourceSaga, setBaseConfig } from '../src';
 import { actions, actionTypeNoMeta, resourceType } from './utils';
 
 
@@ -17,6 +17,9 @@ beforeEach(() => {
     });
 
     resource = new SagaResource('/test', null, DummyResource);
+
+    setBaseConfig('timeoutMessage', 'Timeout error');
+    setBaseConfig('timeoutMs', 3000);
 });
 
 
@@ -47,14 +50,13 @@ describe('createResourceSaga', () => {
         }
     });
 
-    test('request timeout', async (done) => {
+    test('request timeout :: default', async (done) => {
         const saga = createResourceSaga({
             * apiHook() {
                 yield delay(500);
 
                 done(new Error('Expected Saga to be cancelled via timeout.'));
             },
-            timeoutMessage: 'Timeout error',
             timeoutMs: 10,
         });
 
@@ -64,6 +66,27 @@ describe('createResourceSaga', () => {
             done(new Error('Expected Saga to be cancelled via timeout.'));
         } catch (error) {
             expect(error.toString()).toEqual('Error: Timeout error');
+            done();
+        }
+    });
+
+    test('request timeout :: override', async (done) => {
+        const saga = createResourceSaga({
+            * apiHook() {
+                yield delay(500);
+
+                done(new Error('Expected Saga to be cancelled via timeout.'));
+            },
+            timeoutMessage: 'Timeout error override',
+            timeoutMs: 10,
+        });
+
+        try {
+            await store.sagaMiddleware.run(saga, null, actions.noMeta()).toPromise();
+
+            done(new Error('Expected Saga to be cancelled via timeout.'));
+        } catch (error) {
+            expect(error.toString()).toEqual('Error: Timeout error override');
             done();
         }
     });

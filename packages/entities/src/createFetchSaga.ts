@@ -2,12 +2,13 @@ import { createResourceSaga, StringOrSymbol } from '@thorgate/create-resource-sa
 import { entitiesActions, EntityStatus } from '@thorgate/spa-entities-reducer';
 import { errorActions } from '@thorgate/spa-errors';
 import { isFunction, Kwargs } from '@thorgate/spa-is';
-import { normalize, schema } from 'normalizr';
+import { schema } from 'normalizr';
 import { match } from 'react-router';
 import { SagaIterator } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
 import { Resource } from 'tg-resources';
 
+import { getFetchSagaConfig } from './configuration';
 import {
     CreateFetchSagaOptions,
     CreateFetchSagaOverrideOptions,
@@ -34,9 +35,9 @@ export function* saveResults(
     result: any[],
     listSchema: [schema.Entity],
     meta: FetchMeta = {},
-    serialize: SerializeData = normalize
+    serialize?: SerializeData
 ): SagaIterator {
-    const { entities, result: order } = yield call(serialize, result, listSchema);
+    const { entities, result: order } = yield call(serialize || getFetchSagaConfig('serializeData'), result, listSchema);
     yield put(entitiesActions.setEntities({ entities, key, order }, meta));
 
     return { entities, order };
@@ -56,7 +57,7 @@ export function* saveResult(
     result: any,
     detailSchema: schema.Entity,
     meta: FetchMeta = {},
-    serialize: SerializeData = normalize
+    serialize?: SerializeData
 ): SagaIterator {
     return yield call(saveResults, key, [result], [detailSchema], { ...meta, preserveOrder: true }, serialize);
 }
@@ -70,7 +71,7 @@ export function createFetchSaga<Klass extends Resource,
     const {
         key,
         listSchema,
-        serializeData = normalize,
+        serializeData = getFetchSagaConfig('serializeData'),
 
         ...baseOptions
     } = options;

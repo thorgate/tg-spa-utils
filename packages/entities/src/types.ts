@@ -77,13 +77,17 @@ export interface DetailSchemaSelector<RType> extends InvalidateExtension {
     <S extends EntitiesRootState>(state: S, id: string | number): RType | null;
 }
 
+export interface FetchSagaConfig {
+    serializeData: SerializeData;
+}
+
 
 export interface CreateFetchSagaOptions<
     Klass extends Resource,
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {},
     Data = any
-> extends Omit<
+> extends Partial<FetchSagaConfig>, Omit<
     ResourceSagaOptions<EntitiesResourceType, Klass, KW, Params, Data, FetchMeta>, 'apiHook' | 'timeoutMessage' | 'successHook'
 > {
     /**
@@ -117,8 +121,6 @@ export interface CreateFetchSagaOptions<
      * @param action
      */
     successHook?: (result: any, matchObj: match<Params> | null, action: FetchActionType<StringOrSymbol, KW, Data>) => (any | SagaIterator);
-
-    serializeData?: SerializeData;
 
     /**
      * Mutate response before serializing it.

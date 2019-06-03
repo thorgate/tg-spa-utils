@@ -48,6 +48,20 @@ export type ResourcePayloadMetaAction<
   : { type: T; payload: ResourceActionPayload<KW, Data>; meta: Meta; resourceType: ResourceType };
 
 
+export interface ResourceSagaConfig {
+    /**
+     * Error message thrown when timeout occurs
+     */
+    timeoutMessage: string;
+
+    /**
+     * Request timeout in milliseconds
+     *  Default: 3000
+     */
+    timeoutMs: number;
+}
+
+
 export interface ResourceSagaOptions<
     ResourceType extends StringOrSymbol,
     Klass extends Resource,
@@ -55,7 +69,7 @@ export interface ResourceSagaOptions<
     Params extends Kwargs<Params>,
     Data = any,
     Meta = undefined,
-> {
+> extends Partial<ResourceSagaConfig> {
     /**
      * tg-resources instance used for handling request
      *  This is preferred usage. For advanced options use `apiHook`
@@ -109,17 +123,6 @@ export interface ResourceSagaOptions<
     mutateQuery?: (
         matchObj: match<Params> | null, action: ResourcePayloadMetaAction<ResourceType, StringOrSymbol, KW, Data, Meta>
     ) => (any | SagaIterator);
-
-    /**
-     * Error message thrown when timeout occurs
-     */
-    timeoutMessage?: string;
-
-    /**
-     * Request timeout in milliseconds
-     *  Default: 3000
-     */
-    timeoutMs?: number;
 }
 
 

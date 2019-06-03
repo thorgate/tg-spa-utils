@@ -55,12 +55,21 @@ export type SaveActionType<
 > = ResourcePayloadMetaAction<FormsResourceType, T, KW, Values, SaveMeta<Values>>;
 
 
+export interface FormSagaConfig {
+    timeoutMessage: string;
+
+    /**
+     * Error messages.
+     */
+    messages: ErrorMessages;
+}
+
 export interface CreateFormSaveSagaOptions<
     Values,
     Klass extends Resource,
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {}
-> extends Omit<
+> extends Partial<FormSagaConfig>, Omit<
     ResourceSagaOptions<FormsResourceType, Klass, KW, Params, Values, SaveMeta<Values>>,
     'apiHook' | 'timeoutMessage' | 'successHook' | 'method'
 > {
@@ -93,11 +102,6 @@ export interface CreateFormSaveSagaOptions<
      * @param options
      */
     errorHook?: (options: FormErrorHandlerOptions<Values>) => (void | SagaIterator);
-
-    /**
-     * Error messages.
-     */
-    messages?: ErrorMessages;
 }
 
 export type CreateFormSaveSagaReconfigureOptions<
