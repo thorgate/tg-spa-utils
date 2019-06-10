@@ -13,6 +13,7 @@ interface HasState {
     [key: string]: boolean;
 }
 
+// TODO: Should we use setEntitiesMetaData instead of separate reducer?
 export const paginationActions = {
     resetPagination: createAction(
         '@@tg-spa/pagination/RESET',

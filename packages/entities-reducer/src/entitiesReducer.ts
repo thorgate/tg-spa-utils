@@ -3,6 +3,8 @@ import { ActionType, createAction, getType } from 'typesafe-actions';
 import {
     EntitiesIdsPayload,
     EntitiesMeta,
+    EntitiesMetaDataMap,
+    EntitiesMetaDataPayload,
     EntitiesRootState,
     EntitiesState,
     EntitiesStatusPayload,
@@ -29,6 +31,12 @@ export const entitiesActions = {
 
     setEntitiesStatus: createAction('@@tg-spa-entities/SET_ENTITIES_STATUS', (resolve) => (
         (payload: EntitiesStatusPayload) => resolve(payload)
+    )),
+
+    setEntitiesMetaData: createAction('@@tg-spa-entities/SET_ENTITIES_META_DATA', (resolve) => (
+        (payload: EntitiesMetaDataPayload, meta: EntitiesMeta = {}) => {
+            return resolve(payload, { ...defaultActionMeta, ...meta });
+        }
     )),
 
     markArchived: createAction('@@tg-spa-entities/MARK_ARCHIVED', (resolve) => (
@@ -65,12 +73,16 @@ const selectArchivedEntities = (state: EntitiesState, key: string): Array<string
 const selectStatuses = (state: EntitiesState) => state.status;
 const selectEntitiesStatus = (state: EntitiesState, key: string) => selectStatuses(state)[key] || EntityStatus.NotLoaded;
 
+const selectMetaData = (state: EntitiesState) => state.metaData;
+const selectEntitiesMetaData = (state: EntitiesState, key: string) => selectMetaData(state)[key] || {};
+
 
 const initialState: EntitiesState = {
     data: {},
     order: {},
     archived: {},
     status: {},
+    metaData: {},
 };
 
 
@@ -152,6 +164,48 @@ export const entitiesReducer = (state: EntitiesState = initialState, action: Ent
             return Object.assign({}, state, {
                 status: Object.assign({}, state.status, { [action.payload.key]: action.payload.status }),
             });
+
+        case getType(entitiesActions.setEntitiesMetaData): {
+            const { meta, payload } = action;
+
+            let nextEntityMetaData: EntitiesMetaDataMap = {};
+            if (meta && meta.mergeEntities) {
+                if (meta.preserveExisting) {
+                    nextEntityMetaData = { ...state.metaData[payload.key] };
+                }
+                nextEntityMetaData = Object.entries(payload.metaData).reduce((entityMetaData, [metaDataKey, metaDataValue]) => {
+                    const oldValue = entityMetaData[metaDataKey];
+                    let newValue;
+                    if (
+                        oldValue !== null && typeof oldValue === 'object' && !Array.isArray(oldValue)
+                        && metaDataValue !== null && typeof metaDataValue === 'object' && !Array.isArray(metaDataValue)
+                    ) {
+                        newValue = { ...oldValue, ...metaDataValue };
+                    } else {
+                        newValue = metaDataValue;
+                    }
+
+                    return {
+                        ...entityMetaData,
+                        [metaDataKey]: newValue,
+                    };
+                }, nextEntityMetaData);
+
+            } else if (meta && meta.preserveExisting) {
+                nextEntityMetaData = {
+                    ...state.metaData[payload.key],
+                    ...payload.metaData,
+                };
+            } else {
+                nextEntityMetaData = payload.metaData;
+            }
+
+            return Object.assign({}, state, {
+                metaData: Object.assign({}, state.metaData, {
+                    [payload.key]: nextEntityMetaData,
+                }),
+            });
+        }
 
         case getType(entitiesActions.markArchived):
             return Object.assign({}, state, {
@@ -263,4 +317,17 @@ export const entitiesSelectors = {
      * @param key
      */
     selectEntitiesStatus: <S extends EntitiesRootState>(state: S, key: string) => selectEntitiesStatus(selectEntitiesRoot(state), key),
+
+    /**
+     * Select entities metaData.
+     * @param state
+     */
+    selectMetaData: <S extends EntitiesRootState>(state: S) => selectMetaData(selectEntitiesRoot(state)),
+
+    /**
+     * Select specific entity metaData.
+     * @param state
+     * @param key
+     */
+    selectEntitiesMetaData: <S extends EntitiesRootState>(state: S, key: string) => selectEntitiesMetaData(selectEntitiesRoot(state), key),
 };
