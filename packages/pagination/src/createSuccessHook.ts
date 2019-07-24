@@ -1,6 +1,7 @@
-import { FetchActionType, StringOrSymbol } from '@thorgate/spa-entities';
+import { FetchActionType, FetchMeta, GetKeyValue, Key, mergeKeyOptions, StringOrSymbol } from '@thorgate/spa-entities';
 import { Kwargs } from '@thorgate/spa-is';
 import { KwargsType, paginationActions } from '@thorgate/spa-pagination-reducer';
+import { match } from 'react-router';
 import { put, putResolve } from 'redux-saga/effects';
 
 
@@ -10,12 +11,20 @@ export interface Result<R = any> {
     previous: KwargsType;
 }
 
-export const createPaginationSuccessHook = (name: string, setNextOnly: boolean = false, enabled: boolean = true) => (
+export function createPaginationSuccessHook<Params extends Kwargs<Params> = {},
+    >(key: Key, setNextOnly: boolean = false, enabled: boolean = true) {
+    function getKeyValue(matchObj: match<Params> | null, meta: FetchMeta) {
+        return GetKeyValue(key, mergeKeyOptions(matchObj, meta && meta.keyOptions));
+    }
+
     function* paginationSuccessHook<
         R extends Result,
         KW extends Kwargs<KW>,
         A extends FetchActionType<StringOrSymbol, KW, R>
-    >(result: R, _0: any, action: A) {
+    >(result: R, matchObj: match<Params> | null, action: A) {
+        const { meta = {} } = action;
+        const name = getKeyValue(matchObj, meta);
+
         if (result && !Array.isArray(result) && enabled) {
             yield put(paginationActions.setNextKwargs(name, result.next || null));
 
@@ -30,4 +39,5 @@ export const createPaginationSuccessHook = (name: string, setNextOnly: boolean =
             yield putResolve(paginationActions.setPrevKwargs(name));
         }
     }
-);
+    return paginationSuccessHook;
+}
