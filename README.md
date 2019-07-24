@@ -20,6 +20,7 @@ Some of the packages are used by [Thorgate project template (SPA variant)](https
 * [loading-bar](packages/loading-bar/README.md) - controlled loading bar component
 * [named-routes](packages/named-routes/README.md) - routes helper library to add named routes via [react-router-config](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config)
 * [pending-data](packages/pending-data/README.md) - pending data manager used by SPA template
+* [pagination](packages/pagination/README.md) - pagination helpers for use with entities
 * [permissions](packages/permissions/README.md) - permissions helpers used by SPA template
 * [saga-manager](packages/saga-manager/README.md) - helper to hot-reload [Redux-Saga](https://github.com/redux-saga/redux-saga)s
 * [view](packages/view/README.md) - [Redux-Saga](https://github.com/redux-saga/redux-saga) runners used by SPA template

@@ -1,5 +1,5 @@
 import { SagaResource } from '@tg-resources/redux-saga-router';
-import { createFetchAction, createFetchSaga } from '@thorgate/spa-entities';
+import { createFetchAction, createFetchSaga, Key, KeyOptions } from '@thorgate/spa-entities';
 import { entitiesReducer, EntitiesRootState } from '@thorgate/spa-entities-reducer';
 import { errorReducer, ErrorState } from '@thorgate/spa-errors';
 import { paginationReducer, paginationSelectors, PaginationState } from '@thorgate/spa-pagination-reducer';
@@ -28,7 +28,7 @@ beforeEach(() => {
 
 const actionCreator = createFetchAction('TEST_DATA');
 
-const setupData = async (key: string, ...args: any[]) => {
+const setupData = async (key: Key, ...args: any[]) => {
     const resource = new SagaResource('/test', null, DummyResource);
     const data = generateArticles(100, 5);
     resource.resource.Data = {
@@ -44,7 +44,8 @@ const setupData = async (key: string, ...args: any[]) => {
         successHook: createPaginationSuccessHook(key, ...args),
     });
 
-    await store.sagaMiddleware.run(fetchSaga, null, actionCreator({ query: { test: '1' } })).toPromise();
+    const action = actionCreator({ query: { test: '1' } }, { keyOptions: { keyArg: 'testVal' } });
+    await store.sagaMiddleware.run(fetchSaga, null, action).toPromise();
 };
 
 
@@ -80,6 +81,18 @@ describe('createSuccessHook', () => {
         expect(paginationSelectors.selectPrevKwargs(store.getState(), 'test')).toEqual(null);
         expect(paginationSelectors.selectHasNext(store.getState(), 'test')).toEqual(false);
         expect(paginationSelectors.selectHasPrev(store.getState(), 'test')).toEqual(false);
+    });
+
+    test('keyFn works', async () => {
+        const keyFn = (keyOptions: KeyOptions | null) => `test-${keyOptions && keyOptions.keyArg}`;
+        await setupData(keyFn);
+
+        // Expect store values
+        expect(paginationSelectors.selectNextKwargs(store.getState(), 'test-testVal')).toEqual({ page: '2', test: '1' });
+        expect(paginationSelectors.selectCurrentKwargs(store.getState(), 'test-testVal')).toEqual({ test: '1' });
+        expect(paginationSelectors.selectPrevKwargs(store.getState(), 'test-testVal')).toEqual({ page: '1', test: '1' });
+        expect(paginationSelectors.selectHasNext(store.getState(), 'test-testVal')).toEqual(true);
+        expect(paginationSelectors.selectHasPrev(store.getState(), 'test-testVal')).toEqual(true);
     });
 });
 

@@ -394,6 +394,7 @@ describe('reducer works', () => {
             data: {},
             archived: {},
             status: {},
+            metaData: {},
         });
     });
 });
