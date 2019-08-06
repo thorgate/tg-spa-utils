@@ -10,26 +10,63 @@ import { rootReducer, State } from './reducer';
 import { routes, waitLoadingDone } from './TestRoutes';
 
 
-let store: ConfigureStore<State>;
-
-const history = createMemoryHistory({ initialEntries: ['/'] });
-
-beforeEach(() => {
-    store = configureStore(rootReducer(history), routerMiddleware(history));
-
-    resetUrlCache();
-    buildUrlCache(routes);
-});
-
 describe('ViewManager works', () => {
+    const createStore = (initialEntries: string[] = ['/']) => {
+        const history = createMemoryHistory({ initialEntries });
+        const store: ConfigureStore<State> = configureStore(rootReducer(history), routerMiddleware(history));
+
+        resetUrlCache();
+        buildUrlCache(routes);
+        return store;
+    };
+
     test('as worker', async () => {
+        const store = createStore();
         const task = store.sagaMiddleware.run(ServerViewManagerWorker, routes, createLocationAction(store.getState().router));
         await task.toPromise();
 
         expect(store.getState().data.status).toEqual(2);
+        store.dispatch(END);
+    });
+
+    const testSkipInitials = async (skipInitialsForFirstRendering: boolean) => {
+        const store = createStore(['/incrementing']);
+        const serverLocationAction = createLocationAction(store.getState().router);
+        // Mock initial location action that connected-react-router creates
+        // See https://github.com/supasate/connected-react-router/blob/master/src/ConnectedRouter.js#L66
+        const clientLocationAction = { ...serverLocationAction, isFirstRendering: true };
+
+        // First run ViewManager as worker (i.e. SSR)
+        const serverTask = store.sagaMiddleware.run(ServerViewManagerWorker, routes, serverLocationAction);
+        await serverTask.toPromise();
+
+        // Check that data was loaded
+        expect(store.getState().data.status).toEqual(1);
+
+        // Secondly, run ViewManager as watcher (i.e. client-side)
+        const task = store.sagaMiddleware.run(ViewManager, routes, { skipInitialsForFirstRendering });
+        // Dispatch initial
+        store.dispatch(clientLocationAction);
+        await store.sagaMiddleware.run(waitLoadingDone).toPromise();
+
+        // Check if data has been loaded twice (if it was, status would be 2)
+        const expectedStatus = skipInitialsForFirstRendering ? 1 : 2;
+        expect(store.getState().data.status).toEqual(expectedStatus);
+
+        store.dispatch(END);
+        await task.toPromise();
+    };
+
+    test('as worker with skipInitialsForFirstRendering', async () => {
+        await testSkipInitials(true);
+    });
+
+    test('as worker without skipInitialsForFirstRendering', async () => {
+        await testSkipInitials(false);
     });
 
     test('as manager', async () => {
+        const store = createStore();
         jest.setTimeout(10000);
 
         const task = store.sagaMiddleware.run(ViewManager, routes);
