@@ -5,7 +5,7 @@ import { createMemoryHistory } from 'history';
 import { END } from 'redux-saga';
 import { buildUrlCache, resetUrlCache } from 'tg-named-routes';
 
-import { createLocationAction, ServerViewManagerWorker, ViewManager } from '../src';
+import { createLocationAction, ServerViewManagerWorker, ssrRedirectMiddleware, ViewManager } from '../src';
 import { rootReducer, State } from './reducer';
 import { routes, waitLoadingDone } from './TestRoutes';
 
@@ -13,7 +13,7 @@ import { routes, waitLoadingDone } from './TestRoutes';
 describe('ViewManager works', () => {
     const createStore = (initialEntries: string[] = ['/']) => {
         const history = createMemoryHistory({ initialEntries });
-        const store: ConfigureStore<State> = configureStore(rootReducer(history), routerMiddleware(history));
+        const store: ConfigureStore<State> = configureStore(rootReducer(history), ssrRedirectMiddleware(), routerMiddleware(history));
 
         resetUrlCache();
         buildUrlCache(routes);
@@ -29,12 +29,38 @@ describe('ViewManager works', () => {
         store.dispatch(END);
     });
 
+    test('as worker :: context', async () => {
+        const store = createStore(['/redirect']);
+
+        const task = store.sagaMiddleware.run(
+            ServerViewManagerWorker, routes, createLocationAction(store.getState().router), { allowLogger: true },
+        );
+        const result = await task.toPromise();
+
+        expect(result).toEqual({
+            location: {
+                hash: '',
+                search: '',
+                pathname: '/home',
+            },
+        });
+        // Expecting view to redirect and not set status
+        expect(store.getState().data.status).toBeUndefined();
+        store.dispatch(END);
+    });
+
     const testSkipInitials = async (skipInitialsForFirstRendering: boolean) => {
         const store = createStore(['/incrementing']);
         const serverLocationAction = createLocationAction(store.getState().router);
         // Mock initial location action that connected-react-router creates
         // See https://github.com/supasate/connected-react-router/blob/master/src/ConnectedRouter.js#L66
-        const clientLocationAction = { ...serverLocationAction, isFirstRendering: true };
+        const clientLocationAction = {
+            type: serverLocationAction.type,
+            payload: {
+                ...serverLocationAction.payload,
+                isFirstRendering: true,
+            }
+        };
 
         // First run ViewManager as worker (i.e. SSR)
         const serverTask = store.sagaMiddleware.run(ServerViewManagerWorker, routes, serverLocationAction);
@@ -48,13 +74,12 @@ describe('ViewManager works', () => {
         // Dispatch initial
         store.dispatch(clientLocationAction);
         await store.sagaMiddleware.run(waitLoadingDone).toPromise();
+        store.dispatch(END);
+        await task.toPromise();
 
         // Check if data has been loaded twice (if it was, status would be 2)
         const expectedStatus = skipInitialsForFirstRendering ? 1 : 2;
         expect(store.getState().data.status).toEqual(expectedStatus);
-
-        store.dispatch(END);
-        await task.toPromise();
     };
 
     test('as worker with skipInitialsForFirstRendering', async () => {

@@ -6,15 +6,21 @@ import { Resource } from 'tg-resources';
 
 import { getFormSagaConfig } from './configuration';
 import { formErrorsHandler } from './formErrors';
-import { CreateFormSaveSagaOptions, CreateFormSaveSagaReconfigureOptions, SaveActionType, SaveSaga } from './types';
+import {
+    CreateFormSaveSagaOptions,
+    CreateFormSaveSagaReconfigureOptions,
+    FormsResourceType,
+    SaveActionType,
+    SaveMeta,
+    SaveSaga
+} from './types';
 
 
-export const createFormSaveSaga = <
-    Values,
+export const createFormSaveSaga = <Values,
     Klass extends Resource,
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {},
->(options: CreateFormSaveSagaOptions<Values, Klass, KW, Params>): SaveSaga<Values, Klass, KW, Params> => {
+    >(options: CreateFormSaveSagaOptions<Values, Klass, KW, Params>): SaveSaga<Values, Klass, KW, Params> => {
     const {
         messages = getFormSagaConfig('messages'),
         ...baseOptions
@@ -34,7 +40,7 @@ export const createFormSaveSaga = <
             timeoutMs,
         } = mergedOptions;
 
-        const saga = createResourceSaga({
+        const saga = createResourceSaga<FormsResourceType, Klass, KW, Params, Values, SaveMeta<Values>>({
             timeoutMessage: getFormSagaConfig('timeoutMessage'),
             resource,
             method,

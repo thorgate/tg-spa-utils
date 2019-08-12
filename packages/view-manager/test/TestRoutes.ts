@@ -1,5 +1,5 @@
 import { getLoadedView, loadingActions } from '@thorgate/spa-pending-data';
-import { getLocation } from 'connected-react-router';
+import { getLocation, push } from 'connected-react-router';
 import { delay, put, select, take } from 'redux-saga/effects';
 import { getType } from 'typesafe-actions';
 
@@ -26,6 +26,14 @@ function* dummyInitialLanding() {
 function* dummyInitialHome() {
     yield delay(20);
     yield put(setResponse({ status: 3 }));
+}
+
+function* dummyRedirectToHome() {
+    yield delay(200);
+    console.log('dummyRedirectToHome :: redirect', put(push('/home')));
+    yield put(push('/home'));
+    yield delay(200);
+    yield put(setResponse({ status: 1 }));
 }
 
 function* dummyInitialIncrementing() {
@@ -136,6 +144,13 @@ export const routes = [
                 path: '/home',
                 component: () => null,
                 initial: dummyInitialHome,
+            },
+            {
+                name: 'redirect',
+                exact: true,
+                path: '/redirect',
+                component: () => null,
+                initial: dummyRedirectToHome,
             },
             {
                 name: 'test-every',

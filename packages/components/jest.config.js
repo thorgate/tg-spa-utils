@@ -7,5 +7,7 @@ module.exports = Object.assign({}, defaultConfig, {
     displayName: pkg.name,
     rootDir: './',
 
-    setupTestFrameworkScriptFile: 'jest-dom/extend-expect',
+    setupFilesAfterEnv: [
+        '@testing-library/jest-dom/extend-expect',
+    ],
 });

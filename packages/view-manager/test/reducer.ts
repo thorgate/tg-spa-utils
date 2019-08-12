@@ -31,13 +31,11 @@ export const setResponse = (response: any): ApiResponseAction => ({
 });
 
 function reducer(state: Data = initialState, action: ApiResponseAction) {
-    switch (action.type) {
-        case 'API_RESPONSE':
-            return action.response;
-
-        default:
-            return state;
+    if (action.type === 'API_RESPONSE') {
+        return action.response;
     }
+
+    return state;
 }
 
 export const rootReducer = (history: any) => combineReducers({

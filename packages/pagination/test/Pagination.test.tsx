@@ -1,3 +1,4 @@
+import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import {
     paginationActions,
     paginationReducer,
@@ -6,7 +7,6 @@ import {
 import { ConfigureStore, configureStore } from '@thorgate/test-store';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { act, cleanup, fireEvent, render } from 'react-testing-library';
 import { combineReducers } from 'redux';
 
 import { Pagination } from '../src';

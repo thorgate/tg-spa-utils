@@ -72,7 +72,7 @@ const expectEntities = (normalizedData: NormalizedData, expectedData: ExpectEnti
     if (expectedData.entities) {
         expect(entitiesSelectors.selectEntityType(store.getState(), article.key)).toEqual(expectedData.entities);
     } else {
-        expect(entitiesSelectors.selectEntityType(store.getState(), article.key)).toEqual(normalizedData.entities[article.key]);
+        expect(entitiesSelectors.selectEntityType(store.getState(), article.key)).toEqual((normalizedData as any).entities[article.key]);
     }
 };
 

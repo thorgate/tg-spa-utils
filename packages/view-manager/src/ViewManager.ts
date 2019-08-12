@@ -2,24 +2,33 @@ import { Effect, Task } from '@redux-saga/types';
 import { errorActions } from '@thorgate/spa-errors';
 import { Kwargs } from '@thorgate/spa-is';
 import { loadingActions } from '@thorgate/spa-pending-data';
-import { LOCATION_CHANGE, LocationChangeAction, RouterState } from 'connected-react-router';
+import {
+    getLocation,
+    LOCATION_CHANGE,
+    LocationChangeAction,
+    RouterState
+} from 'connected-react-router';
+import { Location } from 'history';
 import { SagaIterator } from 'redux-saga';
-import { all, call, cancel, fork, put, spawn, take } from 'redux-saga/effects';
+import { all, call, cancel, fork, put, race, select, spawn, take } from 'redux-saga/effects';
 import { NamedRouteConfig } from 'tg-named-routes';
 
 import { matchRouteSagas } from './matchRouteSagas';
 import { sagaRunner } from './sagaRunner';
-import { SagaTaskWithArgs, WatcherTasks } from './types';
+import { SagaTaskWithArgs, SSR_REDIRECT_ACTION, SSRRedirectHistoryActions, WatcherTasks } from './types';
 
 
 export interface ViewManagerOptions {
     allowLogger?: boolean;
-    firstRendering?: boolean;
     skipInitialsForFirstRendering?: boolean;
 }
 
+export interface ServerViewManagerContext {
+    location?: Location<any>;
+}
+
 interface RunningWatcherTasks {
-    [routeName: string]: Task[];
+    [routeName: string]: Task;
 }
 
 interface WatcherEffects {
@@ -48,49 +57,52 @@ function* manageWatchers(runningWatchers: RunningWatcherTasks, watcherTasks: Wat
     // Create new tasks
     const watchersToStart: WatcherEffects = {};
     newRouteTasks
-        .filter((routeName) => !alreadyRunning.includes(routeName))
-        .forEach((routeName) => {
-            watchersToStart[routeName] = all(watcherTasks[routeName].map(mapToStartArgs));
+        .filter((taskKey) => !alreadyRunning.includes(taskKey))
+        .forEach((taskKey) => {
+            watchersToStart[taskKey] = mapToStartArgs(watcherTasks[taskKey]);
         });
 
     // Start not running tasks again
     // This is to ensure that watcher that have crashed or have finished execution will be started again
-    newRouteTasks.filter((routeName) => alreadyRunning.includes(routeName)).forEach((routeName) => {
-        if (!runningWatchers[routeName]) {
+    newRouteTasks.filter((taskKey) => alreadyRunning.includes(taskKey)).forEach((taskKey) => {
+        if (!runningWatchers[taskKey]) {
             return;
         }
 
-        runningWatchers[routeName].forEach((task) => {
-            if (task && !task.isRunning()) {
-                watchersToStart[routeName] = all(watcherTasks[routeName].map(mapToStartArgs));
-            }
-        });
+        if (!runningWatchers[taskKey].isRunning()) {
+            watchersToStart[taskKey] = mapToStartArgs(watcherTasks[taskKey]);
+        }
     });
 
     const started = yield all(watchersToStart);
-    Object.keys(started).forEach((key) => {
-        runningWatchers[key] = started[key];
+    Object.keys(started).forEach((taskKey) => {
+        runningWatchers[taskKey] = started[taskKey];
     });
 
     // Stop removed tasks
     const watchersToStop: WatcherEffects = {};
-    alreadyRunning.filter((routeName) => !newRouteTasks.includes(routeName)).forEach((routeName) => {
-        watchersToStop[routeName] = all(runningWatchers[routeName].map((task) => cancel(task)));
+    alreadyRunning.filter((taskKey) => !newRouteTasks.includes(taskKey)).forEach((taskKey) => {
+        watchersToStop[taskKey] = cancel(runningWatchers[taskKey]);
     });
 
     const stopped = yield all(watchersToStop);
     Object.keys(stopped).forEach((key) => {
-        delete runningWatchers[key]; // eslint-disable-line no-param-reassign
+        delete runningWatchers[key];
     });
 }
 
 
-export const createLocationAction = (payload: RouterState): LocationChangeAction => ({ type: LOCATION_CHANGE, payload });
+export const createLocationAction = (payload: RouterState, isFirstRendering: boolean = false): LocationChangeAction => ({
+    type: LOCATION_CHANGE, payload: { ...payload, isFirstRendering },
+});
 
 
-export function* ViewManagerWorker(
-    routes: NamedRouteConfig[], { payload: { location } }: LocationChangeAction,
-    options: ViewManagerOptions = {}, runningWatchers: RunningWatcherTasks = {}
+function* ViewManagerWorker(
+    routes: NamedRouteConfig[],
+    { payload: { location } }: LocationChangeAction,
+    options: ViewManagerOptions = {},
+    runningWatchers: RunningWatcherTasks = {},
+    firstRendering: boolean = false,
 ): SagaIterator {
     try {
         if (process.env.NODE_ENV !== 'production' && options.allowLogger) {
@@ -114,7 +126,7 @@ export function* ViewManagerWorker(
             // Currently connected-react-router creates LOCATION_CHANGE action on router mount
             // To prevent initials running both on server and client, we skip initials for the first rendering
             // See https://github.com/supasate/connected-react-router/blob/master/src/ConnectedRouter.js#L66
-            const initialsLoaded = options.skipInitialsForFirstRendering && options.firstRendering;
+            const initialsLoaded = options.skipInitialsForFirstRendering && firstRendering;
             if (!initialsLoaded) {
                 // Start initial data loading sagas in background
                 yield call(sagaRunner, initials);
@@ -130,14 +142,40 @@ export function* ViewManagerWorker(
     } finally {
         yield put(loadingActions.setLoadedView(location.key));
     }
+
+    // finished
+    return true;
 }
 
 export function* ServerViewManagerWorker(
     routes: NamedRouteConfig[], locationAction: LocationChangeAction, options: ViewManagerOptions = {}
 ): SagaIterator {
+    const context: ServerViewManagerContext = {};
     const runningWatchers = {};
-    yield call(ViewManagerWorker, routes, locationAction, options, runningWatchers);
+
+    const result: {
+        interrupt?: SSRRedirectHistoryActions;
+        finished?: boolean;
+    } = yield race({
+        interrupt: take(SSR_REDIRECT_ACTION),
+        finished: call(ViewManagerWorker, routes, locationAction, options, runningWatchers),
+    });
+
+    if (result.interrupt) {
+        context.location = result.interrupt.location;
+    }
+
+    const location: Location = yield select(getLocation);
+
+    if (location.pathname !== locationAction.payload.location.pathname) {
+        context.location = location;
+    }
+
+    // Reset running tasks
     yield call(manageWatchers, runningWatchers, {});
+
+    // Return resulting context
+    return context;
 }
 
 
@@ -151,8 +189,7 @@ function* runViewManagerWorker(routes: NamedRouteConfig[], runningWatchers: Runn
             yield cancel(task);
         }
 
-        const firstRendering = action.payload.isFirstRendering;
-        task = yield fork(ViewManagerWorker, routes, action, { firstRendering, ...options }, runningWatchers);
+        task = yield fork(ViewManagerWorker, routes, action, options, runningWatchers, action.payload.isFirstRendering);
     }
 }
 
