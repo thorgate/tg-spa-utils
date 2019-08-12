@@ -1,6 +1,7 @@
 import { ActionType, createAction, getType } from 'typesafe-actions';
 
 import {
+    EntitiesData,
     EntitiesIdsPayload,
     EntitiesMeta,
     EntitiesMetaDataMap,
@@ -128,7 +129,7 @@ export const entitiesReducer = (state: EntitiesState = initialState, action: Ent
             // Create new object - will see later what would be the performance impact
             nextState.data = { ...nextState.data };
 
-            Object.entries(payload.entities).forEach(([key, entities]) => {
+            Object.entries<EntitiesData>(payload.entities).forEach(([key, entities]) => {
                 if (meta && !meta.preserveExisting) {
                     nextState.data[key] = entities;
                     return;

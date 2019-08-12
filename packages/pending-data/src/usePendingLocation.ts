@@ -14,7 +14,7 @@ export function usePendingLocation(location: Location, loadedKey: string | undef
         if ((location.key === loadedKey && !disabled) || disabled) {
             setStoredLocation(location);
         }
-    }, [location, loadedKey, disabled]);
+    }, [location.key, loadedKey, disabled]);
 
     return storedLocation || location;
 }

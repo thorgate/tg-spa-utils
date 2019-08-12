@@ -1,5 +1,6 @@
-import { Action, AnyAction, applyMiddleware, createStore, Reducer, Store } from 'redux';
+import { Action, AnyAction, applyMiddleware, createStore, Middleware, Reducer, Store } from 'redux';
 import createSagaMiddleware, { SagaMiddleware } from 'redux-saga';
+import { select, takeEvery } from 'redux-saga/effects';
 
 
 type ExtendedStore<S, T> = S & {
@@ -10,21 +11,18 @@ export type ConfigureStore<S = any, A extends Action = AnyAction> = Store<S, A> 
     sagaMiddleware: SagaMiddleware;
 };
 
-export const configureStore = <S = any, A extends Action = AnyAction>(reducer: Reducer<S, A>, routerMiddleware: any = null): Store<S, A> & {
+export const configureStore = <S = any, A extends Action = AnyAction>(
+    reducer: Reducer<S, A>,
+    ...middlewares: Array<Middleware<any, S, any>>
+): ExtendedStore<Store<S, A>, {
     sagaMiddleware: SagaMiddleware;
-} => {
+}> => {
     const sagaMiddleware = createSagaMiddleware({
         onError: () => null,
     });
 
-    const middlewares = [];
-    if (routerMiddleware) {
-        middlewares.push(routerMiddleware);
-    }
-
-    middlewares.push(sagaMiddleware);
-
-    const store = createStore(reducer, applyMiddleware(...middlewares));
+    const middlewareConfig = [...middlewares, sagaMiddleware];
+    const store = createStore(reducer, applyMiddleware(...middlewareConfig));
 
     (store as any).sagaMiddleware = sagaMiddleware;
 
@@ -32,3 +30,17 @@ export const configureStore = <S = any, A extends Action = AnyAction>(reducer: R
         sagaMiddleware: SagaMiddleware;
     }>;
 };
+
+
+export function* watchAndLog(logAction: boolean = true, logState: boolean = true) {
+    yield takeEvery('*', function* logger(action: any) {
+        if (logAction) {
+            console.log('action', action);
+        }
+
+        if (logState) {
+            const state = yield select();
+            console.log('state after', state);
+        }
+    });
+}

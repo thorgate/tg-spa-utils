@@ -1,7 +1,7 @@
+import '@testing-library/jest-dom/extend-expect';
+import { cleanup } from '@testing-library/react';
+import { renderHook } from '@testing-library/react-hooks';
 import { createMemoryHistory, History, Location } from 'history';
-import 'jest-dom/extend-expect';
-import { renderHook } from 'react-hooks-testing-library';
-import { cleanup } from 'react-testing-library';
 
 import { usePendingLocation } from '../src/usePendingLocation';
 

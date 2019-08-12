@@ -1,6 +1,6 @@
+import { cleanup, render } from '@testing-library/react';
 import * as React from 'react';
 import { StaticContext, StaticRouter } from 'react-router';
-import { cleanup, render } from 'react-testing-library';
 
 import { MessagePanel, PageError, Status } from '../src';
 

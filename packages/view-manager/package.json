@@ -12,7 +12,8 @@
   "license": "MIT",
   "author": "Thorgate <hi@thorgate.eu>",
   "contributors": [
-    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
+    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)",
+    "Kristofer Kirss <kristofer.kirss@hotmail.com> (https://github.com/runekri3)"
   ],
   "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/view-manager#readme",
   "repository": {

@@ -77,7 +77,9 @@ export const matchRouteSagas = <Params extends Kwargs<Params>>(
         warning(route.routeName !== undefined, `RouteName is missing for ${route.path}`);
 
         if (route.watcher && route.routeName !== undefined) {
-            tasks.watchers[route.routeName] = reduceSagas([route.watcher as any], { ...routeMatch, routePattern: route.path });
+            reduceSagas([route.watcher as any], { ...routeMatch, routePattern: route.path }).forEach((value, index) => {
+                tasks.watchers[`${route.routeName}.${index}`] = value;
+            });
         }
     });
 

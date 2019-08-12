@@ -1,14 +1,14 @@
+import '@testing-library/jest-dom/extend-expect';
+import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { ConfigureStore, configureStore } from '@thorgate/test-store';
 import { ConnectedRouter, connectRouter, getLocation, push, RouterRootState } from 'connected-react-router';
 import { createMemoryHistory, History } from 'history';
-import 'jest-dom/extend-expect';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { Route, Switch } from 'react-router';
 import { Link } from 'react-router-dom';
-import { act, cleanup, fireEvent, render } from 'react-testing-library';
-
 import { combineReducers } from 'redux';
+
 import {
     isViewLoaded,
     loadingActions,

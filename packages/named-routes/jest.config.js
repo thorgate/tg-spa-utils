@@ -9,5 +9,7 @@ module.exports = {
     displayName: pkg.name,
     rootDir: './',
 
-    setupTestFrameworkScriptFile: '<rootDir>/../../jest.setup.ts',
+    setupFilesAfterEnv: [
+        '@testing-library/jest-dom/extend-expect',
+    ],
 };
