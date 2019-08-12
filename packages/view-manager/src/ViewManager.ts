@@ -14,6 +14,8 @@ import { SagaTaskWithArgs, WatcherTasks } from './types';
 
 export interface ViewManagerOptions {
     allowLogger?: boolean;
+    firstRendering?: boolean;
+    skipInitialsForFirstRendering?: boolean;
 }
 
 interface RunningWatcherTasks {
@@ -106,10 +108,17 @@ export function* ViewManagerWorker(
         // Any sub-route watcher sagas will be also started
         yield call(manageWatchers, runningWatchers, watchers);
 
-        // if any initial data sagas present, start them
+        // if any initial data sagas present, start them (if necessary)
         if (initials.length) {
-            // Start initial data loading sagas in background
-            yield call(sagaRunner, initials);
+            // Skip running initial sagas if first render
+            // Currently connected-react-router creates LOCATION_CHANGE action on router mount
+            // To prevent initials running both on server and client, we skip initials for the first rendering
+            // See https://github.com/supasate/connected-react-router/blob/master/src/ConnectedRouter.js#L66
+            const initialsLoaded = options.skipInitialsForFirstRendering && options.firstRendering;
+            if (!initialsLoaded) {
+                // Start initial data loading sagas in background
+                yield call(sagaRunner, initials);
+            }
         }
 
         if (process.env.NODE_ENV !== 'production' && options.allowLogger) {
@@ -142,7 +151,8 @@ function* runViewManagerWorker(routes: NamedRouteConfig[], runningWatchers: Runn
             yield cancel(task);
         }
 
-        task = yield fork(ViewManagerWorker, routes, action, options, runningWatchers);
+        const firstRendering = action.payload.isFirstRendering;
+        task = yield fork(ViewManagerWorker, routes, action, { firstRendering, ...options }, runningWatchers);
     }
 }
 

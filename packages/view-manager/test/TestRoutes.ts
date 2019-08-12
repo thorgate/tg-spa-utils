@@ -28,6 +28,16 @@ function* dummyInitialHome() {
     yield put(setResponse({ status: 3 }));
 }
 
+function* dummyInitialIncrementing() {
+    yield delay(20);
+    const status: number | undefined = yield select((state) => state.data.status);
+    if (status) {
+        yield put(setResponse({ status: status + 1 }));
+    } else {
+        yield put(setResponse({ status: 1 }));
+    }
+}
+
 function* dummyWatcher() {
     while (true) {
         const action = yield take('API_RESPONSE');
@@ -95,6 +105,13 @@ export const routes = [
         path: '/error',
         component: () => null,
         initial: dummyError,
+    },
+    {
+        name: 'incrementing',
+        exact: true,
+        path: '/incrementing',
+        component: () => null,
+        initial: dummyInitialIncrementing,
     },
     {
         path: '/',
