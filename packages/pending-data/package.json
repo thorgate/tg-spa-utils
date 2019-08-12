@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-pending-data",
-  "version": "1.0.0-alpha.30",
+  "version": "1.0.0-alpha.37",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -39,8 +39,8 @@
   },
   "dependencies": {
     "@thorgate/spa-is": "1.0.0-alpha.30",
-    "tg-loading-bar": "1.0.0-alpha.30",
-    "tg-named-routes": "1.0.0-alpha.30"
+    "tg-loading-bar": "1.0.0-alpha.37",
+    "tg-named-routes": "1.0.0-alpha.37"
   },
   "scripts": {
     "clean": "rimraf ./lib",

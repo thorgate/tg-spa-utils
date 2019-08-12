@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-components",
-  "version": "1.0.0-alpha.30",
+  "version": "1.0.0-alpha.37",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -35,7 +35,7 @@
     "react-router": "^4.3.0 || ^5.0.0"
   },
   "dependencies": {
-    "tg-named-routes": "1.0.0-alpha.30",
+    "tg-named-routes": "1.0.0-alpha.37",
     "warning": "^4.0.2"
   },
   "scripts": {

@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/create-resource-saga",
-  "version": "1.0.0-alpha.36",
+  "version": "1.0.0-alpha.37",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@thorgate/test-resource": "1.0.0-alpha.14",
-    "@thorgate/test-store": "1.0.0-alpha.28"
+    "@thorgate/test-store": "1.0.0-alpha.37"
   },
   "scripts": {
     "clean": "rimraf ./lib",
