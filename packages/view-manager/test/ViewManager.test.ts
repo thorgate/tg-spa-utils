@@ -32,12 +32,17 @@ describe('ViewManager works', () => {
     test('as worker :: context', async () => {
         const store = createStore(['/redirect']);
 
+        const context = {};
         const task = store.sagaMiddleware.run(
-            ServerViewManagerWorker, routes, createLocationAction(store.getState().router), { allowLogger: true },
+            ServerViewManagerWorker,
+            routes,
+            createLocationAction(store.getState().router),
+            { allowLogger: true },
+            context,
         );
-        const result = await task.toPromise();
+        await task.toPromise();
 
-        expect(result).toEqual({
+        expect(context).toEqual({
             location: {
                 hash: '',
                 search: '',

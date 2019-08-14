@@ -142,15 +142,14 @@ function* ViewManagerWorker(
     } finally {
         yield put(loadingActions.setLoadedView(location.key));
     }
-
-    // finished
-    return true;
 }
 
 export function* ServerViewManagerWorker(
-    routes: NamedRouteConfig[], locationAction: LocationChangeAction, options: ViewManagerOptions = {}
+    routes: NamedRouteConfig[],
+    locationAction: LocationChangeAction,
+    options: ViewManagerOptions = {},
+    context: ServerViewManagerContext = {}
 ): SagaIterator {
-    const context: ServerViewManagerContext = {};
     const runningWatchers = {};
 
     const result: {
@@ -173,9 +172,6 @@ export function* ServerViewManagerWorker(
 
     // Reset running tasks
     yield call(manageWatchers, runningWatchers, {});
-
-    // Return resulting context
-    return context;
 }
 
 
