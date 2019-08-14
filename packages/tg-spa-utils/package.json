@@ -1,6 +1,6 @@
 {
   "name": "tg-spa-utils",
-  "version": "1.0.0-alpha.37",
+  "version": "1.0.0-alpha.38",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -34,7 +34,7 @@
     "@thorgate/spa-pending-data": "1.0.0-alpha.37",
     "@thorgate/spa-permissions": "1.0.0-alpha.37",
     "@thorgate/spa-view": "1.0.0-alpha.37",
-    "@thorgate/spa-view-manager": "1.0.0-alpha.37"
+    "@thorgate/spa-view-manager": "1.0.0-alpha.38"
   },
   "scripts": {
     "clean": "rimraf ./lib",

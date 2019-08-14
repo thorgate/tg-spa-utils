@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-view-manager",
-  "version": "1.0.0-alpha.37",
+  "version": "1.0.0-alpha.38",
   "private": false,
   "publishConfig": {
     "access": "public"
