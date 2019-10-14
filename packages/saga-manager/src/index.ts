@@ -3,13 +3,11 @@ import { Store } from 'redux';
 import { SagaMiddleware } from 'redux-saga';
 import { call, cancel, fork, take } from 'redux-saga/effects';
 
-
 export type ReportError = (error: any) => void;
 export type RootSaga = (hot?: boolean) => SagaIterator;
 
 const CANCEL_SAGAS_HMR = '@@tg-saga-manager/CANCEL_SAGAS_HMR';
 const DEFAULT_RETRIES = 10;
-
 
 export interface ReloadOptions {
     enableHotReload?: boolean;
@@ -17,15 +15,18 @@ export interface ReloadOptions {
     onError?: ReportError;
 }
 
-function* runAbortAbleSaga(saga: RootSaga, hot: boolean = false, options?: ReloadOptions) {
+function* runAbortAbleSaga(
+    saga: RootSaga,
+    hot: boolean = false,
+    options?: ReloadOptions
+) {
     const maxRetries = (options && options.maxRetries) || DEFAULT_RETRIES;
     let retryCount = 0;
 
-    const enableHotReload = (options && options.enableHotReload !== undefined) ? (
-        options.enableHotReload
-    ) : (
-        process.env.NODE_ENV !== 'production'
-    );
+    const enableHotReload =
+        options && options.enableHotReload !== undefined
+            ? options.enableHotReload
+            : process.env.NODE_ENV !== 'production';
 
     while (retryCount < maxRetries) {
         try {
@@ -40,7 +41,6 @@ function* runAbortAbleSaga(saga: RootSaga, hot: boolean = false, options?: Reloa
             } else {
                 yield call(saga, retryCount > 0);
             }
-
         } catch (err) {
             if (options && options.onError) {
                 options.onError(err);
@@ -51,9 +51,12 @@ function* runAbortAbleSaga(saga: RootSaga, hot: boolean = false, options?: Reloa
     }
 }
 
-
 export class SagaHotReloader<S = any> {
-    public constructor(store: Store<S>, sagaMiddleWare: SagaMiddleware, options?: ReloadOptions) {
+    public constructor(
+        store: Store<S>,
+        sagaMiddleWare: SagaMiddleware,
+        options?: ReloadOptions
+    ) {
         this.store = store;
         this.sagaMiddleWare = sagaMiddleWare;
         this.options = options;
@@ -69,7 +72,12 @@ export class SagaHotReloader<S = any> {
     private _runningTask: Task | null = null;
 
     public startRootSaga(saga: RootSaga) {
-        this._runningTask = this.sagaMiddleWare.run(runAbortAbleSaga, saga, false, this.options);
+        this._runningTask = this.sagaMiddleWare.run(
+            runAbortAbleSaga,
+            saga,
+            false,
+            this.options
+        );
     }
 
     public stopRootSaga() {
@@ -93,7 +101,12 @@ export class SagaHotReloader<S = any> {
 
         return (this.stopRootSaga() as Promise<any>).then(() => {
             console.log('Replaced root saga.');
-            this._runningTask = this.sagaMiddleWare.run(runAbortAbleSaga, saga, true, this.options);
+            this._runningTask = this.sagaMiddleWare.run(
+                runAbortAbleSaga,
+                saga,
+                true,
+                this.options
+            );
         });
     }
 }

@@ -5,7 +5,6 @@ import { ComponentType } from 'react';
 import { match } from 'react-router';
 import { RouteConfig, RouteConfigComponentProps } from 'react-router-config';
 
-
 export interface NamedRouteConfigComponentProps<
     Params extends { [K in keyof Params]?: string } = {}
 > extends RouteConfigComponentProps<Params> {
@@ -30,24 +29,30 @@ export interface NamedComponentProps {
 export interface NamedRouteConfig extends RouteConfig {
     routeName?: string;
     name?: string;
-    component?: ComponentType<NamedRouteConfigComponentProps<any> | {}> | ComponentType<any>;
+    path?: string;
+    component?:
+        | ComponentType<NamedRouteConfigComponentProps<any> | {}>
+        | ComponentType<any>;
     routes?: NamedRouteConfig[];
 
     [key: string]: any;
 }
 
-export interface MatchedNamedRoute<Params extends { [K in keyof Params]?: string }> {
+export interface MatchedNamedRoute<
+    Params extends { [K in keyof Params]?: string }
+> {
     route: NamedRouteConfig;
     match: match<Params>;
 }
 
-let urlMapCache: {
-    [key: string]: {
-        pattern: string;
-        resolve: (kwargs: object) => string;
-    };
-} = {};
+interface URLCache {
+    pattern: string;
+    resolve: (kwargs: object) => string;
+}
 
+let urlMapCache: {
+    [key: string]: URLCache;
+} = {};
 
 /**
  * Format path namespace and
@@ -56,7 +61,11 @@ let urlMapCache: {
  * @param pathName Route name
  * @return Generated route name
  */
-export function cleanPathName(separator: string, namespace: string | null, pathName?: string | null): string {
+export function cleanPathName(
+    separator: string,
+    namespace: string | null,
+    pathName?: string | null
+): string {
     if (!namespace && !pathName) {
         return '';
     }
@@ -72,7 +81,6 @@ export function cleanPathName(separator: string, namespace: string | null, pathN
     return routeName.replace(`${separator}${separator}`, `${separator}`);
 }
 
-
 /**
  * Generate named path resolve and pattern cache.
  * Routes are built recursively.
@@ -83,14 +91,21 @@ export function cleanPathName(separator: string, namespace: string | null, pathN
  * @param [routeNames=[]] For internal use only, used to keep track of generated URLs
  */
 export function buildUrlCache(
-    routeData: NamedRouteConfig[], separator: string = ':', namespace: string | null = null, routeNames: string[] = [],
+    routeData: NamedRouteConfig[],
+    separator: string = ':',
+    namespace: string | null = null,
+    routeNames: string[] = []
 ) {
-    routeData.forEach((route) => {
+    routeData.forEach(route => {
         route.routeName = cleanPathName(separator, namespace, route.name);
 
         // Prevent duplicate route names.
         if (routeNames.includes(route.routeName)) {
-            throw Error(`Duplicated route name: ${route.routeName} Route: ${JSON.stringify(route)}`);
+            throw Error(
+                `Duplicated route name: ${
+                    route.routeName
+                } Route: ${JSON.stringify(route)}`
+            );
         }
         routeNames.push(route.routeName);
 
@@ -107,7 +122,6 @@ export function buildUrlCache(
     });
 }
 
-
 /**
  * Get list of url names.
  *
@@ -117,7 +131,6 @@ export function getUrlNames(): string[] {
     return Object.keys(urlMapCache);
 }
 
-
 /**
  * Reset URL cache.
  *
@@ -126,7 +139,6 @@ export function getUrlNames(): string[] {
 export function resetUrlCache() {
     urlMapCache = {};
 }
-
 
 /**
  * Resolve url name to valid path.
@@ -142,7 +154,10 @@ export function resetUrlCache() {
  * @returns URL matching name and kwargs
  */
 export function resolvePath(
-    name: string, kwargs: Kwargs = null, query: Query = null, state: LocationState = null,
+    name: string,
+    kwargs: Kwargs = null,
+    query: Query = null,
+    state: LocationState = null
 ): Location {
     if (!Object.keys(urlMapCache).length) {
         throw new Error('Missing route data, did you call `buildUrlCache`');
@@ -179,7 +194,6 @@ export function resolvePath(
     };
 }
 
-
 /**
  * Resolve route pattern
  *
@@ -196,7 +210,6 @@ export function resolvePattern(name: string): string {
 
     return urlMapCache[name].pattern;
 }
-
 
 /**
  * Serialize location object to string

@@ -1,8 +1,11 @@
 import { Location } from 'history';
 import { useEffect, useState } from 'react';
 
-
-export function usePendingLocation(location: Location, loadedKey: string | undefined, disabled: boolean = false) {
+export function usePendingLocation(
+    location: Location,
+    loadedKey: string | undefined,
+    disabled: boolean = false
+) {
     const [storedLocation, setStoredLocation] = useState<Location | null>(null);
 
     // Apply initial location

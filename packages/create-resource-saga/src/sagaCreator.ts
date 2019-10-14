@@ -6,22 +6,37 @@ import { Resource } from 'tg-resources';
 
 import { validateResourceAction } from './actionCheck';
 import { getBaseConfig } from './configuration';
-import { ResourcePayloadMetaAction, ResourceSaga, ResourceSagaOptions, StringOrSymbol } from './types';
-
+import {
+    ResourcePayloadMetaAction,
+    ResourceSaga,
+    ResourceSagaOptions,
+    TypeConstant,
+} from './types';
 
 /**
  * Create resource saga with pre-defined settings.
  * @param options - Options to configure resource saga
  */
 export function createResourceSaga<
-    ResourceType extends StringOrSymbol,
+    ResourceType extends TypeConstant,
     Klass extends Resource,
     KW extends Kwargs<KW>,
     Params extends Kwargs<Params>,
     Data = any,
-    Meta = undefined,
->(options: ResourceSagaOptions<ResourceType, Klass, KW, Params, Data, Meta>): ResourceSaga<ResourceType, Klass, KW, Params, Data, Meta> {
-    function createCloneableSaga(config: ResourceSagaOptions<ResourceType, Klass, KW, Params, Data, Meta> = {}) {
+    Meta = undefined
+>(
+    options: ResourceSagaOptions<ResourceType, Klass, KW, Params, Data, Meta>
+): ResourceSaga<ResourceType, Klass, KW, Params, Data, Meta> {
+    function createCloneableSaga(
+        config: ResourceSagaOptions<
+            ResourceType,
+            Klass,
+            KW,
+            Params,
+            Data,
+            Meta
+        > = {}
+    ) {
         const mergedOptions = { ...options, ...config };
 
         const {
@@ -38,11 +53,21 @@ export function createResourceSaga<
 
         function* resourceSaga(
             matchObj: match<Params> | null,
-            action: ResourcePayloadMetaAction<ResourceType, StringOrSymbol, KW, Data, Meta>
+            action: ResourcePayloadMetaAction<
+                ResourceType,
+                TypeConstant,
+                KW,
+                Data,
+                Meta
+            >
         ) {
             // Expect action created with createResourceAction
             validateResourceAction(action.type, 'type', 'Action');
-            validateResourceAction(action.resourceType, 'resourceType', 'Action');
+            validateResourceAction(
+                action.resourceType,
+                'resourceType',
+                'Action'
+            );
 
             const { payload } = action;
 
@@ -59,19 +84,29 @@ export function createResourceSaga<
             }
 
             if (resource) {
-                resourceEffect = resourceEffectFactory(resource, payload.method || method, {
-                    kwargs,
-                    query,
-                    data: payload.data,
-                    attachments: payload.attachments,
-                    requestConfig: { initializeSaga: false }, // Disable initialized saga in this context
-                });
+                resourceEffect = resourceEffectFactory(
+                    resource,
+                    payload.method || method,
+                    {
+                        kwargs,
+                        query,
+                        data: payload.data,
+                        attachments: payload.attachments,
+                        requestConfig: { initializeSaga: false }, // Disable initialized saga in this context
+                    }
+                );
             } else if (apiHook) {
-                resourceEffect = call(apiHook, matchObj, Object.assign({}, action, {
-                    payload: Object.assign({}, payload, { kwargs, query }),
-                }));
+                resourceEffect = call(
+                    apiHook,
+                    matchObj,
+                    Object.assign({}, action, {
+                        payload: Object.assign({}, payload, { kwargs, query }),
+                    })
+                );
             } else {
-                throw new Error('Misconfiguration: "resource" or "apiHook" is required');
+                throw new Error(
+                    'Misconfiguration: "resource" or "apiHook" is required'
+                );
             }
 
             const { response, timeout } = yield race({
@@ -88,15 +123,25 @@ export function createResourceSaga<
             }
         }
 
-        return Object.assign(
-            resourceSaga, {
-                cloneSaga: (override: ResourceSagaOptions<ResourceType, Klass, KW, Params, Data, Meta>) => (
-                    createCloneableSaga(override)
-                ),
+        return Object.assign(resourceSaga, {
+            cloneSaga: (
+                override: ResourceSagaOptions<
+                    ResourceType,
+                    Klass,
+                    KW,
+                    Params,
+                    Data,
+                    Meta
+                >
+            ) => createCloneableSaga(override),
 
-                getConfiguration: () => ({ ...mergedOptions, method, timeoutMs, timeoutMessage }),
-            },
-        );
+            getConfiguration: () => ({
+                ...mergedOptions,
+                method,
+                timeoutMs,
+                timeoutMessage,
+            }),
+        });
     }
 
     return createCloneableSaga();

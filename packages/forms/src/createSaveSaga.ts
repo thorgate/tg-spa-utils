@@ -1,4 +1,7 @@
-import { createResourceSaga, StringOrSymbol } from '@thorgate/create-resource-saga';
+import {
+    createResourceSaga,
+    TypeConstant,
+} from '@thorgate/create-resource-saga';
 import { Kwargs } from '@thorgate/spa-is';
 import { match } from 'react-router';
 import { call } from 'redux-saga/effects';
@@ -12,21 +15,30 @@ import {
     FormsResourceType,
     SaveActionType,
     SaveMeta,
-    SaveSaga
+    SaveSaga,
 } from './types';
 
-
-export const createFormSaveSaga = <Values,
+export const createFormSaveSaga = <
+    Values,
     Klass extends Resource,
     KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {},
-    >(options: CreateFormSaveSagaOptions<Values, Klass, KW, Params>): SaveSaga<Values, Klass, KW, Params> => {
+    Params extends Kwargs<Params> = {}
+>(
+    options: CreateFormSaveSagaOptions<Values, Klass, KW, Params>
+): SaveSaga<Values, Klass, KW, Params> => {
     const {
         messages = getFormSagaConfig('messages'),
         ...baseOptions
     } = options;
 
-    function createCloneableSaga(config: CreateFormSaveSagaReconfigureOptions<Values, Klass, KW, Params> = {}) {
+    function createCloneableSaga(
+        config: CreateFormSaveSagaReconfigureOptions<
+            Values,
+            Klass,
+            KW,
+            Params
+        > = {}
+    ) {
         const mergedOptions = { ...baseOptions, ...config };
 
         const {
@@ -40,7 +52,14 @@ export const createFormSaveSaga = <Values,
             timeoutMs,
         } = mergedOptions;
 
-        const saga = createResourceSaga<FormsResourceType, Klass, KW, Params, Values, SaveMeta<Values>>({
+        const saga = createResourceSaga<
+            FormsResourceType,
+            Klass,
+            KW,
+            Params,
+            Values,
+            SaveMeta<Values>
+        >({
             timeoutMessage: getFormSagaConfig('timeoutMessage'),
             resource,
             method,
@@ -51,14 +70,16 @@ export const createFormSaveSaga = <Values,
             timeoutMs,
         });
 
-        function* formSaveSaga(matchObj: match<Params> | null, action: SaveActionType<StringOrSymbol, Values, KW>) {
+        function* formSaveSaga(
+            matchObj: match<Params> | null,
+            action: SaveActionType<TypeConstant, Values, KW>
+        ) {
             if (!(action as any)) {
                 throw new Error('Action is required for formSaveSaga');
             }
 
             try {
                 yield call(saga, matchObj, action);
-
             } catch (error) {
                 yield call(errorHook || formErrorsHandler, {
                     messages,
@@ -76,15 +97,18 @@ export const createFormSaveSaga = <Values,
             }
         }
 
-        return Object.assign(
-            formSaveSaga, {
-                cloneSaga: (override: CreateFormSaveSagaReconfigureOptions<Values, Klass, KW, Params> = {}) => (
-                    createCloneableSaga(override)
-                ),
+        return Object.assign(formSaveSaga, {
+            cloneSaga: (
+                override: CreateFormSaveSagaReconfigureOptions<
+                    Values,
+                    Klass,
+                    KW,
+                    Params
+                > = {}
+            ) => createCloneableSaga(override),
 
-                getConfiguration: () => ({ ...mergedOptions, messages, method }),
-            }
-        );
+            getConfiguration: () => ({ ...mergedOptions, messages, method }),
+        });
     }
 
     return createCloneableSaga();

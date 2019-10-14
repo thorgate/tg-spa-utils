@@ -1,17 +1,22 @@
 import { article, comment, generateArticles, generateComments, user } from '@thorgate/test-data';
 import { ConfigureStore, configureStore } from '@thorgate/test-store';
-import * as normalizr from 'normalizr';
+import { normalize } from 'normalizr';
+import { combineReducers } from 'redux';
 
 import {
     createDetailSchemaSelector,
     createSchemaSelector,
     entitiesActions,
+    entitiesReducer,
+    EntitiesRootState,
 } from '../src';
 
-import { reducer, State } from './reducer';
+const reducer = combineReducers({
+    entities: entitiesReducer,
+});
 
 
-let store: ConfigureStore<State>;
+let store: ConfigureStore<EntitiesRootState>;
 
 beforeEach(() => {
     store = configureStore(reducer);
@@ -19,7 +24,7 @@ beforeEach(() => {
 
 
 const pushDataToStore = (schema: any, data: any) => {
-    const normalizedData = normalizr.normalize(data, [schema]);
+    const normalizedData = normalize(data, [schema]);
 
     store.dispatch(entitiesActions.setEntities({
         key: schema.key,
@@ -29,7 +34,6 @@ const pushDataToStore = (schema: any, data: any) => {
 };
 
 
-// TODO: mock with real implementation `denormalize` and inspect that it is not called second time
 describe('createSchemaSelector works', () => {
     test('root schema selector works', () => {
         const schemaSelector = createSchemaSelector(article, article.key, { max: Infinity });

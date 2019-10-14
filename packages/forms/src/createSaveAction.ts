@@ -1,13 +1,14 @@
-import { createResourceAction, ResourceActionPayload } from '@thorgate/create-resource-saga';
+import {
+    createResourceAction,
+    ResourceActionPayload,
+} from '@thorgate/create-resource-saga';
 import { Kwargs, OptionalMap } from '@thorgate/spa-is';
 
 import { FormsResource, SaveMeta } from './types';
 
-
 export const setStatusNoop = (_0: any) => null;
 export const setErrorsNoop = (_0: any) => null;
 export const setSubmittingNoop = (_0: boolean) => null;
-
 
 /**
  * Action creator matching signature:
@@ -21,15 +22,24 @@ export const setSubmittingNoop = (_0: boolean) => null;
  * @param defaultMeta - Optional object similar to formikActions for error handling, in case formik cannot be used
  */
 export const createSaveAction = <
-    T extends string, Values, KW extends Kwargs<KW> = {}
+    T extends string,
+    Values,
+    KW extends Kwargs<KW> = {}
 >(
     type: T,
-    defaultMeta: OptionalMap<SaveMeta<Values>> = {},
-) => (
-    createResourceAction(FormsResource, type, (resolve) => (
-        (payload: ResourceActionPayload<KW, Values>, meta: OptionalMap<SaveMeta<Values>> = {}) => {
+    defaultMeta: OptionalMap<SaveMeta<Values>> = {}
+) =>
+    createResourceAction(
+        FormsResource,
+        type,
+        resolve => (
+            payload: ResourceActionPayload<KW, Values>,
+            meta: OptionalMap<SaveMeta<Values>> = {}
+        ) => {
             if (!defaultMeta.setStatus && !meta.setStatus) {
-                throw new Error(`Save/delete action "${type}" misconfiguration. setStatus is required.`);
+                throw new Error(
+                    `Save/delete action "${type}" misconfiguration. setStatus is required.`
+                );
             }
 
             return resolve(payload, {
@@ -40,8 +50,7 @@ export const createSaveAction = <
                 ...meta,
             });
         }
-    ))
-);
+    );
 
 /**
  * Action creator matching signature:

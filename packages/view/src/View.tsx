@@ -1,15 +1,29 @@
 import {
-    ComponentErrorCallback, ErrorBoundary, ErrorComponent, ErrorState, ErrorType, getError
+    ComponentErrorCallback,
+    ErrorBoundary,
+    ErrorComponent,
+    ErrorState,
+    ErrorType,
+    getError,
 } from '@thorgate/spa-errors';
-import { getUser, isAuthenticated, User, UserState } from '@thorgate/spa-permissions';
-import React, { Component, ComponentClass, ComponentType, ReactNode } from 'react';
+import {
+    getUser,
+    isAuthenticated,
+    User,
+    UserState,
+} from '@thorgate/spa-permissions';
+import React, {
+    Component,
+    ComponentClass,
+    ComponentType,
+    ReactNode,
+} from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { NamedRouteConfigComponentProps } from 'tg-named-routes';
 
 import { SafeStorage } from './Storage';
 import { getSessionStorage, windowPageOffset, windowScroll } from './Window';
-
 
 declare var window: Window | undefined;
 
@@ -33,8 +47,10 @@ export interface ViewProps {
     children?: ReactNode;
 }
 
-interface ViewInternalProps extends ViewProps, ViewProvidedProps, NamedRouteConfigComponentProps {
-}
+interface ViewInternalProps
+    extends ViewProps,
+        ViewProvidedProps,
+        NamedRouteConfigComponentProps {}
 
 interface ViewBaseSnapshot {
     locationUpdate?: boolean;
@@ -43,15 +59,17 @@ interface ViewBaseSnapshot {
 
 type ViewSnapshot = ViewBaseSnapshot | null;
 
-
 function shouldHandleScrollRestoration(): boolean {
     if (typeof window === 'undefined') {
         return false;
     }
 
-    return window.history && window.history.scrollRestoration && window.history.scrollRestoration !== 'auto';
+    return (
+        window.history &&
+        window.history.scrollRestoration &&
+        window.history.scrollRestoration !== 'auto'
+    );
 }
-
 
 class ViewBase extends Component<ViewInternalProps, never, ViewSnapshot> {
     public static defaultProps = {
@@ -124,12 +142,17 @@ class ViewBase extends Component<ViewInternalProps, never, ViewSnapshot> {
             return;
         }
 
-        const { history: { action }, location: { key = 'root', hash } } = this.props;
+        const {
+            history: { action },
+            location: { key = 'root', hash },
+        } = this.props;
         let scrollToTop = hash.length === 0;
 
         // POP means user is going forward or backward in history, restore previous scroll position
         if (action === 'POP') {
-            const pos = this.sessionStorage.getItem(`View.scrollPositions.${key}`);
+            const pos = this.sessionStorage.getItem(
+                `View.scrollPositions.${key}`
+            );
             if (pos) {
                 const [posX, posY] = pos.split(';');
 
@@ -161,14 +184,16 @@ class ViewBase extends Component<ViewInternalProps, never, ViewSnapshot> {
         }
 
         // Remember scroll position so we can restore if we return to this view via browser history
-        const { location: { key = 'root' } } = this.props;
+        const {
+            location: { key = 'root' },
+        } = this.props;
         const [x, y] = windowPageOffset();
 
         this.sessionStorage.setItem(`View.scrollPositions.${key}`, `${x};${y}`);
     };
 
     protected renderChildren = () => {
-        const children = React.Children.map(this.props.children, (child) => {
+        const children = React.Children.map(this.props.children, child => {
             return React.cloneElement(child as any, {
                 error: this.props.error,
                 isAuthenticated: this.props.isAuthenticated,
@@ -178,11 +203,7 @@ class ViewBase extends Component<ViewInternalProps, never, ViewSnapshot> {
 
         let content: ReactNode = children;
         if (this.props.className) {
-            content = (
-                <div className={this.props.className}>
-                    {children}
-                </div>
-            );
+            content = <div className={this.props.className}>{children}</div>;
         }
 
         return (
@@ -197,8 +218,7 @@ class ViewBase extends Component<ViewInternalProps, never, ViewSnapshot> {
     };
 }
 
-interface ReduxState extends ErrorState, UserState {
-}
+interface ReduxState extends ErrorState, UserState {}
 
 const mapStateToProps = (state: ReduxState) => ({
     error: getError(state),
@@ -206,4 +226,6 @@ const mapStateToProps = (state: ReduxState) => ({
     user: getUser(state),
 });
 
-export const View: ComponentClass<ViewProps> = withRouter(connect(mapStateToProps)(ViewBase));
+export const View: ComponentClass<ViewProps> = withRouter(
+    connect(mapStateToProps)(ViewBase)
+);

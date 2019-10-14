@@ -1,6 +1,5 @@
 type StorageType = Storage | null;
 
-
 export class SafeStorage {
     protected storageObject: StorageType;
 

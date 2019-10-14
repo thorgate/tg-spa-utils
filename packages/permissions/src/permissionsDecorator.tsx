@@ -1,11 +1,18 @@
 import React, { ComponentType, FC } from 'react';
 
-import { PermissionCheck, PermissionCheckFn, PermissionCheckProps } from './PermissionCheck';
-
+import {
+    PermissionCheck,
+    PermissionCheckFn,
+    PermissionCheckProps,
+} from './PermissionCheck';
 
 export type CreateDecoratorOptions = Pick<
     PermissionCheckProps,
-    'redirectRouteName' | 'PermissionDeniedComponent' |'hideWithoutPermissions' | 'permissionDeniedStatusCodes' | 'redirectParam'
+    | 'redirectRouteName'
+    | 'PermissionDeniedComponent'
+    | 'hideWithoutPermissions'
+    | 'permissionDeniedStatusCodes'
+    | 'redirectParam'
 >;
 
 /**
@@ -23,10 +30,12 @@ export type CreateDecoratorOptions = Pick<
  * @returns HoC function to wrap component e.g permissionCheck(...)(Component)
  */
 export const permissionCheck = (
-    permissionCheckFn: PermissionCheckFn, displayName: string | null = null, options: CreateDecoratorOptions = {}
-) => (
+    permissionCheckFn: PermissionCheckFn,
+    displayName: string | null = null,
+    options: CreateDecoratorOptions = {}
+) =>
     function decorator<Props>(Component: ComponentType<Props>) {
-        const WrappedComponent: FC<Props> = (props) => (
+        const WrappedComponent: FC<Props> = props => (
             <PermissionCheck
                 permissionCheck={permissionCheckFn}
                 redirectRouteName={options.redirectRouteName}
@@ -37,11 +46,10 @@ export const permissionCheck = (
         );
 
         const baseName = displayName || 'permissionCheck';
-        WrappedComponent.displayName = `${baseName}(${Component.displayName || Component.name})`;
+        WrappedComponent.displayName = `${baseName}(${Component.displayName ||
+            Component.name})`;
         return WrappedComponent;
-    }
-);
-
+    };
 
 /**
  * Check if user is authenticated, if not then user is returned to login screen.
@@ -52,5 +60,5 @@ export const permissionCheck = (
  */
 export const loginRequired = permissionCheck(
     ({ isAuthenticated }) => isAuthenticated,
-    'loginRequired',
+    'loginRequired'
 );

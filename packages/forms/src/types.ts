@@ -1,21 +1,26 @@
-import { ResourcePayloadMetaAction, ResourceSagaOptions, StringOrSymbol } from '@thorgate/create-resource-saga';
-import { Kwargs, Omit } from '@thorgate/spa-is';
+import {
+    ResourcePayloadMetaAction,
+    ResourceSagaOptions,
+    TypeConstant,
+} from '@thorgate/create-resource-saga';
+import { Kwargs } from '@thorgate/spa-is';
 import { FormikErrors, FormikProps } from 'formik';
 import { match } from 'react-router';
 import { SagaIterator } from 'redux-saga';
-import { Resource, ResourceErrorInterface, ResourcePostMethods } from 'tg-resources';
-
+import {
+    Resource,
+    ResourceErrorInterface,
+    ResourcePostMethods,
+} from 'tg-resources';
 
 export const FormsResource = '@@thorgate/spa-entities';
 export type FormsResourceType = typeof FormsResource;
-
 
 export interface StatusMessage {
     message?: string;
 
     [key: string]: any;
 }
-
 
 export interface ErrorMessages {
     network: string;
@@ -43,17 +48,25 @@ export interface NestedError {
 
 export type NestedErrorType = string | null | NestedError;
 
-
-export interface SaveMeta<Values> extends Pick<FormikProps<Values>, 'setErrors' | 'setStatus' | 'setSubmitting'> {
+export interface SaveMeta<Values>
+    extends Pick<
+        FormikProps<Values>,
+        'setErrors' | 'setStatus' | 'setSubmitting'
+    > {
     [key: string]: any;
 }
 
 export type SaveActionType<
-    T extends StringOrSymbol,
+    T extends TypeConstant,
     Values,
     KW extends Kwargs<KW> = {}
-> = ResourcePayloadMetaAction<FormsResourceType, T, KW, Values, SaveMeta<Values>>;
-
+> = ResourcePayloadMetaAction<
+    FormsResourceType,
+    T,
+    KW,
+    Values,
+    SaveMeta<Values>
+>;
 
 export interface FormSagaConfig {
     timeoutMessage: string;
@@ -69,10 +82,19 @@ export interface CreateFormSaveSagaOptions<
     Klass extends Resource,
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {}
-> extends Partial<FormSagaConfig>, Omit<
-    ResourceSagaOptions<FormsResourceType, Klass, KW, Params, Values, SaveMeta<Values>>,
-    'apiHook' | 'timeoutMessage' | 'successHook' | 'method'
-> {
+>
+    extends Partial<FormSagaConfig>,
+        Omit<
+            ResourceSagaOptions<
+                FormsResourceType,
+                Klass,
+                KW,
+                Params,
+                Values,
+                SaveMeta<Values>
+            >,
+            'apiHook' | 'timeoutMessage' | 'successHook' | 'method'
+        > {
     /**
      * tg-resource method to call `resource` with.
      *   **Notice:** by default only POST like methods are supported. For more special configurations use `apiSaveHook`.
@@ -85,7 +107,10 @@ export interface CreateFormSaveSagaOptions<
      * @param matchObj
      * @param action
      */
-    apiSaveHook?: (matchObj: match<Params> | null, action: SaveActionType<StringOrSymbol, Values, KW>) => (any | SagaIterator);
+    apiSaveHook?: (
+        matchObj: match<Params> | null,
+        action: SaveActionType<TypeConstant, Values, KW>
+    ) => any | SagaIterator;
 
     /**
      * Successful request handler. This is only called when saving was successful, e.g resource or apiSaveHook did not throw any errors.
@@ -94,14 +119,20 @@ export interface CreateFormSaveSagaOptions<
      * @param matchObj
      * @param action
      */
-    successHook: (result: any, matchObj: match<Params> | null, action: SaveActionType<StringOrSymbol, Values, KW>) => (any | SagaIterator);
+    successHook: (
+        result: any,
+        matchObj: match<Params> | null,
+        action: SaveActionType<TypeConstant, Values, KW>
+    ) => any | SagaIterator;
 
     /**
      * Error handler called when `resource` or `apiSaveHook` throws any error.
      *
      * @param options
      */
-    errorHook?: (options: FormErrorHandlerOptions<Values>) => (void | SagaIterator);
+    errorHook?: (
+        options: FormErrorHandlerOptions<Values>
+    ) => void | SagaIterator;
 }
 
 export type CreateFormSaveSagaReconfigureOptions<
@@ -109,8 +140,9 @@ export type CreateFormSaveSagaReconfigureOptions<
     Klass extends Resource,
     KW extends Kwargs<KW> = {},
     Params extends Kwargs<Params> = {}
-> = Partial<Omit<CreateFormSaveSagaOptions<Values, Klass, KW, Params>, 'messages'>>;
-
+> = Partial<
+    Omit<CreateFormSaveSagaOptions<Values, Klass, KW, Params>, 'messages'>
+>;
 
 export interface SaveSaga<
     Values,
@@ -124,7 +156,10 @@ export interface SaveSaga<
      * @param matchObj
      * @param action
      */
-    (matchObj: match<Params> | null, action: SaveActionType<StringOrSymbol, Values, KW>): SagaIterator;
+    (
+        matchObj: match<Params> | null,
+        action: SaveActionType<TypeConstant, Values, KW>
+    ): SagaIterator;
 
     /**
      * Clone configured saga and create new saga with updated values.
@@ -138,5 +173,10 @@ export interface SaveSaga<
     /**
      * Get currently used resource saga config.
      */
-    getConfiguration: () => CreateFormSaveSagaOptions<Values, Klass, KW, Params>;
+    getConfiguration: () => CreateFormSaveSagaOptions<
+        Values,
+        Klass,
+        KW,
+        Params
+    >;
 }

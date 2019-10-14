@@ -12,27 +12,23 @@ import {
 import { defaultMessages } from './messages';
 import { FormErrorHandlerOptions, NestedErrorType } from './types';
 
+const isValidationError = (error: any): error is ValidationErrorInterface =>
+    error.isValidationError;
 
-const isValidationError = (error: any): error is ValidationErrorInterface => (
-    error.isValidationError
-);
+const isStatusCodeError = (error: any): error is InvalidResponseCode =>
+    error.isInvalidResponseCode;
 
-const isStatusCodeError = (error: any): error is InvalidResponseCode => (
-    error.isInvalidResponseCode
-);
-
-const isNetworkError = (error: any): error is NetworkError => (
-    error.isNetworkError
-);
-
+const isNetworkError = (error: any): error is NetworkError =>
+    error.isNetworkError;
 
 interface ErrorMapping {
     field: string;
     error: ValidationErrorType;
 }
 
-
-export function reduceNestedErrors(error: ValidationErrorType): NestedErrorType {
+export function reduceNestedErrors(
+    error: ValidationErrorType
+): NestedErrorType {
     if (!error || !error.hasError()) {
         return null;
     }
@@ -48,27 +44,32 @@ export function reduceNestedErrors(error: ValidationErrorType): NestedErrorType 
     const errors: ValidationErrorInterface[] = Object.values(error.errors);
 
     return errors
-        .map((e: ValidationErrorInterface) => ({ field: e.fieldName, error: e }))
-        .reduce((result: any, current: any) => {
-            result[current.field] = reduceNestedErrors(current.error);
-            return result;
-        }, {} as NestedErrorType);
+        .map((e: ValidationErrorInterface) => ({
+            field: e.fieldName,
+            error: e,
+        }))
+        .reduce(
+            (result: any, current: any) => {
+                result[current.field] = reduceNestedErrors(current.error);
+                return result;
+            },
+            {} as NestedErrorType
+        );
 }
 
-
-export function* formErrorsHandler<Values>(options: FormErrorHandlerOptions<Values>): SagaIterator {
+export function* formErrorsHandler<Values>(
+    options: FormErrorHandlerOptions<Values>
+): SagaIterator {
     const { error, messages = defaultMessages, setErrors, setStatus } = options;
 
     if (isNetworkError(error)) {
         yield call(setStatus, {
             message: messages.network,
         });
-
     } else if (isStatusCodeError(error)) {
         yield call(setStatus, {
             message: messages.invalidResponseCode,
         });
-
     } else if (isValidationError(error)) {
         const { nonFieldErrors } = error.errors;
 
@@ -79,8 +80,14 @@ export function* formErrorsHandler<Values>(options: FormErrorHandlerOptions<Valu
         }
 
         const fields = error.errors
-            .filter((e: ValidationErrorInterface) => e.fieldName !== 'nonFieldErrors')
-            .map((e: ValidationErrorInterface) => ({ field: e.fieldName, error: e }))
+            .filter(
+                (e: ValidationErrorInterface) =>
+                    e.fieldName !== 'nonFieldErrors'
+            )
+            .map((e: ValidationErrorInterface) => ({
+                field: e.fieldName,
+                error: e,
+            }))
             .reduce((result: any, current: ErrorMapping) => {
                 const currentError = reduceNestedErrors(current.error);
 

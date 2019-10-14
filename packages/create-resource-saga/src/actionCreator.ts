@@ -2,15 +2,20 @@ import { Kwargs } from '@thorgate/spa-is';
 
 import { validateResourceAction } from './actionCheck';
 import { resourceAction } from './actionType';
-import { ActionCreator, ResourceActionPayload, ResourcePayloadMetaAction, StringOrSymbol } from './types';
-
+import {
+    ActionCreator,
+    ResourceActionPayload,
+    ResourcePayloadMetaAction,
+    TypeConstant,
+} from './types';
 
 /**
  * Get the "resource type literal" of a given resource action-creator
  */
-export function getResourceType<ResourceType extends StringOrSymbol, T extends StringOrSymbol>(
-    creator: ActionCreator<ResourceType, T>
-): ResourceType {
+export function getResourceType<
+    ResourceType extends TypeConstant,
+    T extends TypeConstant
+>(creator: ActionCreator<ResourceType, T>): ResourceType {
     // istanbul ignore next: safeguard against invalid parameters
     if ((creator as any) == null) {
         throw new Error('first argument is missing');
@@ -18,7 +23,9 @@ export function getResourceType<ResourceType extends StringOrSymbol, T extends S
 
     // istanbul ignore next: safeguard against invalid parameters
     if (typeof creator.getResourceType === 'undefined') {
-        throw new Error('first argument is not an instance of "@thorgate/create-saga-resource" action');
+        throw new Error(
+            'first argument is not an instance of "@thorgate/create-saga-resource" action'
+        );
     }
 
     return creator.getResourceType();
@@ -31,8 +38,8 @@ export function getResourceType<ResourceType extends StringOrSymbol, T extends S
  * @param actionResolverHandler - Action creator helper
  */
 export function createResourceAction<
-    ResourceType extends StringOrSymbol,
-    T extends StringOrSymbol,
+    ResourceType extends TypeConstant,
+    T extends TypeConstant,
     AC extends ActionCreator<ResourceType, T>
 >(
     resourceType: ResourceType,
@@ -47,9 +54,11 @@ export function createResourceAction<
     validateResourceAction(resourceType, 1);
     validateResourceAction(actionType, 2);
 
-    const actionCreator: AC = actionResolverHandler(
-        resourceAction.bind(null, resourceType, actionType) as Parameters<typeof actionResolverHandler>[0]
-    );
+    const actionCreator: AC = actionResolverHandler(resourceAction.bind(
+        null,
+        resourceType,
+        actionType
+    ) as Parameters<typeof actionResolverHandler>[0]);
 
     return Object.assign(actionCreator, {
         getType: () => actionType,
