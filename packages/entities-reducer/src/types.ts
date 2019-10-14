@@ -4,29 +4,42 @@ export enum EntityStatus {
     Fetched = 'Fetched',
 }
 
+export interface DataObject {
+    readonly [key: string]: any;
+}
 
 export interface EntitiesDataMap {
-    [id: string]: any | undefined;
+    readonly [id: string]: DataObject | undefined;
 }
 
 export interface EntitiesData {
-    [key: string]: EntitiesDataMap | undefined;
+    readonly [key: string]: EntitiesDataMap;
 }
 
 export interface EntitiesKeys {
-    [key: string]: Array<string | number> | undefined;
+    readonly [key: string]: Array<string | number> | undefined;
 }
 
 export interface EntitiesStatus {
-    [key: string]: EntityStatus.NotLoaded | EntityStatus.Fetching | EntityStatus.Fetched | undefined;
+    readonly [key: string]:
+        | EntityStatus.NotLoaded
+        | EntityStatus.Fetching
+        | EntityStatus.Fetched
+        | undefined;
 }
 
 export interface EntitiesMetaDataMap {
-    [key: string]: any | undefined;
+    readonly [key: string]:
+        | DataObject
+        | string
+        | number
+        | any[]
+        | null
+        | undefined;
 }
 
 export interface EntitiesMetaData {
-    [key: string]: EntitiesMetaDataMap | undefined;
+    readonly [key: string]: EntitiesMetaDataMap;
 }
 
 export interface EntityKeyPayload {
@@ -34,7 +47,7 @@ export interface EntityKeyPayload {
 }
 
 export interface SetEntitiesPayload extends EntityKeyPayload {
-    entities: any;
+    entities: EntitiesData;
     order: string | number | Array<string | number>;
 }
 
@@ -43,7 +56,10 @@ export interface EntitiesIdsPayload extends EntityKeyPayload {
 }
 
 export interface EntitiesStatusPayload extends EntityKeyPayload {
-    status: EntityStatus.NotLoaded | EntityStatus.Fetching | EntityStatus.Fetched;
+    status:
+        | EntityStatus.NotLoaded
+        | EntityStatus.Fetching
+        | EntityStatus.Fetched;
 }
 
 export interface EntitiesMetaDataPayload extends EntityKeyPayload {
@@ -51,17 +67,45 @@ export interface EntitiesMetaDataPayload extends EntityKeyPayload {
 }
 
 export interface EntitiesState {
-    data: EntitiesData;
-    order: EntitiesKeys;
-    archived: EntitiesKeys;
-    status: EntitiesStatus;
-    metaData: EntitiesMetaData;
+    readonly data: EntitiesData;
+    readonly order: EntitiesKeys;
+    readonly archived: EntitiesKeys;
+    readonly status: EntitiesStatus;
+    readonly metaData: EntitiesMetaData;
 }
 
 export interface EntitiesRootState {
-    entities: EntitiesState;
+    readonly entities: EntitiesState;
 }
 
+export type KeyOptions = DataObject;
+
+export type KeyFn = (keyOptions: KeyOptions | null) => string;
+
+export type Key = string | KeyFn;
+
+interface InvalidateExtension {
+    invalidate: () => void;
+}
+
+export interface ListSchemaSelector<RType> extends InvalidateExtension {
+    <S extends EntitiesRootState>(
+        state: S,
+        ids?: Array<string | number>
+    ): RType[];
+}
+export interface ListKeyOptionsSchemaSelector<RType>
+    extends InvalidateExtension {
+    <S extends EntitiesRootState>(
+        state: S,
+        keyOptions: KeyOptions | null,
+        ids?: Array<string | number>
+    ): RType[];
+}
+
+export interface DetailSchemaSelector<RType> extends InvalidateExtension {
+    <S extends EntitiesRootState>(state: S, id: string | number): RType | null;
+}
 
 /**
  * Normalized fetch options
@@ -78,6 +122,12 @@ export interface EntitiesMeta {
      *  Default: false
      */
     mergeEntities?: boolean;
+
+    /**
+     * Merge existing metadata objects.
+     *  Default: false
+     */
+    mergeMetadata?: boolean;
 
     /**
      * Preserve existing order, only update existing entities.

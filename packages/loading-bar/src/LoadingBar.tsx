@@ -1,10 +1,8 @@
 import React, { Component, CSSProperties } from 'react';
 
-
 // Declare window value is undefined in some cases
 // TSLint detects that window is always defined otherwise
 declare var window: Window | undefined;
-
 
 export interface LoadingBarProps {
     isLoading: boolean;
@@ -20,7 +18,6 @@ interface LoadingBarState {
     delayShow: boolean;
     delayHide: boolean;
 }
-
 
 export class LoadingBar extends Component<LoadingBarProps, LoadingBarState> {
     public static defaultProps: Partial<LoadingBarProps> = {
@@ -58,7 +55,7 @@ export class LoadingBar extends Component<LoadingBarProps, LoadingBarState> {
     }
 
     public show = () => {
-        this.setState((prevState) => ({
+        this.setState(prevState => ({
             delayShow: true,
             percent: this.calculateVisiblePercentage(prevState.percent),
         }));
@@ -78,12 +75,14 @@ export class LoadingBar extends Component<LoadingBarProps, LoadingBarState> {
         });
 
         // Clear the delay flag & hide loading bar
-        setTimeout(() => (
-            this.setState({
-                delayHide: false,
-                percent: 0,
-            })
-        ), this.props.hideDelay);
+        setTimeout(
+            () =>
+                this.setState({
+                    delayHide: false,
+                    percent: 0,
+                }),
+            this.props.hideDelay
+        );
     };
 
     public calculateVisiblePercentage = (percentage: number): number => {
@@ -115,7 +114,10 @@ export class LoadingBar extends Component<LoadingBarProps, LoadingBarState> {
             if (this.props.simulateInterval > 0) {
                 this.stopSimulate();
 
-                this.simulateInterval = window.setInterval(this.show, this.props.simulateInterval);
+                this.simulateInterval = window.setInterval(
+                    this.show,
+                    this.props.simulateInterval
+                );
             }
         }
     }
@@ -137,7 +139,7 @@ export class LoadingBar extends Component<LoadingBarProps, LoadingBarState> {
             ...style,
 
             width: delayShow ? 0 : `${percent * 100}%`,
-            display: (delayHide || percent > 0) ? 'block' : 'none',
+            display: delayHide || percent > 0 ? 'block' : 'none',
         };
     }
 
@@ -145,7 +147,10 @@ export class LoadingBar extends Component<LoadingBarProps, LoadingBarState> {
         const { className, style } = this.props;
 
         return (
-            <div className={`tg-loading-bar ${className || ''}`} style={this.loadingBarStyles(style)} />
+            <div
+                className={`tg-loading-bar ${className || ''}`}
+                style={this.loadingBarStyles(style)}
+            />
         );
     }
 }

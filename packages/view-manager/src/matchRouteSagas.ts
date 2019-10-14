@@ -11,13 +11,13 @@ import {
     SagaRunnerTask,
     SagaRunnerTasks,
     SagaTaskType,
-    SagaTaskWithArgs
+    SagaTaskWithArgs,
 } from './types';
 
-
-const mapSaga = <
-    Params extends Kwargs<Params> = {}
->(sagaToMap: SagaTaskType<Params>, routeMatch: MatchWithRoute<Params>): SagaTaskWithArgs<Params> => {
+const mapSaga = <Params extends Kwargs<Params> = {}>(
+    sagaToMap: SagaTaskType<Params>,
+    routeMatch: MatchWithRoute<Params>
+): SagaTaskWithArgs<Params> => {
     if (isRouteSagaObject(sagaToMap)) {
         const { saga, args = [] } = sagaToMap;
 
@@ -44,25 +44,32 @@ const mapSaga = <
     throw new Error('Misconfiguration: Route saga task is invalid.');
 };
 
+const reduceSagas = <Params extends Kwargs<Params> = {}>(
+    sagas: SagaRunnerTasks<Params>,
+    routeMatch: MatchWithRoute<Params>
+): MatchedSagas<Params> =>
+    sagas.reduce(
+        (result: MatchedSagas<Params>, saga: SagaRunnerTask<Params>) => {
+            if (Array.isArray(saga)) {
+                return result.concat(
+                    saga.map(sagaObj => mapSaga(sagaObj, routeMatch))
+                );
+            }
 
-const reduceSagas = <
-    Params extends Kwargs<Params> = {}
->(sagas: SagaRunnerTasks<Params>, routeMatch: MatchWithRoute<Params>): MatchedSagas<Params> => (
-    sagas.reduce((result: MatchedSagas<Params>, saga: SagaRunnerTask<Params>) => {
-        if (Array.isArray(saga)) {
-            return result.concat(saga.map((sagaObj) => mapSaga(sagaObj, routeMatch)));
-        }
-
-        result.push(mapSaga(saga, routeMatch));
-        return result;
-    }, [])
-);
-
+            result.push(mapSaga(saga, routeMatch));
+            return result;
+        },
+        []
+    );
 
 export const matchRouteSagas = <Params extends Kwargs<Params>>(
-    routes: NamedRouteConfig[], pathName: string,
+    routes: NamedRouteConfig[],
+    pathName: string
 ): MatchRouteSagas => {
-    const branch: Array<MatchedNamedRoute<Params>> = matchRoutes(routes, pathName) as any;
+    const branch: Array<MatchedNamedRoute<Params>> = matchRoutes(
+        routes,
+        pathName
+    ) as any;
 
     const tasks: MatchRouteSagas = {
         initials: [],
@@ -71,13 +78,24 @@ export const matchRouteSagas = <Params extends Kwargs<Params>>(
 
     branch.forEach(({ route, match: routeMatch }) => {
         if (route.initial) {
-            tasks.initials.push(...reduceSagas([route.initial as any], { ...routeMatch, routePattern: route.path }));
+            tasks.initials.push(
+                ...reduceSagas([route.initial as any], {
+                    ...routeMatch,
+                    routePattern: route.path,
+                })
+            );
         }
 
-        warning(route.routeName !== undefined, `RouteName is missing for ${route.path}`);
+        warning(
+            route.routeName !== undefined,
+            `RouteName is missing for ${route.path}`
+        );
 
         if (route.watcher && route.routeName !== undefined) {
-            reduceSagas([route.watcher as any], { ...routeMatch, routePattern: route.path }).forEach((value, index) => {
+            reduceSagas([route.watcher as any], {
+                ...routeMatch,
+                routePattern: route.path,
+            }).forEach((value, index) => {
                 tasks.watchers[`${route.routeName}.${index}`] = value;
             });
         }

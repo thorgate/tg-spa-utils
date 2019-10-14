@@ -1,11 +1,15 @@
 {
-  "extends": ["tslint:recommended", "tslint-config-standard", "tslint-react"],
+  "extends": [
+    "tslint:recommended", "tslint-config-standard", "tslint-react", "tslint-plugin-prettier"
+  ],
   "linterOptions": {
     "exclude": [
       "**/lib/**/*.ts"
     ]
   },
   "rules": {
+    "prettier": [true, "/prettier.config.js"],
+    "arrow-parens": [true, "ban-single-arg-parens"],
     "jsx-wrap-multiline": false,
     "align": [true, "parameters", "statements"],
     "ban": false,
@@ -14,9 +18,8 @@
     "curly": true,
     "eofline": false,
     "forin": true,
-    "ter-indent": [true, 4, {
-      "SwitchCase": 1
-    }],
+    "ter-indent": false,
+    "ter-func-call-spacing": false,
     "indent": [true, "spaces"],
     "interface-name": [true, "never-prefix"],
     "interface-over-type-literal": false,

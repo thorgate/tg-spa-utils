@@ -4,15 +4,13 @@ import { SafeStorage } from './Storage';
 // TSLint detects that window is always defined otherwise
 declare var window: Window | undefined;
 
+export const getSessionStorage = () =>
+    new SafeStorage(
+        typeof window !== 'undefined' ? window.sessionStorage : null
+    );
 
-export const getSessionStorage = () => (
-    new SafeStorage(typeof window !== 'undefined' ? window.sessionStorage : null)
-);
-
-export const getLocalStorage = () => (
-    new SafeStorage(typeof window !== 'undefined' ? window.localStorage : null)
-);
-
+export const getLocalStorage = () =>
+    new SafeStorage(typeof window !== 'undefined' ? window.localStorage : null);
 
 export const windowScroll = (x: number, y: number) => {
     if (typeof window !== 'undefined') {

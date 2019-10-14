@@ -13,5 +13,5 @@ export {
     ResourceSaga,
     ResourceSagaConfig,
     ResourceSagaOptions,
-    StringOrSymbol,
+    TypeConstant,
 } from './types';

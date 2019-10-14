@@ -1,29 +1,21 @@
 import { ActionType, createAction, getType } from 'typesafe-actions';
 
-
 export const loadingActions = {
     setLoadedView: createAction(
         '@@tg-spa-pending-data/FINISH_LOADING_VIEW',
-        (resolve) => (
-            (key: string | undefined) => resolve(key)
-        )
+        resolve => (key: string | undefined) => resolve(key)
     ),
     startLoadingResource: createAction(
         '@@tg-spa-pending-data/START_LOADING_DATA',
-        (resolve) => (
-            (key: string) => resolve(key)
-        ),
+        resolve => (key: string) => resolve(key)
     ),
     finishLoadingResource: createAction(
         '@@tg-spa-pending-data/FINISH_LOADING_DATA',
-        (resolve) => (
-            (key: string) => resolve(key)
-        ),
+        resolve => (key: string) => resolve(key)
     ),
 };
 
 export type LoadingActions = ActionType<typeof loadingActions>;
-
 
 interface DataLoadingState {
     [key: string]: boolean;
@@ -43,7 +35,10 @@ const initialState: LoadingStateType = {
     view: undefined,
 };
 
-export function loadingReducer(state: LoadingStateType = initialState, action: LoadingActions): LoadingStateType {
+export function loadingReducer(
+    state: LoadingStateType = initialState,
+    action: LoadingActions
+): LoadingStateType {
     switch (action.type) {
         case getType(loadingActions.setLoadedView):
             return {
@@ -78,19 +73,19 @@ export function loadingReducer(state: LoadingStateType = initialState, action: L
     }
 }
 
+export const getLoadedView = <T extends LoadingState>(state: T) =>
+    state.loading.view;
 
-export const getLoadedView = <T extends LoadingState>(state: T) => (
-    state.loading.view
-);
+export const isViewLoaded = <T extends LoadingState>(
+    state: T,
+    locationKey: string | undefined
+) => state.loading.view === locationKey;
 
-export const isViewLoaded = <T extends LoadingState>(state: T, locationKey: string | undefined) => (
-    state.loading.view === locationKey
-);
+export const isDataLoading = <T extends LoadingState>(state: T, key: string) =>
+    state.loading.data[key] || false;
 
-export const isDataLoading = <T extends LoadingState>(state: T, key: string) => (
-    state.loading.data[key] || false
-);
-
-export const isLoading = <T extends LoadingState>(state: T) => (
-    Object.keys(state.loading.data).reduce((current, key) => (current || isDataLoading(state, key)), false)
-);
+export const isLoading = <T extends LoadingState>(state: T) =>
+    Object.keys(state.loading.data).reduce(
+        (current, key) => current || isDataLoading(state, key),
+        false
+    );

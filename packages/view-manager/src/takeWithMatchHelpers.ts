@@ -10,31 +10,35 @@ import {
     ForkEffect,
     select,
     Tail,
-    take
+    take,
 } from 'redux-saga/effects';
 import { First, Last } from 'typescript-tuple';
 
 import { MatchWithRoute } from './types';
 
-
 export type AllButFirst<L extends any[]> = Tail<L>;
 
 export type HelperProviderParameters<
-    T, Params extends Kwargs<Params>, Fn extends (...args: [any, ...any[]]) => any
-> = Last<Parameters<Fn>> extends T ? (
-    First<Parameters<Fn>> extends MatchWithRoute<Params> ? AllButFirst<AllButLast<Parameters<Fn>>> : never
-) : never;
-
+    T,
+    Params extends Kwargs<Params>,
+    Fn extends (...args: [any, ...any[]]) => any
+> = Last<Parameters<Fn>> extends T
+    ? (First<Parameters<Fn>> extends MatchWithRoute<Params>
+          ? AllButFirst<AllButLast<Parameters<Fn>>>
+          : never)
+    : never;
 
 export function takeEveryWithMatch<
     A extends Action,
     Fn extends (...args: any[]) => any,
     Params extends Kwargs<Params> = {}
 >(
-    actionPattern: ActionPattern<A>, routePattern: string | undefined,
-    saga: Fn, ...args: HelperProviderParameters<A, Params, Fn>
+    actionPattern: ActionPattern<A>,
+    routePattern: string | undefined,
+    saga: Fn,
+    ...args: HelperProviderParameters<A, Params, Fn>
 ): ForkEffect {
-    return fork(function* () {
+    return fork(function*() {
         if (!routePattern) {
             throw new Error('Route pattern is required');
         }
@@ -48,16 +52,17 @@ export function takeEveryWithMatch<
     });
 }
 
-
 export function takeLatestWithMatch<
     A extends Action,
     Fn extends (...args: any[]) => any,
     Params extends Kwargs<Params> = {}
 >(
-    actionPattern: ActionPattern<A>, routePattern: string | undefined,
-    saga: Fn, ...args: HelperProviderParameters<A, Params, Fn>
+    actionPattern: ActionPattern<A>,
+    routePattern: string | undefined,
+    saga: Fn,
+    ...args: HelperProviderParameters<A, Params, Fn>
 ): ForkEffect {
-    return fork(function* () {
+    return fork(function*() {
         if (!routePattern) {
             throw new Error('Route pattern is required');
         }
@@ -76,16 +81,17 @@ export function takeLatestWithMatch<
     });
 }
 
-
 export function takeLeadingWithMatch<
     A extends Action,
     Fn extends (...args: any[]) => any,
     Params extends Kwargs<Params> = {}
 >(
-    actionPattern: ActionPattern<A>, routePattern: string | undefined,
-    saga: Fn, ...args: HelperProviderParameters<A, Params, Fn>
+    actionPattern: ActionPattern<A>,
+    routePattern: string | undefined,
+    saga: Fn,
+    ...args: HelperProviderParameters<A, Params, Fn>
 ): ForkEffect {
-    return fork(function* () {
+    return fork(function*() {
         if (!routePattern) {
             throw new Error('Route pattern is required');
         }

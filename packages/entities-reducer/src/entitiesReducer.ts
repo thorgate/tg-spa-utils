@@ -1,82 +1,100 @@
+import { isObject } from '@thorgate/spa-is';
+import { produce } from 'immer';
 import { ActionType, createAction, getType } from 'typesafe-actions';
 
 import {
-    EntitiesData,
     EntitiesIdsPayload,
     EntitiesMeta,
-    EntitiesMetaDataMap,
+    // EntitiesMetaDataMap,
     EntitiesMetaDataPayload,
     EntitiesRootState,
     EntitiesState,
     EntitiesStatusPayload,
     EntityKeyPayload,
     EntityStatus,
-    SetEntitiesPayload
+    SetEntitiesPayload,
 } from './types';
-
 
 const defaultActionMeta: EntitiesMeta = {
     preserveExisting: true,
     mergeEntities: false,
+    mergeMetadata: false,
     preserveOrder: false,
     updateOrder: false,
     clearArchived: true,
 };
 
 export const entitiesActions = {
-    setEntities: createAction('@@tg-spa-entities/SET_ENTITIES', (resolve) => (
-        (payload: SetEntitiesPayload, meta: EntitiesMeta = {}) => {
-            return resolve(payload, { ...defaultActionMeta, ...meta });
-        }
-    )),
+    setEntities: createAction(
+        '@@tg-spa-entities/SET_ENTITIES',
+        createHandler => (
+            payload: SetEntitiesPayload,
+            meta: EntitiesMeta = {}
+        ) => createHandler(payload, { ...defaultActionMeta, ...meta })
+    ),
 
-    setEntitiesStatus: createAction('@@tg-spa-entities/SET_ENTITIES_STATUS', (resolve) => (
-        (payload: EntitiesStatusPayload) => resolve(payload)
-    )),
+    setEntitiesStatus: createAction(
+        '@@tg-spa-entities/SET_ENTITIES_STATUS',
+        createHandler => (payload: EntitiesStatusPayload) =>
+            createHandler(payload)
+    ),
 
-    setEntitiesMetaData: createAction('@@tg-spa-entities/SET_ENTITIES_META_DATA', (resolve) => (
-        (payload: EntitiesMetaDataPayload, meta: EntitiesMeta = {}) => {
-            return resolve(payload, { ...defaultActionMeta, ...meta });
-        }
-    )),
+    setEntitiesMetaData: createAction(
+        '@@tg-spa-entities/SET_ENTITIES_META_DATA',
+        createHandler => (
+            payload: EntitiesMetaDataPayload,
+            meta: EntitiesMeta = {}
+        ) => createHandler(payload, { ...defaultActionMeta, ...meta })
+    ),
 
-    markArchived: createAction('@@tg-spa-entities/MARK_ARCHIVED', (resolve) => (
-        (payload: EntitiesIdsPayload) => resolve(payload)
-    )),
+    markArchived: createAction(
+        '@@tg-spa-entities/MARK_ARCHIVED',
+        createHandler => (payload: EntitiesIdsPayload) => createHandler(payload)
+    ),
 
-    markActive: createAction('@@tg-spa-entities/MARK_ACTIVE', (resolve) => (
-        (payload: EntitiesIdsPayload) => resolve(payload)
-    )),
+    markActive: createAction(
+        '@@tg-spa-entities/MARK_ACTIVE',
+        createHandler => (payload: EntitiesIdsPayload) => createHandler(payload)
+    ),
 
-    purgeOrder: createAction('@@tg-spa-entities/PURGE_ORDER', (resolve) => (
-        (payload: EntityKeyPayload) => resolve(payload)
-    )),
+    purgeOrder: createAction(
+        '@@tg-spa-entities/PURGE_ORDER',
+        createHandler => (payload: EntityKeyPayload) => createHandler(payload)
+    ),
 
-    purgeEntities: createAction('@@tg-spa-entities/PURGE_ENTITIES', (resolve) => (
-        (payload: EntitiesIdsPayload) => resolve(payload)
-    )),
+    purgeEntities: createAction(
+        '@@tg-spa-entities/PURGE_ENTITIES',
+        createHandler => (payload: EntitiesIdsPayload) => createHandler(payload)
+    ),
 
     clearEntities: createAction('@@tg-spa-entities/CLEAR_ENTITIES'),
 };
 
 export type EntitiesAction = ActionType<typeof entitiesActions>;
 
-
 const selectEntities = (state: EntitiesState) => state.data;
-const selectEntityType = (state: EntitiesState, key: string) => selectEntities(state)[key] || {};
+const selectEntityType = (state: EntitiesState, key: string) =>
+    selectEntities(state)[key] || {};
 
 const selectOrder = (state: EntitiesState) => state.order;
-const selectEntityOrder = (state: EntitiesState, key: string): Array<string | number> => selectOrder(state)[key] || [];
+const selectEntityOrder = (
+    state: EntitiesState,
+    key: string
+): Array<string | number> => selectOrder(state)[key] || [];
 
 const selectArchived = (state: EntitiesState) => state.archived;
-const selectArchivedEntities = (state: EntitiesState, key: string): Array<string | number> => selectArchived(state)[key] || [];
+const selectArchivedEntities = (
+    state: EntitiesState,
+    key: string
+): Array<string | number> => selectArchived(state)[key] || [];
 
 const selectStatuses = (state: EntitiesState) => state.status;
-const selectEntitiesStatus = (state: EntitiesState, key: string) => selectStatuses(state)[key] || EntityStatus.NotLoaded;
+const selectEntitiesStatus = (state: EntitiesState, key: string) =>
+    selectStatuses(state)[key] || EntityStatus.NotLoaded;
 
 const selectMetaData = (state: EntitiesState) => state.metaData;
-const selectEntitiesMetaData = (state: EntitiesState, key: string) => selectMetaData(state)[key] || {};
-
+const selectEntitiesMetaData = (state: EntitiesState, key: string) =>
+    selectMetaData(state)[key] || {};
 
 const initialState: EntitiesState = {
     data: {},
@@ -86,183 +104,155 @@ const initialState: EntitiesState = {
     metaData: {},
 };
 
+const mutateOrder = <T>(baseOrder: T[] | undefined, order: T[]) => {
+    order.forEach(item => {
+        if (typeof baseOrder === 'undefined') {
+            baseOrder = [];
+        }
 
-export const entitiesReducer = (state: EntitiesState = initialState, action: EntitiesAction) => {
-    switch (action.type) {
-        case getType(entitiesActions.setEntities): {
-            const { meta, payload } = action;
+        if (!baseOrder.includes(item)) {
+            baseOrder.push(item);
+        }
+    });
+};
 
-            const nextState = {
-                ...state,
-            };
+export const entitiesReducer = (
+    state: EntitiesState = initialState,
+    action: EntitiesAction
+) =>
+    produce(state, draft => {
+        switch (action.type) {
+            case getType(entitiesActions.setEntities): {
+                const { meta, payload } = action;
 
-            let nextOrder: Array<string | number>;
-            if (meta && meta.preserveOrder) {
-                nextOrder = selectEntityOrder(state, payload.key);
-            } else if (meta && meta.updateOrder) {
-                nextOrder = [...selectEntityOrder(state, payload.key)];
-
-                if (Array.isArray(payload.order)) {
-                    payload.order.forEach((id) => {
-                        if (!nextOrder.includes(id)) {
-                            nextOrder.push(id);
-                        }
-                    });
-                } else {
-                    if (!nextOrder.includes(payload.order)) {
-                        nextOrder.push(payload.order);
+                // Update order if not preserving previous
+                if ((meta && !meta.preserveOrder) || !meta) {
+                    if (meta && meta.updateOrder) {
+                        const order = Array.isArray(payload.order)
+                            ? payload.order
+                            : [payload.order];
+                        mutateOrder(draft.order[payload.key], order);
+                    } else if (Array.isArray(payload.order)) {
+                        draft.order[payload.key] = payload.order;
+                    } else {
+                        draft.order[payload.key] = [payload.order];
                     }
                 }
-            } else if (Array.isArray(payload.order)) {
-                nextOrder = payload.order;
-            } else {
-                nextOrder = [payload.order];
+
+                // Update entities from the payload
+                Object.entries(payload.entities).forEach(([key, entities]) => {
+                    // Overwrite existing entities
+                    if (meta && !meta.preserveExisting) {
+                        draft.data[key] = entities;
+                        return;
+                    }
+
+                    // Go through all payload entities to update or merge in the Draft
+                    Object.entries(entities).forEach(([entityId, entity]) => {
+                        let newEntity = entity;
+
+                        if (meta && meta.mergeEntities) {
+                            const oldEntity = draft.data[key][entityId] || {};
+                            newEntity = { ...oldEntity, ...newEntity };
+                        }
+
+                        if (draft.data[key]) {
+                            draft.data[key][entityId] = newEntity;
+                        } else {
+                            draft.data[key] = {
+                                [entityId]: newEntity,
+                            };
+                        }
+                    });
+                });
+
+                if (meta && meta.clearArchived) {
+                    draft.archived[payload.key] = [];
+                }
+                return;
             }
 
-            // Update order
-            nextState.order = {
-                ...nextState.order,
+            case getType(entitiesActions.setEntitiesStatus):
+                draft.status[action.payload.key] = action.payload.status;
+                return;
 
-                [payload.key]: nextOrder,
-            };
+            case getType(entitiesActions.setEntitiesMetaData): {
+                const { meta, payload } = action;
 
-            // Create new object - will see later what would be the performance impact
-            nextState.data = { ...nextState.data };
-
-            Object.entries<EntitiesData>(payload.entities).forEach(([key, entities]) => {
                 if (meta && !meta.preserveExisting) {
-                    nextState.data[key] = entities;
+                    draft.metaData[payload.key] = payload.metaData;
                     return;
                 }
 
-                nextState.data[key] = Object.entries(entities).reduce((last, [entityId, entity]) => {
-                    let newEntity = entity;
+                Object.entries(payload.metaData).forEach(([key, metaData]) => {
+                    let newValue = metaData;
 
-                    if (meta && meta.mergeEntities) {
-                        const oldEntity = last[entityId] || {};
-                        newEntity = { ...oldEntity, ...newEntity };
+                    if (meta && meta.mergeMetadata && isObject(newValue)) {
+                        const oldValue = (draft.metaData[payload.key] || {})[
+                            key
+                        ];
+
+                        if (isObject(oldValue)) {
+                            newValue = { ...oldValue, ...newValue };
+                        }
                     }
 
-                    return {
-                        ...last,
-                        [entityId]: newEntity,
-                    };
-                }, nextState.data[key] || {});
-            });
-
-            if (meta && meta.clearArchived) {
-                nextState.archived = {
-                    ...nextState.archived,
-
-                    [payload.key]: [],
-                };
-            }
-
-            return nextState;
-        }
-
-        case getType(entitiesActions.setEntitiesStatus):
-            return Object.assign({}, state, {
-                status: Object.assign({}, state.status, { [action.payload.key]: action.payload.status }),
-            });
-
-        case getType(entitiesActions.setEntitiesMetaData): {
-            const { meta, payload } = action;
-
-            let nextEntityMetaData: EntitiesMetaDataMap = {};
-            if (meta && meta.mergeEntities) {
-                if (meta.preserveExisting) {
-                    nextEntityMetaData = { ...state.metaData[payload.key] };
-                }
-                nextEntityMetaData = Object.entries(payload.metaData).reduce((entityMetaData, [metaDataKey, metaDataValue]) => {
-                    const oldValue = entityMetaData[metaDataKey];
-                    let newValue;
-                    if (
-                        oldValue !== null && typeof oldValue === 'object' && !Array.isArray(oldValue)
-                        && metaDataValue !== null && typeof metaDataValue === 'object' && !Array.isArray(metaDataValue)
-                    ) {
-                        newValue = { ...oldValue, ...metaDataValue };
+                    if (draft.metaData[payload.key]) {
+                        draft.metaData[payload.key][key] = newValue;
                     } else {
-                        newValue = metaDataValue;
+                        draft.metaData[payload.key] = {
+                            [key]: newValue,
+                        };
                     }
-
-                    return {
-                        ...entityMetaData,
-                        [metaDataKey]: newValue,
-                    };
-                }, nextEntityMetaData);
-
-            } else if (meta && meta.preserveExisting) {
-                nextEntityMetaData = {
-                    ...state.metaData[payload.key],
-                    ...payload.metaData,
-                };
-            } else {
-                nextEntityMetaData = payload.metaData;
+                });
+                return;
             }
 
-            return Object.assign({}, state, {
-                metaData: Object.assign({}, state.metaData, {
-                    [payload.key]: nextEntityMetaData,
-                }),
-            });
+            case getType(entitiesActions.markArchived):
+                draft.archived[action.payload.key] = action.payload.ids;
+                return;
+
+            case getType(entitiesActions.markActive):
+                draft.archived[action.payload.key] = action.payload.ids;
+                draft.archived[action.payload.key] = selectArchivedEntities(
+                    draft,
+                    action.payload.key
+                ).filter(id => !action.payload.ids.includes(id));
+                return;
+
+            case getType(entitiesActions.purgeEntities): {
+                action.payload.ids.forEach(id => {
+                    if (
+                        draft.data[action.payload.key] &&
+                        draft.data[action.payload.key][id]
+                    ) {
+                        delete draft.data[action.payload.key][id];
+                    }
+                });
+                draft.order[action.payload.key] = selectEntityOrder(
+                    draft,
+                    action.payload.key
+                ).filter(id => !action.payload.ids.includes(id));
+                return;
+            }
+
+            case getType(entitiesActions.purgeOrder):
+                draft.order[action.payload.key] = [];
+                return;
+
+            case getType(entitiesActions.clearEntities):
+                return initialState;
+
+            default:
+                return state;
         }
-
-        case getType(entitiesActions.markArchived):
-            return Object.assign({}, state, {
-                archived: Object.assign({}, state.archived, {
-                    [action.payload.key]: action.payload.ids,
-                })
-            });
-
-        case getType(entitiesActions.markActive):
-            return Object.assign({}, state, {
-                archived: Object.assign({}, state.archived, {
-                    [action.payload.key]: (
-                        selectArchivedEntities(state, action.payload.key).filter((id) => !action.payload.ids.includes(id))
-                    ),
-                })
-            });
-
-        case getType(entitiesActions.purgeEntities): {
-            const nextData = { ...selectEntityType(state, action.payload.key) };
-
-            action.payload.ids.forEach((id) => {
-                if (nextData[id]) {
-                    delete nextData[id];
-                }
-            });
-
-            return Object.assign({}, state, {
-                order: Object.assign({}, state.order, {
-                    [action.payload.key]: (
-                        selectEntityOrder(state, action.payload.key).filter((id) => !action.payload.ids.includes(id))
-                    ),
-                }),
-
-                data: Object.assign({}, state.data, { [action.payload.key]: nextData }),
-            });
-        }
-
-        case getType(entitiesActions.purgeOrder):
-            return Object.assign({}, state, {
-                order: Object.assign({}, state.order, { [action.payload.key]: [] }),
-            });
-
-        case getType(entitiesActions.clearEntities):
-            return initialState;
-
-        default:
-            return state;
-    }
-};
-
+    });
 
 /**
  * Select entities root state.
  */
-const selectEntitiesRoot = <S extends EntitiesRootState>(state: S) => state.entities;
-
+const selectEntitiesRoot = <S extends EntitiesRootState>(state: S) =>
+    state.entities;
 
 export const entitiesSelectors = {
     selectEntitiesRoot,
@@ -271,64 +261,80 @@ export const entitiesSelectors = {
      * Select entities data.
      * @param state
      */
-    selectEntities: <S extends EntitiesRootState>(state: S) => selectEntities(selectEntitiesRoot(state)),
+    selectEntities: <S extends EntitiesRootState>(state: S) =>
+        selectEntities(selectEntitiesRoot(state)),
 
     /**
      * Select specific entity type.
      * @param state
      * @param key
      */
-    selectEntityType: <S extends EntitiesRootState>(state: S, key: string) => selectEntityType(selectEntitiesRoot(state), key),
+    selectEntityType: <S extends EntitiesRootState>(state: S, key: string) =>
+        selectEntityType(selectEntitiesRoot(state), key),
 
     /**
      * Select entities order.
      * @param state
      */
-    selectOrder: <S extends EntitiesRootState>(state: S) => selectOrder(selectEntitiesRoot(state)),
+    selectOrder: <S extends EntitiesRootState>(state: S) =>
+        selectOrder(selectEntitiesRoot(state)),
 
     /**
      * Select specific entity order.
      * @param state
      * @param key
      */
-    selectEntityOrder: <S extends EntitiesRootState>(state: S, key: string) => selectEntityOrder(selectEntitiesRoot(state), key),
+    selectEntityOrder: <S extends EntitiesRootState>(state: S, key: string) =>
+        selectEntityOrder(selectEntitiesRoot(state), key),
 
     /**
      * Select entities archive.
      * @param state
      */
-    selectArchived: <S extends EntitiesRootState>(state: S) => selectArchived(selectEntitiesRoot(state)),
+    selectArchived: <S extends EntitiesRootState>(state: S) =>
+        selectArchived(selectEntitiesRoot(state)),
 
     /**
      * Select specific archived entity order.
      * @param state
      * @param key
      */
-    selectArchivedEntities: <S extends EntitiesRootState>(state: S, key: string) => selectArchivedEntities(selectEntitiesRoot(state), key),
+    selectArchivedEntities: <S extends EntitiesRootState>(
+        state: S,
+        key: string
+    ) => selectArchivedEntities(selectEntitiesRoot(state), key),
 
     /**
      * Select entities statuses.
      * @param state
      */
-    selectStatuses: <S extends EntitiesRootState>(state: S) => selectStatuses(selectEntitiesRoot(state)),
+    selectStatuses: <S extends EntitiesRootState>(state: S) =>
+        selectStatuses(selectEntitiesRoot(state)),
 
     /**
      * Select specific entity status.
      * @param state
      * @param key
      */
-    selectEntitiesStatus: <S extends EntitiesRootState>(state: S, key: string) => selectEntitiesStatus(selectEntitiesRoot(state), key),
+    selectEntitiesStatus: <S extends EntitiesRootState>(
+        state: S,
+        key: string
+    ) => selectEntitiesStatus(selectEntitiesRoot(state), key),
 
     /**
      * Select entities metaData.
      * @param state
      */
-    selectMetaData: <S extends EntitiesRootState>(state: S) => selectMetaData(selectEntitiesRoot(state)),
+    selectMetaData: <S extends EntitiesRootState>(state: S) =>
+        selectMetaData(selectEntitiesRoot(state)),
 
     /**
      * Select specific entity metaData.
      * @param state
      * @param key
      */
-    selectEntitiesMetaData: <S extends EntitiesRootState>(state: S, key: string) => selectEntitiesMetaData(selectEntitiesRoot(state), key),
+    selectEntitiesMetaData: <S extends EntitiesRootState>(
+        state: S,
+        key: string
+    ) => selectEntitiesMetaData(selectEntitiesRoot(state), key),
 };

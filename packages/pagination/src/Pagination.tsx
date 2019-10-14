@@ -1,9 +1,12 @@
 import { FetchAction } from '@thorgate/spa-entities';
 import { hasRenderPropFn } from '@thorgate/spa-is';
-import { KwargsType, paginationSelectors, PaginationState } from '@thorgate/spa-pagination-reducer';
+import {
+    KwargsType,
+    paginationSelectors,
+    PaginationState,
+} from '@thorgate/spa-pagination-reducer';
 import { FC, ReactElement, useCallback } from 'react';
 import { connect } from 'react-redux';
-
 
 export interface PaginationOptions {
     hasNext: boolean;
@@ -15,7 +18,7 @@ export interface PaginationOptions {
 
 export interface PaginationProps {
     name: string;
-    trigger: FetchAction<string | symbol, any>;
+    trigger: FetchAction<string, any>;
     render: (params: PaginationOptions) => ReactElement;
 }
 
@@ -27,8 +30,7 @@ interface StateProps {
     prevKwargs: KwargsType;
 }
 
-
-const PaginationBase: FC<PaginationProps & StateProps> = (props) => {
+const PaginationBase: FC<PaginationProps & StateProps> = props => {
     const loadNext = useCallback(() => {
         props.trigger({ query: props.nextKwargs });
     }, [props.nextKwargs, props.trigger]);
@@ -56,10 +58,16 @@ const PaginationBase: FC<PaginationProps & StateProps> = (props) => {
     return null;
 };
 
-const mapStateToProps = <T extends PaginationState>(state: T, ownProps: PaginationProps) => ({
+const mapStateToProps = <T extends PaginationState>(
+    state: T,
+    ownProps: PaginationProps
+) => ({
     hasNext: paginationSelectors.selectHasNext(state, ownProps.name),
     nextKwargs: paginationSelectors.selectNextKwargs(state, ownProps.name),
-    currentKwargs: paginationSelectors.selectCurrentKwargs(state, ownProps.name),
+    currentKwargs: paginationSelectors.selectCurrentKwargs(
+        state,
+        ownProps.name
+    ),
     prevKwargs: paginationSelectors.selectPrevKwargs(state, ownProps.name),
     hasPrev: paginationSelectors.selectHasPrev(state, ownProps.name),
 });

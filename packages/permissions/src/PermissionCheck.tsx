@@ -1,19 +1,27 @@
 import { ErrorState, ErrorType, getError } from '@thorgate/spa-errors';
 import { ConnectedNamedRedirect } from '@thorgate/spa-pending-data';
-import React, { Component, ComponentClass, ComponentType, ReactNode } from 'react';
+import React, {
+    Component,
+    ComponentClass,
+    ComponentType,
+    ReactNode,
+} from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { NamedRouteConfigComponentProps, stringifyLocation } from 'tg-named-routes';
+import {
+    NamedRouteConfigComponentProps,
+    stringifyLocation,
+} from 'tg-named-routes';
 import warning from 'warning';
 
 import { DefaultPermissionDenied } from './DefaultPermissionDenied';
 import { getUser, isAuthenticated, User, UserState } from './userReducer';
 
-
 export const DefaultRedirectParam = 'next';
 
-
-export type PermissionCheckFn<P = any> = (params: P & PermissionCheckInternalProps) => boolean;
+export type PermissionCheckFn<P = any> = (
+    params: P & PermissionCheckInternalProps
+) => boolean;
 
 export interface PermissionCheckProps {
     redirectRouteName?: string;
@@ -25,17 +33,16 @@ export interface PermissionCheckProps {
     permissionDeniedStatusCodes?: number[];
 }
 
-
 interface StateProps {
     user: User;
     isAuthenticated: boolean;
     error: ErrorType;
 }
 
-
-interface PermissionCheckInternalProps extends PermissionCheckProps, StateProps, NamedRouteConfigComponentProps {
-}
-
+interface PermissionCheckInternalProps
+    extends PermissionCheckProps,
+        StateProps,
+        NamedRouteConfigComponentProps {}
 
 class PermissionCheckBase extends Component<PermissionCheckInternalProps> {
     public static defaultProps = {
@@ -49,19 +56,31 @@ class PermissionCheckBase extends Component<PermissionCheckInternalProps> {
     constructor(props: PermissionCheckInternalProps) {
         super(props);
 
-        if (!this.props.redirectRouteName && !this.props.PermissionDeniedComponent) {
-            console.warn('PermissionCheck: Either "redirectLogin" or "PermissionDeniedComponent" is required.');
+        if (
+            !this.props.redirectRouteName &&
+            !this.props.PermissionDeniedComponent
+        ) {
+            console.warn(
+                'PermissionCheck: Either "redirectLogin" or "PermissionDeniedComponent" is required.'
+            );
         }
     }
 
     public render() {
-        const { children, redirectRouteName, PermissionDeniedComponent, hideWithoutPermissions, location } = this.props;
+        const {
+            children,
+            redirectRouteName,
+            PermissionDeniedComponent,
+            hideWithoutPermissions,
+            location,
+        } = this.props;
 
         // Check view permissions
         const hasPermission = this.hasPermission();
 
         if (!hasPermission && redirectRouteName && !PermissionDeniedComponent) {
-            const redirectParam = this.props.redirectParam || DefaultRedirectParam;
+            const redirectParam =
+                this.props.redirectParam || DefaultRedirectParam;
             return (
                 <ConnectedNamedRedirect
                     push={false}
@@ -77,7 +96,10 @@ class PermissionCheckBase extends Component<PermissionCheckInternalProps> {
         }
 
         if (!hasPermission) {
-            warning(!hideWithoutPermissions, 'PermissionCheck misconfiguration');
+            warning(
+                !hideWithoutPermissions,
+                'PermissionCheck misconfiguration'
+            );
             return null;
         }
 
@@ -85,7 +107,11 @@ class PermissionCheckBase extends Component<PermissionCheckInternalProps> {
     }
 
     protected hasPermission() {
-        const { error, permissionCheck, permissionDeniedStatusCodes } = this.props;
+        const {
+            error,
+            permissionCheck,
+            permissionDeniedStatusCodes,
+        } = this.props;
 
         if (error && error.statusCode && permissionDeniedStatusCodes) {
             if (permissionDeniedStatusCodes.includes(error.statusCode)) {
@@ -97,9 +123,7 @@ class PermissionCheckBase extends Component<PermissionCheckInternalProps> {
     }
 }
 
-interface ReduxState extends ErrorState, UserState {
-}
-
+interface ReduxState extends ErrorState, UserState {}
 
 const mapStateToProps = (state: ReduxState) => ({
     error: getError(state),
@@ -107,5 +131,6 @@ const mapStateToProps = (state: ReduxState) => ({
     user: getUser(state),
 });
 
-
-export const PermissionCheck: ComponentClass<PermissionCheckProps> = withRouter(connect(mapStateToProps)(PermissionCheckBase));
+export const PermissionCheck: ComponentClass<PermissionCheckProps> = withRouter(
+    connect(mapStateToProps)(PermissionCheckBase)
+);

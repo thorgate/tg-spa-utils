@@ -3,7 +3,6 @@ import React, { FC, ReactNode } from 'react';
 import { MessagePanel } from './MessagePanel';
 import { Status } from './Status';
 
-
 export interface PageErrorProps {
     /**
      * Status code
@@ -26,8 +25,12 @@ export interface PageErrorProps {
     children?: ReactNode;
 }
 
-
-export const PageError: FC<PageErrorProps> = ({ title, description, children, statusCode }) => (
+export const PageError: FC<PageErrorProps> = ({
+    title,
+    description,
+    children,
+    statusCode,
+}) => (
     <Status code={statusCode}>
         <MessagePanel title={title} description={description}>
             {children}
@@ -38,6 +41,7 @@ export const PageError: FC<PageErrorProps> = ({ title, description, children, st
 PageError.defaultProps = {
     statusCode: 500,
     title: 'Something went wrong',
-    description: 'The server encountered an internal error and was unable to complete your request.',
+    description:
+        'The server encountered an internal error and was unable to complete your request.',
     children: null,
 };

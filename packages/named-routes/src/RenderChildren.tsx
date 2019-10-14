@@ -4,7 +4,6 @@ import warning from 'warning';
 
 import { NamedRouteConfig } from './routes';
 
-
 export interface RenderChildrenProps {
     route?: NamedRouteConfig;
     routes?: NamedRouteConfig[];
@@ -12,8 +11,15 @@ export interface RenderChildrenProps {
     extraProps?: any;
 }
 
-export const RenderChildren: FC<RenderChildrenProps> = ({ route, routes, extraProps }) => {
-    warning(!route || !routes, 'RenderChildren Requires one of [route, routes]');
+export const RenderChildren: FC<RenderChildrenProps> = ({
+    route,
+    routes,
+    extraProps,
+}) => {
+    warning(
+        !route || !routes,
+        'RenderChildren Requires one of [route, routes]'
+    );
 
     if (routes && routes.length) {
         return renderRoutes(routes, extraProps);

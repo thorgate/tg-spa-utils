@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 
 import { useSavedCallback } from './useSavedCallback';
 
-
 // Declare window value is undefined in some cases
 // TSLint detects that window is always defined otherwise
 declare var window: Window | undefined;

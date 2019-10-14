@@ -1,7 +1,6 @@
 import React, { FC, ReactNode } from 'react';
 import { Route } from 'react-router';
 
-
 export interface StatusProps {
     /**
      * Status code to pass to React-Router staticContext
@@ -13,7 +12,6 @@ export interface StatusProps {
      */
     children?: ReactNode;
 }
-
 
 export const Status: FC<StatusProps> = ({ code, children }) => (
     <Route

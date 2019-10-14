@@ -27,7 +27,13 @@
   "devDependencies": {
     "@thorgate/test-data": "1.0.0-alpha.30"
   },
+  "peerDependencies": {
+    "normalizr": "^3.3.0"
+  },
   "dependencies": {
+    "@thorgate/spa-is": "1.0.0-alpha.30",
+    "immer": "^4.0.0",
+    "lru-cache": "^5.1.1",
     "typesafe-actions": "^4.4.2"
   },
   "scripts": {

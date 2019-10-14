@@ -6,17 +6,31 @@ import {
     getLocation,
     LOCATION_CHANGE,
     LocationChangeAction,
-    RouterState
+    RouterState,
 } from 'connected-react-router';
 import { Location } from 'history';
 import { SagaIterator } from 'redux-saga';
-import { all, call, cancel, fork, put, race, select, spawn, take } from 'redux-saga/effects';
+import {
+    all,
+    call,
+    cancel,
+    fork,
+    put,
+    race,
+    select,
+    spawn,
+    take,
+} from 'redux-saga/effects';
 import { NamedRouteConfig } from 'tg-named-routes';
 
 import { matchRouteSagas } from './matchRouteSagas';
 import { sagaRunner } from './sagaRunner';
-import { SagaTaskWithArgs, SSR_REDIRECT_ACTION, SSRRedirectHistoryActions, WatcherTasks } from './types';
-
+import {
+    SagaTaskWithArgs,
+    SSR_REDIRECT_ACTION,
+    SSRRedirectHistoryActions,
+    WatcherTasks,
+} from './types';
 
 export interface ViewManagerOptions {
     allowLogger?: boolean;
@@ -35,12 +49,11 @@ interface WatcherEffects {
     [routeName: string]: Effect;
 }
 
-const mapToStartArgs = <
-    Params extends Kwargs<Params> = {}
->({ saga, args }: SagaTaskWithArgs): ReturnType<typeof spawn> => (
-    args ? (spawn as any)(saga, ...args) : spawn(saga)
-);
-
+const mapToStartArgs = <Params extends Kwargs<Params> = {}>({
+    saga,
+    args,
+}: SagaTaskWithArgs): ReturnType<typeof spawn> =>
+    args ? (spawn as any)(saga, ...args) : spawn(saga);
 
 /**
  * Create watcher sagas as top-level sagas and manage them when view context changes.
@@ -50,59 +63,70 @@ const mapToStartArgs = <
  * @param runningWatchers Currently running watcher tasks
  * @param watcherTasks New route watcher tasks
  */
-function* manageWatchers(runningWatchers: RunningWatcherTasks, watcherTasks: WatcherTasks) {
+function* manageWatchers(
+    runningWatchers: RunningWatcherTasks,
+    watcherTasks: WatcherTasks
+) {
     const newRouteTasks = Object.keys(watcherTasks);
     const alreadyRunning = Object.keys(runningWatchers);
 
     // Create new tasks
     const watchersToStart: WatcherEffects = {};
     newRouteTasks
-        .filter((taskKey) => !alreadyRunning.includes(taskKey))
-        .forEach((taskKey) => {
+        .filter(taskKey => !alreadyRunning.includes(taskKey))
+        .forEach(taskKey => {
             watchersToStart[taskKey] = mapToStartArgs(watcherTasks[taskKey]);
         });
 
     // Start not running tasks again
     // This is to ensure that watcher that have crashed or have finished execution will be started again
-    newRouteTasks.filter((taskKey) => alreadyRunning.includes(taskKey)).forEach((taskKey) => {
-        if (!runningWatchers[taskKey]) {
-            return;
-        }
+    newRouteTasks
+        .filter(taskKey => alreadyRunning.includes(taskKey))
+        .forEach(taskKey => {
+            if (!runningWatchers[taskKey]) {
+                return;
+            }
 
-        if (!runningWatchers[taskKey].isRunning()) {
-            watchersToStart[taskKey] = mapToStartArgs(watcherTasks[taskKey]);
-        }
-    });
+            if (!runningWatchers[taskKey].isRunning()) {
+                watchersToStart[taskKey] = mapToStartArgs(
+                    watcherTasks[taskKey]
+                );
+            }
+        });
 
     const started = yield all(watchersToStart);
-    Object.keys(started).forEach((taskKey) => {
+    Object.keys(started).forEach(taskKey => {
         runningWatchers[taskKey] = started[taskKey];
     });
 
     // Stop removed tasks
     const watchersToStop: WatcherEffects = {};
-    alreadyRunning.filter((taskKey) => !newRouteTasks.includes(taskKey)).forEach((taskKey) => {
-        watchersToStop[taskKey] = cancel(runningWatchers[taskKey]);
-    });
+    alreadyRunning
+        .filter(taskKey => !newRouteTasks.includes(taskKey))
+        .forEach(taskKey => {
+            watchersToStop[taskKey] = cancel(runningWatchers[taskKey]);
+        });
 
     const stopped = yield all(watchersToStop);
-    Object.keys(stopped).forEach((key) => {
+    Object.keys(stopped).forEach(key => {
         delete runningWatchers[key];
     });
 }
 
-
-export const createLocationAction = (payload: RouterState, isFirstRendering: boolean = false): LocationChangeAction => ({
-    type: LOCATION_CHANGE, payload: { ...payload, isFirstRendering },
+export const createLocationAction = (
+    payload: RouterState,
+    isFirstRendering: boolean = false
+): LocationChangeAction => ({
+    type: LOCATION_CHANGE,
+    payload: { ...payload, isFirstRendering },
 });
-
 
 function* ViewManagerWorker(
     routes: NamedRouteConfig[],
     { payload: { location } }: LocationChangeAction,
     options: ViewManagerOptions = {},
     runningWatchers: RunningWatcherTasks = {},
-    firstRendering: boolean = false,
+    firstRendering: boolean = false
 ): SagaIterator {
     try {
         if (process.env.NODE_ENV !== 'production' && options.allowLogger) {
@@ -113,7 +137,10 @@ function* ViewManagerWorker(
         yield put(errorActions.resetError());
 
         // find initial sagas to run from routeConfig
-        const { initials, watchers } = matchRouteSagas(routes, location.pathname);
+        const { initials, watchers } = matchRouteSagas(
+            routes,
+            location.pathname
+        );
 
         // Start required watchers, when watcher is already running, keep them running
         // This will result in that top-level route watcher sagas will always be running
@@ -126,7 +153,8 @@ function* ViewManagerWorker(
             // Currently connected-react-router creates LOCATION_CHANGE action on router mount
             // To prevent initials running both on server and client, we skip initials for the first rendering
             // See https://github.com/supasate/connected-react-router/blob/master/src/ConnectedRouter.js#L66
-            const initialsLoaded = options.skipInitialsForFirstRendering && firstRendering;
+            const initialsLoaded =
+                options.skipInitialsForFirstRendering && firstRendering;
             if (!initialsLoaded) {
                 // Start initial data loading sagas in background
                 yield call(sagaRunner, initials);
@@ -136,7 +164,6 @@ function* ViewManagerWorker(
         if (process.env.NODE_ENV !== 'production' && options.allowLogger) {
             console.log('Finished loading location', location);
         }
-
     } catch (err) {
         yield put(errorActions.setError(err));
     } finally {
@@ -157,7 +184,13 @@ export function* ServerViewManagerWorker(
         finished?: boolean;
     } = yield race({
         interrupt: take(SSR_REDIRECT_ACTION),
-        finished: call(ViewManagerWorker, routes, locationAction, options, runningWatchers),
+        finished: call(
+            ViewManagerWorker,
+            routes,
+            locationAction,
+            options,
+            runningWatchers
+        ),
     });
 
     if (result.interrupt) {
@@ -174,8 +207,11 @@ export function* ServerViewManagerWorker(
     yield call(manageWatchers, runningWatchers, {});
 }
 
-
-function* runViewManagerWorker(routes: NamedRouteConfig[], runningWatchers: RunningWatcherTasks, options: ViewManagerOptions) {
+function* runViewManagerWorker(
+    routes: NamedRouteConfig[],
+    runningWatchers: RunningWatcherTasks,
+    options: ViewManagerOptions
+) {
     let task: Task | null = null;
 
     while (true) {
@@ -185,10 +221,16 @@ function* runViewManagerWorker(routes: NamedRouteConfig[], runningWatchers: Runn
             yield cancel(task);
         }
 
-        task = yield fork(ViewManagerWorker, routes, action, options, runningWatchers, action.payload.isFirstRendering);
+        task = yield fork(
+            ViewManagerWorker,
+            routes,
+            action,
+            options,
+            runningWatchers,
+            action.payload.isFirstRendering
+        );
     }
 }
-
 
 /**
  * Start sagas to handle data loading per view.
@@ -198,7 +240,10 @@ function* runViewManagerWorker(routes: NamedRouteConfig[], runningWatchers: Runn
  * @param options View manager options
  * @returns {void}
  */
-export function* ViewManager(routes: NamedRouteConfig[], options: ViewManagerOptions = {}): SagaIterator {
+export function* ViewManager(
+    routes: NamedRouteConfig[],
+    options: ViewManagerOptions = {}
+): SagaIterator {
     const runningWatchers: RunningWatcherTasks = {};
 
     try {

@@ -1,16 +1,14 @@
 import { schema } from 'normalizr';
 import { v4 as uuid } from 'uuid';
 
-
 export const user = new schema.Entity('users');
 export const comment = new schema.Entity('comments', {
-    commenter: user
+    commenter: user,
 });
 export const article = new schema.Entity('articles', {
     author: user,
-    comments: [comment]
+    comments: [comment],
 });
-
 
 export interface User {
     id: string;
@@ -32,7 +30,6 @@ export interface Article {
     test?: number;
 }
 
-
 export const generateComments = (commentCount: number = 100) => {
     const comments: Comment[] = [];
 
@@ -42,16 +39,18 @@ export const generateComments = (commentCount: number = 100) => {
             message: `Comment nr${i}`,
             commenter: {
                 id: '2',
-                name: 'Nicole'
-            }
+                name: 'Nicole',
+            },
         });
     }
 
     return comments;
 };
 
-
-export const generateArticles = (articleCount: number = 100, commentCount: number = 100) => {
+export const generateArticles = (
+    articleCount: number = 100,
+    commentCount: number = 100
+) => {
     const articles: Article[] = [];
 
     for (let i = 0; i < articleCount; i += 1) {
@@ -59,7 +58,7 @@ export const generateArticles = (articleCount: number = 100, commentCount: numbe
             id: uuid(),
             author: {
                 id: '1',
-                name: 'Paul'
+                name: 'Paul',
             },
             title: `My awesome blog post nr${i}`,
             comments: generateComments(commentCount),

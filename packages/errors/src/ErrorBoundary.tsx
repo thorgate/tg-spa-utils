@@ -1,12 +1,18 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 
-import { DefaultFallback, ErrorComponent, ErrorComponentProps } from './DefaultFallbackComponent';
+import {
+    DefaultFallback,
+    ErrorComponent,
+    ErrorComponentProps,
+} from './DefaultFallbackComponent';
 import { ErrorResponse, ErrorType } from './errorReducer';
-
 
 type ErrorStateType = Pick<ErrorComponentProps, 'error' | 'errorInfo'> | null;
 
-export type ComponentErrorCallback = (error: ErrorResponse, errorInfo: ErrorInfo) => void;
+export type ComponentErrorCallback = (
+    error: ErrorResponse,
+    errorInfo: ErrorInfo
+) => void;
 
 export interface ErrorBoundaryProps {
     onComponentError?: ComponentErrorCallback;
@@ -16,13 +22,14 @@ export interface ErrorBoundaryProps {
     ignoreStatusCodes?: number[];
 }
 
-
 interface ErrorBoundaryState {
     error: ErrorStateType;
 }
 
-
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<
+    ErrorBoundaryProps,
+    ErrorBoundaryState
+> {
     public static defaultProps = {
         ignoreStatusCodes: [401, 403, 404],
         error: null,
@@ -63,15 +70,15 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             );
         }
 
-        const validErrorWithoutStatus = error && typeof error.statusCode === 'undefined';
-        const validErrorWithStatus = (
-            error && error.statusCode && !(ignoreStatusCodes as number[]).includes(error.statusCode)
-        );
+        const validErrorWithoutStatus =
+            error && typeof error.statusCode === 'undefined';
+        const validErrorWithStatus =
+            error &&
+            error.statusCode &&
+            !(ignoreStatusCodes as number[]).includes(error.statusCode);
 
         if (validErrorWithoutStatus || validErrorWithStatus) {
-            return (
-                <ErrorHandler error={error as ErrorResponse} />
-            );
+            return <ErrorHandler error={error as ErrorResponse} />;
         }
 
         return children;

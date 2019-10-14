@@ -1,22 +1,36 @@
-import { Action, AnyAction, applyMiddleware, createStore, Middleware, Reducer, Store } from 'redux';
+import {
+    Action,
+    AnyAction,
+    applyMiddleware,
+    createStore,
+    Middleware,
+    Reducer,
+    Store,
+} from 'redux';
 import createSagaMiddleware, { SagaMiddleware } from 'redux-saga';
 import { select, takeEvery } from 'redux-saga/effects';
 
+type ExtendedStore<S, T> = S &
+    {
+        [P in keyof T]: T[P];
+    };
 
-type ExtendedStore<S, T> = S & {
-    [P in keyof T]: T[P]
-};
-
-export type ConfigureStore<S = any, A extends Action = AnyAction> = Store<S, A> & {
+export type ConfigureStore<S = any, A extends Action = AnyAction> = Store<
+    S,
+    A
+> & {
     sagaMiddleware: SagaMiddleware;
 };
 
 export const configureStore = <S = any, A extends Action = AnyAction>(
     reducer: Reducer<S, A>,
     ...middlewares: Array<Middleware<any, S, any>>
-): ExtendedStore<Store<S, A>, {
-    sagaMiddleware: SagaMiddleware;
-}> => {
+): ExtendedStore<
+    Store<S, A>,
+    {
+        sagaMiddleware: SagaMiddleware;
+    }
+> => {
     const sagaMiddleware = createSagaMiddleware({
         onError: () => null,
     });
@@ -26,13 +40,18 @@ export const configureStore = <S = any, A extends Action = AnyAction>(
 
     (store as any).sagaMiddleware = sagaMiddleware;
 
-    return store as ExtendedStore<typeof store, {
-        sagaMiddleware: SagaMiddleware;
-    }>;
+    return store as ExtendedStore<
+        typeof store,
+        {
+            sagaMiddleware: SagaMiddleware;
+        }
+    >;
 };
 
-
-export function* watchAndLog(logAction: boolean = true, logState: boolean = true) {
+export function* watchAndLog(
+    logAction: boolean = true,
+    logState: boolean = true
+) {
     yield takeEvery('*', function* logger(action: any) {
         if (logAction) {
             console.log('action', action);
