@@ -1,11 +1,11 @@
 [![Build Status][travis-image]][travis-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
 [![NPM version][npm-image]][npm-url]
+[![Greenkeeper badge][greenkeeper-image]][greenkeeper-url]
 
 
 # Thorgate's collection of utility packages for Single-page applications
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/thorgate/tg-spa-utils.svg)](https://greenkeeper.io/)
 
 This is combination of utility packages used at [Thorgate](https://thorgate.eu).
 
@@ -66,3 +66,6 @@ MIT © [Thorgate](http://github.com/thorgate)
 
 [travis-url]: https://travis-ci.com/thorgate/tg-spa-utils
 [travis-image]: https://travis-ci.com/thorgate/tg-spa-utils.svg?branch=master
+
+[greenkeeper-url]: https://greenkeeper.io
+[greenkeeper-image]: https://badges.greenkeeper.io/thorgate/tg-spa-utils.svg
