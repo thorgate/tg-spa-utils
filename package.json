@@ -65,6 +65,7 @@
   },
   "scripts": {
     "create-package": "node scripts/bootstrapPackage.js",
+    "start-api-server": "./packages/test-server/bin/run-test-server.js",
     "bootstrap": "lerna bootstrap",
     "build": "lerna --ignore=example-razzle-app exec yarn build",
     "check-formatting": "prettier --check 'packages/**/src/**/*.{ts,tsx}'",

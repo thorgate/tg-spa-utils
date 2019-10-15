@@ -28,7 +28,7 @@
   "peerDependencies": {
     "normalizr": "^3.3.0",
     "redux": "^4.0.1",
-    "redux-saga": "^1.0.0",
+    "redux-saga": "^1.1.1",
     "tg-resources": "^3.1.1"
   },
   "dependencies": {
