@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/test-server",
-  "version": "1.0.0-alpha.38",
+  "version": "1.0.0-alpha.39",
   "private": true,
   "description": "",
   "main": "lib/index.js",
@@ -17,8 +17,7 @@
     "url": "git+https://github.com/thorgate/tg-spa-utils.git"
   },
   "bugs": "https://github.com/thorgate/tg-spa-utils/issues",
-  "keywords": [
-  ],
+  "keywords": [],
   "files": [
     "lib"
   ],
@@ -33,8 +32,8 @@
     "koa-bodyparser": "^4.2.1",
     "koa-helmet": "^5.2.0",
     "koa-logger": "^3.2.1",
-    "koa-router": "^7.4.0",
     "koa-response-time": "^2.1.0",
+    "koa-router": "^7.4.0",
     "koa-useragent": "^2.1.3",
     "uuid": "^3.3.3"
   },

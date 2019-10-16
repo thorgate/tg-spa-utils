@@ -1,6 +1,6 @@
 {
   "name": "tg-loading-bar",
-  "version": "1.0.0-alpha.37",
+  "version": "1.0.0-alpha.39",
   "private": false,
   "publishConfig": {
     "access": "public"

@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-hooks",
-  "version": "1.0.0-alpha.30",
+  "version": "1.0.0-alpha.39",
   "private": false,
   "publishConfig": {
     "access": "public"

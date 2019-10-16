@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-entities-reducer",
-  "version": "1.0.0-alpha.37",
+  "version": "1.0.0-alpha.39",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -25,13 +25,13 @@
     "lib"
   ],
   "devDependencies": {
-    "@thorgate/test-data": "1.0.0-alpha.30"
+    "@thorgate/test-data": "1.0.0-alpha.39"
   },
   "peerDependencies": {
     "normalizr": "^3.3.0"
   },
   "dependencies": {
-    "@thorgate/spa-is": "1.0.0-alpha.30",
+    "@thorgate/spa-is": "1.0.0-alpha.39",
     "immer": "^4.0.0",
     "lru-cache": "^5.1.1",
     "typesafe-actions": "^4.4.2"

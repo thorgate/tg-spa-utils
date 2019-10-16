@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/test-store",
-  "version": "1.0.0-alpha.37",
+  "version": "1.0.0-alpha.39",
   "private": true,
   "description": "",
   "main": "lib/index.js",

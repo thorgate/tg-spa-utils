@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-pagination-reducer",
-  "version": "1.0.0-alpha.37",
+  "version": "1.0.0-alpha.39",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -25,7 +25,7 @@
     "lib"
   ],
   "dependencies": {
-    "@thorgate/spa-is": "1.0.0-alpha.30",
+    "@thorgate/spa-is": "1.0.0-alpha.39",
     "typesafe-actions": "^4.4.2"
   },
   "scripts": {

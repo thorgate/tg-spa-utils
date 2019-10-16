@@ -1,6 +1,6 @@
 {
   "name": "tg-spa-utils",
-  "version": "1.0.0-alpha.38",
+  "version": "1.0.0-alpha.39",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -25,16 +25,16 @@
     "lib"
   ],
   "dependencies": {
-    "@thorgate/spa-components": "1.0.0-alpha.37",
-    "@thorgate/spa-entities": "1.0.0-alpha.37",
-    "@thorgate/spa-errors": "1.0.0-alpha.37",
-    "@thorgate/spa-forms": "1.0.0-alpha.37",
-    "@thorgate/spa-hooks": "1.0.0-alpha.30",
-    "@thorgate/spa-is": "1.0.0-alpha.30",
-    "@thorgate/spa-pending-data": "1.0.0-alpha.37",
-    "@thorgate/spa-permissions": "1.0.0-alpha.37",
-    "@thorgate/spa-view": "1.0.0-alpha.37",
-    "@thorgate/spa-view-manager": "1.0.0-alpha.38"
+    "@thorgate/spa-components": "1.0.0-alpha.39",
+    "@thorgate/spa-entities": "1.0.0-alpha.39",
+    "@thorgate/spa-errors": "1.0.0-alpha.39",
+    "@thorgate/spa-forms": "1.0.0-alpha.39",
+    "@thorgate/spa-hooks": "1.0.0-alpha.39",
+    "@thorgate/spa-is": "1.0.0-alpha.39",
+    "@thorgate/spa-pending-data": "1.0.0-alpha.39",
+    "@thorgate/spa-permissions": "1.0.0-alpha.39",
+    "@thorgate/spa-view": "1.0.0-alpha.39",
+    "@thorgate/spa-view-manager": "1.0.0-alpha.39"
   },
   "scripts": {
     "clean": "rimraf ./lib",
