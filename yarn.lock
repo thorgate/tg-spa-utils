@@ -1801,26 +1801,26 @@
     "@babel/runtime" "^7.5.5"
     "@testing-library/dom" "^6.0.0"
 
-"@tg-resources/core@^3.1.2":
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/@tg-resources/core/-/core-3.1.2.tgz#37a355e30dea5e85d216f3cbd62b0282ac80f1c2"
-  integrity sha512-D6zGf534Etc5VXkKaupL8C6hu4E8qA3jyFvegEbe9IuQufT2Ll/6AacUIB1lN80EX+yr5o9yug8wfZ+Jta7muw==
+"@tg-resources/core@^3.1.3":
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/@tg-resources/core/-/core-3.1.3.tgz#a9485a744f902f505d9ba06c6a463e7caed25e6b"
+  integrity sha512-xvYPT5cydZvNzOL0IeVzdGxv9NZ1mjrj81Ww7yKTOcMqEey2w6RxMrIINyv6uQa+02U2qmawPOHc77wmRF4QTA==
   dependencies:
-    "@tg-resources/is" "^3.1.2"
+    "@tg-resources/is" "^3.1.3"
     cookie ">=0.3.1"
 
-"@tg-resources/is@^3.1.2":
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/@tg-resources/is/-/is-3.1.2.tgz#d1ae5edc2de9753de3fb395e49db15ea24bb1130"
-  integrity sha512-sXBF/NNk+u6K97QyaHryfjxOAuA+1wbguWJIcapMEIGPjm/aNqHwAzvR+wgU7pgDNPpJ7e8A1AAHDQOws5670w==
+"@tg-resources/is@^3.1.3":
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/@tg-resources/is/-/is-3.1.3.tgz#8e3f0140e1c953d7407773e1e1bb1994e14f483e"
+  integrity sha512-v8WMZ5NOr5bcIlpHpR73WtX8GGwumppGlRiEBPTKwoSdk/A9jj/mEqWqvbA/Z/dWqP5+iIZ2iF/LmY9+c1B+Ww==
 
-"@tg-resources/redux-saga-router@^3.1.2":
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/@tg-resources/redux-saga-router/-/redux-saga-router-3.1.2.tgz#36e68bd5c8ea83d3ba09e16ac657a0807b2dd357"
-  integrity sha512-tlgyKouEZRgVWlRA6GsCpPWGtFgeIO9J8WCXE9SJgE9JRlUw3fi/BZSlcy1bu5PLxpLIzcUS6L94XUMIJXdEzw==
+"@tg-resources/redux-saga-router@^3.1.3":
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/@tg-resources/redux-saga-router/-/redux-saga-router-3.1.3.tgz#020d7c5730bb8f665db1d89c39b25fc8df0bf1a2"
+  integrity sha512-N0hA3PRGsmqvIroN3tXXGSWeR8RvO1EmHcYNWXLuQ67HMrqKw2b462G/A6b7jfJBQFs+6Y3CROmZ3CuosxDfOQ==
   dependencies:
-    "@tg-resources/is" "^3.1.2"
-    tg-resources "^3.1.2"
+    "@tg-resources/core" "^3.1.3"
+    "@tg-resources/is" "^3.1.3"
 
 "@types/accepts@*":
   version "1.3.5"
@@ -12108,12 +12108,12 @@ text-table@0.2.0, text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
-tg-resources@^3.1.1, tg-resources@^3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/tg-resources/-/tg-resources-3.1.2.tgz#c2822a0b52fd5dc5a4e7f306402582d82be3113e"
-  integrity sha512-6+qAGMHmhbaZJUbcwpDC3WjCQ9IT54RwAkZ38Hu08mov9LDdGxwhe69w1mIfJFygJyVFLBc5HATl9vYXRNMwLg==
+tg-resources@^3.1.3:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/tg-resources/-/tg-resources-3.1.3.tgz#d2d3608e6bc8396fb2217d7b351fc486d9bcef5d"
+  integrity sha512-Ey6N2Yj5pVU+MzpqgAjDOfpkvDPCFaayBwdk3OY+u1PQ9h8ZSO2sHo+2/0kwxBCRo3zLJgoGh6XxODGG7m5JbQ==
   dependencies:
-    "@tg-resources/core" "^3.1.2"
+    "@tg-resources/core" "^3.1.3"
 
 thenify-all@^1.0.0:
   version "1.6.0"
