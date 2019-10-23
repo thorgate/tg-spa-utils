@@ -31,7 +31,7 @@
     "history": "^4.9.0",
     "jest": "24.8.0",
     "jest-cli": "24.8.0",
-    "lerna": "3.18.1",
+    "lerna": "3.18.2",
     "lodash.template": "^4.0.0",
     "lru-cache": "^5.1.1",
     "normalizr": "^3.3.0",
