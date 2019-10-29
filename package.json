@@ -27,7 +27,7 @@
     "@types/warning": "^3.0.0",
     "connected-react-router": "^6.5.2",
     "coveralls": "*",
-    "formik": "^1.5.7",
+    "formik": "^2.0.1",
     "history": "^4.9.0",
     "jest": "24.8.0",
     "jest-cli": "24.8.0",

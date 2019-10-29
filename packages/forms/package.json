@@ -25,7 +25,7 @@
     "lib"
   ],
   "peerDependencies": {
-    "formik": "^1.4.3",
+    "formik": "^2.0.1",
     "redux": "^4.0.1",
     "redux-saga": "^1.1.1",
     "tg-resources": "^3.1.3"
