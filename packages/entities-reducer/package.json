@@ -34,7 +34,7 @@
     "@thorgate/spa-is": "1.0.0-alpha.39",
     "immer": "^4.0.0",
     "lru-cache": "^5.1.1",
-    "typesafe-actions": "^4.4.2"
+    "typesafe-actions": "^5.1.0"
   },
   "scripts": {
     "clean": "rimraf ./lib",
