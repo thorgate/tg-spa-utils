@@ -36,7 +36,7 @@
     "lru-cache": "^5.1.1",
     "normalizr": "^3.3.0",
     "path-to-regexp": "^3.0.0",
-    "prettier": "1.18.2",
+    "prettier": "1.19.0",
     "qs": "^6.5.2",
     "razzle": "^3.0.0-alpha.2",
     "react": "^16.9.0",
