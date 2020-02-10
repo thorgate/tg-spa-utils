@@ -25,6 +25,7 @@ import { NamedRouteConfigComponentProps } from 'tg-named-routes';
 import { SafeStorage } from './Storage';
 import { getSessionStorage, windowPageOffset, windowScroll } from './Window';
 
+// eslint-disable-next-line no-var
 declare var window: Window | undefined;
 
 export interface ViewProvidedProps {

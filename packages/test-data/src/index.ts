@@ -30,7 +30,7 @@ export interface Article {
     test?: number;
 }
 
-export const generateComments = (commentCount: number = 100) => {
+export const generateComments = (commentCount = 100) => {
     const comments: Comment[] = [];
 
     for (let i = 0; i < commentCount; i += 1) {
@@ -47,10 +47,7 @@ export const generateComments = (commentCount: number = 100) => {
     return comments;
 };
 
-export const generateArticles = (
-    articleCount: number = 100,
-    commentCount: number = 100
-) => {
+export const generateArticles = (articleCount = 100, commentCount = 100) => {
     const articles: Article[] = [];
 
     for (let i = 0; i < articleCount; i += 1) {

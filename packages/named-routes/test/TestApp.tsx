@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { NamedLink, NamedRouteConfig, NamedRouteConfigComponentProps, RenderChildren } from '../src';
 
 
-const AppShell: React.FC<NamedRouteConfigComponentProps> = ({ route, match }) => (
+const AppShell = ({ route, match }: NamedRouteConfigComponentProps) => (
     <div className="app-shell">
         <div className="menu">
             <NamedLink name="home" data-testid="link-home">Link to Home</NamedLink>
@@ -22,7 +22,7 @@ const Home: React.FC<NamedRouteConfigComponentProps> = () => (
     </div>
 );
 
-const ParentWithChildren: React.FC<NamedRouteConfigComponentProps> = ({ route }) => (
+const ParentWithChildren = ({ route }: NamedRouteConfigComponentProps) => (
     <div className="parent-with-children">
         <div data-testid="page-parent">
             Parent page
@@ -31,7 +31,7 @@ const ParentWithChildren: React.FC<NamedRouteConfigComponentProps> = ({ route })
     </div>
 );
 
-const ChildWithParams: React.FC<NamedRouteConfigComponentProps<{ id: string }>> = ({ match }) => (
+const ChildWithParams = ({ match }: NamedRouteConfigComponentProps<{ id: string }>) => (
     <div className="child" data-testid="page-child">
         Child {match.params.id}
     </div>
@@ -66,7 +66,7 @@ export const routes: NamedRouteConfig[] = [
 ];
 
 
-export const TestApp: React.FC<{ url: string }> = ({ url }) => (
+export const TestApp = ({ url }: { url: string }) => (
     <MemoryRouter initialEntries={[url]}>
         <RenderChildren routes={routes} />
     </MemoryRouter>

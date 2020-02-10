@@ -54,11 +54,11 @@ export function createResourceAction<
     validateResourceAction(resourceType, 1);
     validateResourceAction(actionType, 2);
 
-    const actionCreator: AC = actionResolverHandler(resourceAction.bind(
-        null,
-        resourceType,
-        actionType
-    ) as Parameters<typeof actionResolverHandler>[0]);
+    const actionCreator: AC = actionResolverHandler(
+        resourceAction.bind(null, resourceType, actionType) as Parameters<
+            typeof actionResolverHandler
+        >[0]
+    );
 
     return Object.assign(actionCreator, {
         getType: () => actionType,

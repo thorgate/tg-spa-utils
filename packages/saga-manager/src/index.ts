@@ -17,7 +17,7 @@ export interface ReloadOptions {
 
 function* runAbortAbleSaga(
     saga: RootSaga,
-    hot: boolean = false,
+    hot = false,
     options?: ReloadOptions
 ) {
     const maxRetries = (options && options.maxRetries) || DEFAULT_RETRIES;
@@ -82,12 +82,14 @@ export class SagaHotReloader<S = any> {
 
     public stopRootSaga() {
         if (!this.runningTask) {
+            // eslint-disable-next-line no-console
             console.log('No root saga is running');
             return;
         }
 
         this.store.dispatch({ type: CANCEL_SAGAS_HMR });
         return this.runningTask.toPromise().then(() => {
+            // eslint-disable-next-line no-console
             console.log('Running root saga has been stopped.');
             this._runningTask = null;
         });
@@ -95,11 +97,13 @@ export class SagaHotReloader<S = any> {
 
     public replaceRootSaga(saga: RootSaga) {
         if (!this.runningTask) {
+            // eslint-disable-next-line no-console
             console.log('No root saga is running');
             return;
         }
 
         return (this.stopRootSaga() as Promise<any>).then(() => {
+            // eslint-disable-next-line no-console
             console.log('Replaced root saga.');
             this._runningTask = this.sagaMiddleWare.run(
                 runAbortAbleSaga,

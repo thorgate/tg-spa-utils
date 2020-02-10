@@ -16,10 +16,12 @@ function getValue(key) {
 
 const port = getValue('-p') || getValue('--port') || 3001;
 
+// eslint-disable-next-line no-console
 console.log(`Listening on port ${port}`);
 const server = listen(port, true);
 
 process.on('exit', () => {
+    // eslint-disable-next-line no-console
     console.log('Server closed.');
     server.close();
 });

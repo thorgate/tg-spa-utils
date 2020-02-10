@@ -2,6 +2,7 @@ import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import {
     paginationActions,
     paginationReducer,
+    PaginationActions,
     PaginationState,
 } from '@thorgate/spa-pagination-reducer';
 import { ConfigureStore, configureStore } from '@thorgate/test-store';
@@ -17,7 +18,7 @@ const reducer = combineReducers({
 });
 
 
-let store: ConfigureStore<PaginationState>;
+let store: ConfigureStore<PaginationState, PaginationActions>;
 
 beforeEach(() => {
     store = configureStore(reducer);

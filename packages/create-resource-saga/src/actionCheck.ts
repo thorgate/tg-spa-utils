@@ -5,7 +5,7 @@
 export function validateResourceAction(
     arg: string | symbol | any,
     position?: number | string,
-    parameterType: string = 'Argument'
+    parameterType = 'Argument'
 ) {
     if (position === undefined) {
         position = 1;

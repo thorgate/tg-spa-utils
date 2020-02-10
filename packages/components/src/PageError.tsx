@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
 import { MessagePanel } from './MessagePanel';
 import { Status } from './Status';
@@ -25,12 +25,12 @@ export interface PageErrorProps {
     children?: ReactNode;
 }
 
-export const PageError: FC<PageErrorProps> = ({
+export const PageError = ({
     title,
     description,
     children,
     statusCode,
-}) => (
+}: PageErrorProps) => (
     <Status code={statusCode}>
         <MessagePanel title={title} description={description}>
             {children}

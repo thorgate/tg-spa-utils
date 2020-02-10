@@ -1,6 +1,15 @@
 {
+  "ignore": [
+      "@types/react-router",
+      "@types/react-router-config",
+      "@types/react-router-dom",
+      "react-router",
+      "react-router-config",
+      "react-router-dom",
+      "prettier"
+  ],
   "groups": {
-    "default": {
+    "tg-spa-utils": {
       "packages": [
         ".template/package.json",
         "examples/example-app/package.json",

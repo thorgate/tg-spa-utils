@@ -3,7 +3,6 @@ import React, {
     ComponentClass,
     ComponentType,
     ErrorInfo,
-    FC,
     Fragment,
 } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router';
@@ -18,12 +17,12 @@ export interface ErrorComponentProps {
 
 export type ErrorComponent = ComponentType<ErrorComponentProps>;
 
-const DefaultErrorHandler: FC<ErrorComponentProps & RouteComponentProps> = ({
+const DefaultErrorHandler = ({
     error,
     errorInfo,
     resetError,
     history,
-}) => (
+}: ErrorComponentProps & RouteComponentProps) => (
     <PageError statusCode={error.statusCode || 500}>
         <div>{error.message}</div>
         {process.env.NODE_ENV !== 'production' ? (

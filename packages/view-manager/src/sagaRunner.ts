@@ -22,6 +22,7 @@ export function* sagaRunner(sagas: MatchedSagas) {
     } catch (error) {
         if ((!isNode() && process.env.NODE_ENV !== 'production') || isNode()) {
             // It is more helpful to see real error message
+            // eslint-disable-next-line no-console
             console.warn('SagaRunner failed with: %s', error);
         }
         yield put(errorActions.setError(error));

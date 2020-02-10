@@ -48,13 +48,10 @@ export function reduceNestedErrors(
             field: e.fieldName,
             error: e,
         }))
-        .reduce(
-            (result: any, current: any) => {
-                result[current.field] = reduceNestedErrors(current.error);
-                return result;
-            },
-            {} as NestedErrorType
-        );
+        .reduce((result: any, current: any) => {
+            result[current.field] = reduceNestedErrors(current.error);
+            return result;
+        }, {} as NestedErrorType);
 }
 
 export function* formErrorsHandler<Values>(

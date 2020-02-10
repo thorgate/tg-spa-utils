@@ -5,6 +5,7 @@ import {
     paginationActions,
     paginationReducer,
     paginationSelectors,
+    PaginationActions,
     PaginationState,
 } from '../src';
 
@@ -14,7 +15,7 @@ const reducer = combineReducers({
 });
 
 
-let store: ConfigureStore<PaginationState>;
+let store: ConfigureStore<PaginationState, PaginationActions>;
 
 beforeEach(() => {
     store = configureStore(reducer);

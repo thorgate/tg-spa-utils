@@ -60,6 +60,7 @@ class PermissionCheckBase extends Component<PermissionCheckInternalProps> {
             !this.props.redirectRouteName &&
             !this.props.PermissionDeniedComponent
         ) {
+            // eslint-disable-next-line no-console
             console.warn(
                 'PermissionCheck: Either "redirectLogin" or "PermissionDeniedComponent" is required.'
             );

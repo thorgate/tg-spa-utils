@@ -2,6 +2,7 @@ import React, { Component, CSSProperties } from 'react';
 
 // Declare window value is undefined in some cases
 // TSLint detects that window is always defined otherwise
+// eslint-disable-next-line no-var
 declare var window: Window | undefined;
 
 export interface LoadingBarProps {

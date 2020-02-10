@@ -90,6 +90,7 @@ export const createFormSaveSaga = <
 
                 // Help with debugging by logging the error occurred
                 if (process.env.NODE_ENV !== 'production') {
+                    // eslint-disable-next-line no-console
                     console.log(error);
                 }
             } finally {

@@ -23,9 +23,9 @@ export type HelperProviderParameters<
     Params extends Kwargs<Params>,
     Fn extends (...args: [any, ...any[]]) => any
 > = Last<Parameters<Fn>> extends T
-    ? (First<Parameters<Fn>> extends MatchWithRoute<Params>
-          ? AllButFirst<AllButLast<Parameters<Fn>>>
-          : never)
+    ? First<Parameters<Fn>> extends MatchWithRoute<Params>
+        ? AllButFirst<AllButLast<Parameters<Fn>>>
+        : never
     : never;
 
 export function takeEveryWithMatch<
