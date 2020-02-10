@@ -12,7 +12,7 @@ import {
     FetchMeta,
 } from './types';
 
-export type TypeConstant = TypeConstant;
+export { TypeConstant } from '@thorgate/create-resource-saga';
 
 /**
  * Check if `value` is entities action.

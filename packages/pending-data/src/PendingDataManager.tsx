@@ -2,7 +2,6 @@ import { locationsAreEqual } from 'history';
 import React, {
     ComponentClass,
     CSSProperties,
-    FC,
     Fragment,
     ReactNode,
 } from 'react';
@@ -26,7 +25,7 @@ interface PendingDataManagerInternalProps
     loadingKey: string | undefined;
 }
 
-const PendingDataManagerBase: FC<PendingDataManagerInternalProps> = props => {
+const PendingDataManagerBase = (props: PendingDataManagerInternalProps) => {
     const {
         location,
         loadingKey,
@@ -62,6 +61,6 @@ const mapStateToProps = <T extends LoadingState>(state: T) => ({
     loading: isLoading(state),
 });
 
-export const PendingDataManager: ComponentClass<
-    PendingDataManagerProps
-> = withRouter(connect(mapStateToProps)(PendingDataManagerBase));
+export const PendingDataManager: ComponentClass<PendingDataManagerProps> = withRouter(
+    connect(mapStateToProps)(PendingDataManagerBase)
+);

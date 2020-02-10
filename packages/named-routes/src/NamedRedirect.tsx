@@ -1,5 +1,5 @@
 import { LocationState } from 'history';
-import React, { FC } from 'react';
+import React from 'react';
 import { Redirect, RedirectProps } from 'react-router';
 
 import { Kwargs, Query, resolvePath, resolvePattern } from './routes';
@@ -12,14 +12,14 @@ export interface NamedRedirectProps extends Omit<RedirectProps, 'from' | 'to'> {
     toState?: LocationState;
 }
 
-export const NamedRedirect: FC<NamedRedirectProps> = ({
+export const NamedRedirect = ({
     fromName,
     toName,
     toKwargs,
     toQuery,
     toState,
     ...props
-}) => (
+}: NamedRedirectProps) => (
     <Redirect
         {...props}
         from={fromName ? resolvePattern(fromName) : undefined}

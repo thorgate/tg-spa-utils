@@ -92,7 +92,7 @@ export function cleanPathName(
  */
 export function buildUrlCache(
     routeData: NamedRouteConfig[],
-    separator: string = ':',
+    separator = ':',
     namespace: string | null = null,
     routeNames: string[] = []
 ) {

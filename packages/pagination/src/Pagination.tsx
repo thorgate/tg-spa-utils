@@ -5,7 +5,7 @@ import {
     paginationSelectors,
     PaginationState,
 } from '@thorgate/spa-pagination-reducer';
-import { FC, ReactElement, useCallback } from 'react';
+import { ReactElement, useCallback } from 'react';
 import { connect } from 'react-redux';
 
 export interface PaginationOptions {
@@ -30,7 +30,7 @@ interface StateProps {
     prevKwargs: KwargsType;
 }
 
-const PaginationBase: FC<PaginationProps & StateProps> = props => {
+const PaginationBase = (props: PaginationProps & StateProps) => {
     const loadNext = useCallback(() => {
         props.trigger({ query: props.nextKwargs });
     }, [props.nextKwargs, props.trigger]);
@@ -52,6 +52,7 @@ const PaginationBase: FC<PaginationProps & StateProps> = props => {
     }
 
     if (process.env.NODE_ENV !== 'production') {
+        // eslint-disable-next-line no-console
         console.warn('Missing render prop');
     }
 

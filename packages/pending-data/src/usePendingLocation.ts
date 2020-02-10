@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 export function usePendingLocation(
     location: Location,
     loadedKey: string | undefined,
-    disabled: boolean = false
+    disabled = false
 ) {
     const [storedLocation, setStoredLocation] = useState<Location | null>(null);
 

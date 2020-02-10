@@ -1,5 +1,6 @@
 import is from 'is_js';
 
+// eslint-disable-next-line no-var
 declare var global: NodeJS.Global | undefined;
 
 export type OptionalMap<T> = {
@@ -12,11 +13,11 @@ export type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
 
 export type XOR<T, U> = (Without<T, U> & U) | (Without<U, T> & T);
 
-export type ThreeWayXOR<P, T, U> = (P | T | U) extends object
-    ? (
+export type ThreeWayXOR<P, T, U> = P | T | U extends object
+    ?
           | (Without<P, U> & Without<T, U> & U)
           | (Without<U, T> & Without<P, T> & T)
-          | (Without<T, P> & Without<U, P> & P))
+          | (Without<T, P> & Without<U, P> & P)
     : P | T | U;
 
 export type SagaFn = (...args: any[]) => Iterator<any>;

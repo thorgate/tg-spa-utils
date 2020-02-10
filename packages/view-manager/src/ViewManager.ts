@@ -115,7 +115,7 @@ function* manageWatchers(
 
 export const createLocationAction = (
     payload: RouterState,
-    isFirstRendering: boolean = false
+    isFirstRendering = false
 ): LocationChangeAction => ({
     type: LOCATION_CHANGE,
     payload: { ...payload, isFirstRendering },
@@ -126,10 +126,11 @@ function* ViewManagerWorker(
     { payload: { location } }: LocationChangeAction,
     options: ViewManagerOptions = {},
     runningWatchers: RunningWatcherTasks = {},
-    firstRendering: boolean = false
+    firstRendering = false
 ): SagaIterator {
     try {
         if (process.env.NODE_ENV !== 'production' && options.allowLogger) {
+            // eslint-disable-next-line no-console
             console.log('Starting loading location', location);
         }
 
@@ -162,6 +163,7 @@ function* ViewManagerWorker(
         }
 
         if (process.env.NODE_ENV !== 'production' && options.allowLogger) {
+            // eslint-disable-next-line no-console
             console.log('Finished loading location', location);
         }
     } catch (err) {
@@ -250,6 +252,7 @@ export function* ViewManager(
         yield call(runViewManagerWorker, routes, runningWatchers, options);
     } finally {
         if (process.env.NODE_ENV !== 'production' && options.allowLogger) {
+            // eslint-disable-next-line no-console
             console.log('ViewManager cancelled !');
         }
 

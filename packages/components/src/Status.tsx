@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { Route } from 'react-router';
 
 export interface StatusProps {
@@ -13,7 +13,7 @@ export interface StatusProps {
     children?: ReactNode;
 }
 
-export const Status: FC<StatusProps> = ({ code, children }) => (
+export const Status = ({ code, children }: StatusProps) => (
     <Route
         render={({ staticContext }) => {
             if (staticContext) {

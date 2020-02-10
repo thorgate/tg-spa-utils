@@ -4,6 +4,7 @@ import { useSavedCallback } from './useSavedCallback';
 
 // Declare window value is undefined in some cases
 // TSLint detects that window is always defined otherwise
+// eslint-disable-next-line no-var
 declare var window: Window | undefined;
 
 /**
@@ -35,6 +36,8 @@ export const useInterval = (
                 clearInterval(id);
 
                 if (savedCleanup.current) {
+                    // This is not matching issue - interval should only be re-created when delay changes.
+                    // eslint-disable-next-line react-hooks/exhaustive-deps
                     savedCleanup.current();
                 }
             };

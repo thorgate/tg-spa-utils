@@ -71,7 +71,7 @@ const configureApiRoutes = () => {
     return router;
 };
 
-export const listen = (p: number = port, logger: boolean = false) => {
+export const listen = (p: number = port, logger = false) => {
     const router = configureApiRoutes();
 
     const server = new Koa();

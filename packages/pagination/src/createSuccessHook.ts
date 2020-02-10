@@ -22,8 +22,8 @@ export interface Result<R = any> {
 
 export function createPaginationSuccessHook<Params extends Kwargs<Params> = {}>(
     key: Key,
-    setNextOnly: boolean = false,
-    enabled: boolean = true
+    setNextOnly = false,
+    enabled = true
 ) {
     function getKeyValue(matchObj: match<Params> | null, meta: FetchMeta) {
         return GetKeyValue(
