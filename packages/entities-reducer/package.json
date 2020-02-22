@@ -28,7 +28,7 @@
     "@thorgate/test-data": "1.0.0-alpha.39"
   },
   "peerDependencies": {
-    "normalizr": "^3.3.0"
+    "normalizr": "^3.6.0"
   },
   "dependencies": {
     "@thorgate/spa-is": "1.0.0-alpha.39",
