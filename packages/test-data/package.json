@@ -22,7 +22,7 @@
     "lib"
   ],
   "dependencies": {
-    "normalizr": "^3.3.0",
+    "normalizr": "^3.6.0",
     "uuid": "^3.3.2"
   },
   "scripts": {
