@@ -46,7 +46,7 @@
     "lerna": "^3.20.2",
     "lodash.template": "^4.5.0",
     "lru-cache": "^5.1.1",
-    "normalizr": "^3.5.0",
+    "normalizr": "3.5.0",
     "path-to-regexp": "^6.1.0",
     "prettier": "1.19.1",
     "qs": "^6.9.1",
