@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "path-to-regexp": "^3.0.0",
-    "qs": "^6.5.2",
+    "qs": "^6.9.4",
     "warning": "^4.0.2"
   },
   "scripts": {
