@@ -33,6 +33,7 @@ const saveFormSaga = createFormSaveSaga({
     resource: api.user.forgotPasswordToken,
     successHook,
     errorHook, // Optional
+    method: 'patch', // Optional. Without this the 'POST' request will be made. Complete list of allowed values is fetch, head, options, post, patch, put, del.
 });
 
 
@@ -59,6 +60,24 @@ export const ComponentForm = connect()(withFormik({
 })(Component));
 
 ```
+
+Alternatively, if the API endpoint you are using containts some variables in its path and you need to populate them you can do something like that (if `pk` is the variable that needs to be replaced):
+
+```js
+...
+
+export const ComponentForm = connect()(withFormik({
+    ...
+    
+    handleSubmit: (values, { props, ...formik }) => (
+        props.dispatch(saveForm({ data: values, kwargs: { pk: props.somevalue } }, formik))
+    ),
+})(Component));
+
+```
+
+saveForm also accepts `query: {}` and `attachments: []` as arguments.
+
 
 In case you can't or don't want to use formik, you can also pass error handling functions to the action creator. Anything passed with the action will override these. Note that `setStatus` must be provided in at least one way.
 
