@@ -61,142 +61,148 @@ const createCachingGroups = cachingGroups => {
     };
 };
 
-module.exports = function razzleLongTermCaching(
-    baseConfig,
-    env,
-    webpack,
-    userOptions = {}
-) {
-    const { target, dev } = env;
+module.exports = {
+    modifyWebpackConfig({
+        env: { target, dev },
+        webpackConfig,
+        options: { pluginOptions },
+    }) {
+        // Clone base config & options
+        const options = Object.assign({}, defaultOptions, pluginOptions);
+        const config = Object.assign({}, webpackConfig);
 
-    // Clone base config & options
-    const options = Object.assign({}, defaultOptions, userOptions);
-    const config = Object.assign({}, baseConfig);
+        let { cachingOptions } = options;
 
-    let { cachingOptions } = options;
+        // Fallback to renamed property
+        if (options.aggressiveCaching) {
+            cachingOptions = options.aggressiveCaching;
+        }
 
-    // Fallback to renamed property
-    if (options.aggressiveCaching) {
-        cachingOptions = options.aggressiveCaching;
-    }
+        const splitWithSize = cachingOptions === 'split-size';
 
-    const splitWithSize = cachingOptions === 'split-size';
+        let getCacheGroup = null;
+        if (
+            !(
+                cachingOptions === true ||
+                cachingOptions === false ||
+                splitWithSize
+            )
+        ) {
+            getCacheGroup = createCachingGroups(cachingOptions);
+        }
 
-    let getCacheGroup = null;
-    if (
-        !(cachingOptions === true || cachingOptions === false || splitWithSize)
-    ) {
-        getCacheGroup = createCachingGroups(cachingOptions);
-    }
+        const { vendorsChunkName } = options;
+        let { sizeOptions } = options;
+        sizeOptions = Object.assign({}, defaultSizeLimits, sizeOptions || {});
 
-    const { vendorsChunkName } = options;
-    let { sizeOptions } = options;
-    sizeOptions = Object.assign({}, defaultSizeLimits, sizeOptions || {});
+        let vendorsName;
+        if (cachingOptions && !splitWithSize) {
+            vendorsName = function(module) {
+                const packageNameMatch = module.context.match(
+                    /[\\/]node_modules[\\/](.*?)([\\/]|$)/
+                );
 
-    let vendorsName;
-    if (cachingOptions && !splitWithSize) {
-        vendorsName = function(module) {
-            const packageNameMatch = module.context.match(
-                /[\\/]node_modules[\\/](.*?)([\\/]|$)/
-            );
-
-            if (!packageNameMatch) {
-                return vendorsChunkName;
-            }
-
-            // get the name of the vendor chunk
-            let packageName = packageNameMatch[1];
-
-            if (getCacheGroup) {
-                const grouping = getCacheGroup(packageName);
-
-                if (!grouping) {
+                if (!packageNameMatch) {
                     return vendorsChunkName;
                 }
 
-                packageName = grouping;
-            }
+                // get the name of the vendor chunk
+                let packageName = packageNameMatch[1];
 
-            // In development use real package names
-            if (dev) {
-                // npm package names are URL-safe, but some servers don't like @ symbols
-                return `${vendorsChunkName}.${packageName.replace('@', '')}`;
-            }
+                if (getCacheGroup) {
+                    const grouping = getCacheGroup(packageName);
 
-            // In production use hashed package names 16 first characters
-            const hashedName = crypto
-                .createHash('md5')
-                .update(packageName)
-                .digest('hex');
-            return `${vendorsChunkName}.${hashedName.slice(0, 16)}`;
-        };
-    } else {
-        vendorsName = vendorsChunkName;
-    }
+                    if (!grouping) {
+                        return vendorsChunkName;
+                    }
 
-    // Target only web
-    if (target === 'web') {
-        config.output.filename = outputName(dev);
-        config.output.chunkFilename = outputName(dev, true);
+                    packageName = grouping;
+                }
 
-        config.optimization = {
-            // Copy base values
-            ...config.optimization,
+                // In development use real package names
+                if (dev) {
+                    // npm package names are URL-safe, but some servers don't like @ symbols
+                    return `${vendorsChunkName}.${packageName.replace(
+                        '@',
+                        ''
+                    )}`;
+                }
 
-            // And overwrite what we want
-            runtimeChunk: options.runtimeChunk,
-            splitChunks: {
-                chunks: 'all',
-                name: false,
+                // In production use hashed package names 16 first characters
+                const hashedName = crypto
+                    .createHash('md5')
+                    .update(packageName)
+                    .digest('hex');
+                return `${vendorsChunkName}.${hashedName.slice(0, 16)}`;
+            };
+        } else {
+            vendorsName = vendorsChunkName;
+        }
 
-                ...(cachingOptions && !splitWithSize
-                    ? {
-                          maxInitialRequests: Infinity,
-                          minSize: 0,
-                      }
-                    : {}),
+        // Target only web
+        if (target === 'web') {
+            config.output.filename = outputName(dev);
+            config.output.chunkFilename = outputName(dev, true);
 
-                ...(splitWithSize
-                    ? {
-                          ...sizeOptions,
-                          maxInitialRequests: 10,
-                      }
-                    : {}),
+            config.optimization = {
+                // Copy base values
+                ...config.optimization,
 
-                cacheGroups: {
-                    default: false,
-                    vendors: {
-                        // Override default vendors configuration
-                        name: vendorsName,
+                // And overwrite what we want
+                runtimeChunk: options.runtimeChunk,
+                splitChunks: {
+                    chunks: 'all',
+                    name: false,
 
-                        // Include all assets in node_modules directory
-                        test: /node_modules/,
+                    ...(cachingOptions && !splitWithSize
+                        ? {
+                              maxInitialRequests: Infinity,
+                              minSize: 0,
+                          }
+                        : {}),
 
-                        reuseExistingChunk: true,
+                    ...(splitWithSize
+                        ? {
+                              ...sizeOptions,
+                              maxInitialRequests: 10,
+                          }
+                        : {}),
 
-                        enforce: true,
+                    cacheGroups: {
+                        default: false,
+                        vendors: {
+                            // Override default vendors configuration
+                            name: vendorsName,
 
-                        // Use both async and non-async
-                        chunks: 'all',
+                            // Include all assets in node_modules directory
+                            test: /node_modules/,
 
-                        // How many usages is required before they end up in vendor chunk
-                        // This is will make clients fetch assets more often but keeps better balance compared to package sizes
-                        minChunks: 1,
+                            reuseExistingChunk: true,
 
-                        // Vendors chunk has priority for node_module assets
-                        priority: 100,
+                            enforce: true,
 
-                        ...(splitWithSize
-                            ? {
-                                  ...sizeOptions,
-                              }
-                            : {}),
+                            // Use both async and non-async
+                            chunks: 'all',
+
+                            // How many usages is required before they end up in vendor chunk
+                            // This is will make clients fetch assets more often but keeps better balance compared to package sizes
+                            minChunks: 1,
+
+                            // Vendors chunk has priority for node_module assets
+                            priority: 100,
+
+                            ...(splitWithSize
+                                ? {
+                                      ...sizeOptions,
+                                  }
+                                : {}),
+                        },
                     },
                 },
-            },
-        };
-    }
+            };
+        }
 
-    // Return generated config to Razzle
-    return config;
+        // Return generated config to Razzle
+        return config;
+    },
 };

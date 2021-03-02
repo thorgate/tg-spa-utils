@@ -23,7 +23,7 @@
   "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/long-term-caching#README.md",
   "license": "MIT",
   "peerDependencies": {
-    "razzle": ">=2.4.0 <4"
+    "razzle": ">=3.3.0 <4"
   },
   "files": [
     "src"
