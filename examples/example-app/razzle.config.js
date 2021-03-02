@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = {
-    plugins: [{
+    plugins: ['scss', {
         name: 'long-term-caching',
         options: {
             cachingOptions: 'split-size',
