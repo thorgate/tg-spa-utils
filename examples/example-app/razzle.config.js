@@ -1,10 +1,15 @@
 'use strict';
 
 module.exports = {
-    plugins: ['scss', {
-        name: 'long-term-caching',
-        options: {
-            cachingOptions: 'split-size',
+    plugins: [
+        'eslint',
+        'modify-eslint-loader-config',
+        'scss',
+        {
+            name: 'long-term-caching',
+            options: {
+                cachingOptions: 'split-size',
+            },
         },
-    }],
+    ],
 };

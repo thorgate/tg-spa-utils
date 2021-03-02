@@ -1,6 +1,7 @@
 'use strict';
 
-import makeLoaderFinder from 'razzle-dev-utils/makeLoaderFinder';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder');
 
 const eslintLoaderFinder = makeLoaderFinder('eslint-loader');
 
@@ -13,6 +14,7 @@ module.exports = {
         if (eslintLoaderIndex !== -1) {
             webpackConfig.module.rules[eslintLoaderIndex].options = {
                 ...webpackConfig.module.rules[eslintLoaderIndex].options,
+                emitWarning: true,
                 ...pluginOptions,
             };
         }
