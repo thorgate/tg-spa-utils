@@ -34,7 +34,7 @@
     "react-router": "^5.1.0",
     "react-router-config": "^5.1.0",
     "react-router-dom": "^5.1.0",
-    "serialize-javascript": "^2.0.0",
+    "serialize-javascript": "^3.1.0",
     "tg-named-routes": "1.0.0-alpha.39",
     "tg-saga-manager": "1.0.0-alpha.39"
   },
