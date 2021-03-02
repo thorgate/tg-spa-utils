@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/test-resource",
-  "version": "1.0.0-alpha.40",
+  "version": "1.0.0-beta.0",
   "private": true,
   "description": "",
   "main": "lib/index.js",

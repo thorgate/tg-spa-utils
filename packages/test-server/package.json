@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/test-server",
-  "version": "1.0.0-alpha.39",
+  "version": "1.0.0-beta.0",
   "private": true,
   "description": "",
   "main": "lib/index.js",
