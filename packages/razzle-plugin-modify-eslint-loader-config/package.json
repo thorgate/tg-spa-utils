@@ -28,7 +28,8 @@
     "src"
   ],
   "peerDependencies": {
-    "razzle": ">=3.3.0 <4"
+    "razzle": ">=3.3.0 <4",
+    "razzle-plugin-eslint": ">=3.3.0 <4"
   },
   "scripts": {
     "clean": "echo Nothing to clean",
