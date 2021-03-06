@@ -89,15 +89,26 @@ export function cleanPathName(
  * @param [separator=':'] Separator for parent route name and child route name
  * @param [namespace=null] Parent route namespace
  * @param [routeNames=[]] For internal use only, used to keep track of generated URLs
+ * @param [cleanMethod] For internal use only. Can be used to provide a custom method to
+ *                       clean path names instead of using cleanPathName.
  */
 export function buildUrlCache(
     routeData: NamedRouteConfig[],
     separator = ':',
     namespace: string | null = null,
-    routeNames: string[] = []
+    routeNames: string[] = [],
+    cleanMethod?: (
+        separator: string,
+        namespace: string | null,
+        pathName?: string | null
+    ) => string
 ) {
     routeData.forEach(route => {
-        route.routeName = cleanPathName(separator, namespace, route.name);
+        route.routeName = (cleanMethod || cleanPathName)(
+            separator,
+            namespace,
+            route.name
+        );
 
         // Prevent duplicate route names.
         if (routeNames.includes(route.routeName)) {
@@ -117,7 +128,13 @@ export function buildUrlCache(
         }
 
         if (route.routes) {
-            buildUrlCache(route.routes, separator, route.routeName, routeNames);
+            buildUrlCache(
+                route.routes,
+                separator,
+                route.routeName,
+                routeNames,
+                cleanMethod
+            );
         }
     });
 }
@@ -129,6 +146,15 @@ export function buildUrlCache(
  */
 export function getUrlNames(): string[] {
     return Object.keys(urlMapCache);
+}
+
+/**
+ * Get a copy of the url map cache.
+ *
+ * This is useful for debugging/extending named routes.
+ */
+export function getUrlMapCache(): { [key: string]: URLCache } {
+    return { ...urlMapCache };
 }
 
 /**

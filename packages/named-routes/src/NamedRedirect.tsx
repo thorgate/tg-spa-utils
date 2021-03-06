@@ -10,6 +10,9 @@ export interface NamedRedirectProps extends Omit<RedirectProps, 'from' | 'to'> {
     toKwargs?: Kwargs;
     toQuery?: Query;
     toState?: LocationState;
+
+    resolvePathFn?: typeof resolvePath;
+    resolvePatternFn?: typeof resolvePattern;
 }
 
 export const NamedRedirect = ({
@@ -18,11 +21,17 @@ export const NamedRedirect = ({
     toKwargs,
     toQuery,
     toState,
+    resolvePathFn,
+    resolvePatternFn,
     ...props
 }: NamedRedirectProps) => (
     <Redirect
         {...props}
-        from={fromName ? resolvePattern(fromName) : undefined}
-        to={resolvePath(toName, toKwargs, toQuery, toState)}
+        from={
+            fromName
+                ? (resolvePatternFn || resolvePattern)(fromName)
+                : undefined
+        }
+        to={(resolvePathFn || resolvePath)(toName, toKwargs, toQuery, toState)}
     />
 );

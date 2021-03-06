@@ -37,7 +37,7 @@
   "dependencies": {
     "@thorgate/spa-components": "1.0.0-beta.0",
     "@thorgate/spa-is": "1.0.0-beta.0",
-    "tg-named-routes": "1.0.0-beta.0",
+    "tg-named-routes": "1.0.0-beta.1",
     "typesafe-actions": "^4.4.2",
     "warning": "^4.0.2"
   },

@@ -29,7 +29,7 @@
     "lib"
   ],
   "peerDependencies": {
-    "connected-react-router": "^6.2.2",
+    "connected-react-router": "^6.9.1",
     "history": "^4.7.2",
     "react": ">=16.8.4",
     "react-dom": ">=16.8.4",
@@ -40,7 +40,7 @@
   "dependencies": {
     "@thorgate/spa-is": "1.0.0-beta.0",
     "tg-loading-bar": "1.0.0-beta.0",
-    "tg-named-routes": "1.0.0-beta.0"
+    "tg-named-routes": "1.0.0-beta.1"
   },
   "scripts": {
     "clean": "rimraf ./lib",
