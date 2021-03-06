@@ -5,15 +5,23 @@ import { createMemoryHistory } from 'history';
 import { END } from 'redux-saga';
 import { buildUrlCache, resetUrlCache } from 'tg-named-routes';
 
-import { createLocationAction, ServerViewManagerWorker, ssrRedirectMiddleware, ViewManager } from '../src';
+import {
+    createLocationAction,
+    ServerViewManagerWorker,
+    ssrRedirectMiddleware,
+    ViewManager,
+} from '../src';
 import { rootReducer, State } from './reducer';
 import { routes, waitLoadingDone } from './TestRoutes';
-
 
 describe('ViewManager works', () => {
     const createStore = (initialEntries: string[] = ['/']) => {
         const history = createMemoryHistory({ initialEntries });
-        const store: ConfigureStore<State> = configureStore(rootReducer(history), ssrRedirectMiddleware(), routerMiddleware(history));
+        const store: ConfigureStore<State> = configureStore(
+            rootReducer(history),
+            ssrRedirectMiddleware(),
+            routerMiddleware(history)
+        );
 
         resetUrlCache();
         buildUrlCache(routes);
@@ -22,7 +30,11 @@ describe('ViewManager works', () => {
 
     test('as worker', async () => {
         const store = createStore();
-        const task = store.sagaMiddleware.run(ServerViewManagerWorker, routes, createLocationAction(store.getState().router));
+        const task = store.sagaMiddleware.run(
+            ServerViewManagerWorker,
+            routes,
+            createLocationAction(store.getState().router)
+        );
         await task.toPromise();
 
         expect(store.getState().data.status).toEqual(2);
@@ -38,7 +50,7 @@ describe('ViewManager works', () => {
             routes,
             createLocationAction(store.getState().router),
             { allowLogger: true },
-            context,
+            context
         );
         await task.toPromise();
 
@@ -56,7 +68,9 @@ describe('ViewManager works', () => {
 
     const testSkipInitials = async (skipInitialsForFirstRendering: boolean) => {
         const store = createStore(['/incrementing']);
-        const serverLocationAction = createLocationAction(store.getState().router);
+        const serverLocationAction = createLocationAction(
+            store.getState().router
+        );
         // Mock initial location action that connected-react-router creates
         // See https://github.com/supasate/connected-react-router/blob/master/src/ConnectedRouter.js#L66
         const clientLocationAction = {
@@ -64,18 +78,24 @@ describe('ViewManager works', () => {
             payload: {
                 ...serverLocationAction.payload,
                 isFirstRendering: true,
-            }
+            },
         };
 
         // First run ViewManager as worker (i.e. SSR)
-        const serverTask = store.sagaMiddleware.run(ServerViewManagerWorker, routes, serverLocationAction);
+        const serverTask = store.sagaMiddleware.run(
+            ServerViewManagerWorker,
+            routes,
+            serverLocationAction
+        );
         await serverTask.toPromise();
 
         // Check that data was loaded
         expect(store.getState().data.status).toEqual(1);
 
         // Secondly, run ViewManager as watcher (i.e. client-side)
-        const task = store.sagaMiddleware.run(ViewManager, routes, { skipInitialsForFirstRendering });
+        const task = store.sagaMiddleware.run(ViewManager, routes, {
+            skipInitialsForFirstRendering,
+        });
         // Dispatch initial
         store.dispatch(clientLocationAction);
         await store.sagaMiddleware.run(waitLoadingDone).toPromise();
@@ -101,56 +121,68 @@ describe('ViewManager works', () => {
 
         const task = store.sagaMiddleware.run(ViewManager, routes);
 
-        store.dispatch(createLocationAction({
-            action: 'PUSH',
-            location: {
-                key: 'home',
-                pathname: '/home',
-                search: '',
-                hash: '',
-                state: '',
-            }
-        }));
+        store.dispatch(
+            createLocationAction({
+                action: 'PUSH',
+                location: {
+                    key: 'home',
+                    pathname: '/home',
+                    search: '',
+                    query: {},
+                    hash: '',
+                    state: '',
+                },
+            })
+        );
 
         await store.sagaMiddleware.run(waitLoadingDone).toPromise();
         expect(store.getState().data.status).toEqual(4);
 
-        store.dispatch(createLocationAction({
-            action: 'PUSH',
-            location: {
-                key: '.',
-                pathname: '/',
-                search: '',
-                hash: '',
-                state: '',
-            }
-        }));
+        store.dispatch(
+            createLocationAction({
+                action: 'PUSH',
+                location: {
+                    key: '.',
+                    pathname: '/',
+                    search: '',
+                    query: {},
+                    hash: '',
+                    state: '',
+                },
+            })
+        );
         await store.sagaMiddleware.run(waitLoadingDone).toPromise();
         expect(store.getState().data.status).toEqual(2);
 
-        store.dispatch(createLocationAction({
-            action: 'PUSH',
-            location: {
-                key: 'root',
-                pathname: '/root',
-                search: '',
-                hash: '',
-                state: '',
-            }
-        }));
+        store.dispatch(
+            createLocationAction({
+                action: 'PUSH',
+                location: {
+                    key: 'root',
+                    pathname: '/root',
+                    search: '',
+                    query: {},
+                    hash: '',
+                    state: '',
+                },
+            })
+        );
         await store.sagaMiddleware.run(waitLoadingDone).toPromise();
         expect(store.getState().data.status).toEqual(1);
 
-        store.dispatch(createLocationAction({
-            action: 'PUSH',
-            location: {
-                key: 'error',
-                pathname: '/error',
-                search: '',
-                hash: '',
-                state: '',
-            }
-        }));
+        store.dispatch(
+            createLocationAction({
+                action: 'PUSH',
+                location: {
+                    key: 'error',
+                    pathname: '/error',
+                    search: '',
+                    query: {},
+                    hash: '',
+                    state: '',
+                },
+            })
+        );
         await store.sagaMiddleware.run(waitLoadingDone).toPromise();
         expect(store.getState().data.status).toEqual(500);
         const error = getError(store.getState());
