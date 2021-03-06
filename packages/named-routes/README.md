@@ -1,6 +1,6 @@
 # `tg-named-routes`
 
-React Router 4 named routes helper library to add support for named routes via [react-router-config](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config).
+React Router 4/5 named routes helper library to add support for named routes via [react-router-config](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config).
 Also provides named versions of [React-Router](https://github.com/ReactTraining/react-router/tree/master/packages/react-router) components.
 
 ## Usage

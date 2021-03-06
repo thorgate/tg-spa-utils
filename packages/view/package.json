@@ -39,7 +39,7 @@
     "@thorgate/spa-errors": "1.0.0-beta.0",
     "@thorgate/spa-is": "1.0.0-beta.0",
     "@thorgate/spa-permissions": "1.0.0-beta.0",
-    "tg-named-routes": "1.0.0-beta.0"
+    "tg-named-routes": "1.0.0-beta.1"
   },
   "scripts": {
     "clean": "rimraf ./lib",

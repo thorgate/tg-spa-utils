@@ -5,20 +5,27 @@ import { NamedComponentProps, resolvePath } from './routes';
 
 export interface NamedLinkProps
     extends NamedComponentProps,
-        Omit<LinkProps, 'to'> {}
+        Omit<LinkProps, 'to'> {
+    resolvePathFn?: typeof resolvePath;
+}
 
 export const NamedLink = ({
     name,
     kwargs,
     query,
     state,
+    resolvePathFn,
     ...props
 }: NamedLinkProps) => (
-    <Link {...props} to={resolvePath(name, kwargs, query, state)} />
+    <Link
+        {...props}
+        to={(resolvePathFn || resolvePath)(name, kwargs, query, state)}
+    />
 );
 
 NamedLink.defaultProps = {
     kwargs: {},
     query: null,
     state: null,
+    resolvePathFn: resolvePath,
 };
