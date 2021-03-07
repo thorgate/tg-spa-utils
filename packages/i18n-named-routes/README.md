@@ -48,7 +48,8 @@ yarn add tg-i18n-named-routes
       }
   ];
   buildUrlCache(routes);
-
++ storeLanguages(['et', 'en']); // all languages
++
   export default routes;
 ```
 
