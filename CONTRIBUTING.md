@@ -1,13 +1,11 @@
-Contributing
-============
+# Contributing
 
 Contributions are welcome, and they are greatly appreciated! Every
 little bit helps, and credit will always be given.
 
 You can contribute in many ways:
 
-Types of Contributions
-----------------------
+## Types of Contributions
 
 ### Report Bugs
 
@@ -54,8 +52,7 @@ If you are proposing a feature:
 Changelog is maintained via github releases.
 
 
-Get Started!
-------------
+## Get Started!
 
 Ready to contribute? Here's how to set up tg-spa-utils for local
 development.
@@ -90,10 +87,23 @@ development.
 
 7.  Submit a pull request through the GitHub website.
 
-Pull Request Guidelines
------------------------
+## Pull Request Guidelines
 
 Before you submit a pull request, check that it meets these guidelines:
 
 1.  The pull request should include tests.
 2.  If the pull request adds functionality, the docs should be updated.
+
+## Creating a new release
+
+Once the changes have been published on the master branch and it is time to create a new
+release you can do this following these steps.
+
+1. Make sure your `origin` git remote points to the root repository.
+2. Ensure your local working directory is clean and contains the latest changes from remote:
+   - `git status --porcelain && git pull origin master`
+3. Log in to npm using `npm login`
+4. Then use `yarn run-publish` or `yarn run-publish:git` to create a new release
+   - `run-publish`: publish packages that have changed since the last release
+   - `run-publish:git`: explicitly publish packages tagged in the current commit
+5. Once the script completes the updated versions should be available in npm
