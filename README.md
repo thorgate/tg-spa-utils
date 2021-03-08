@@ -1,4 +1,4 @@
-[![Build Status][travis-image]][travis-url]
+[![Build Status][gh-actions-image]][gh-actions-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
 [![NPM version][npm-image]][npm-url]
 
@@ -64,5 +64,5 @@ MIT © [Thorgate](http://github.com/thorgate)
 [coveralls-url]: https://coveralls.io/github/thorgate/tg-spa-utils?branch=master
 [coveralls-image]: https://coveralls.io/repos/github/thorgate/tg-spa-utils/badge.svg?branch=master
 
-[travis-url]: https://travis-ci.com/thorgate/tg-spa-utils
-[travis-image]: https://travis-ci.com/thorgate/tg-spa-utils.svg?branch=master
+[gh-actions-url]: https://github.com/thorgate/razzle-plugins/actions/workflows/main.yml
+[gh-actions-image]: https://github.com/thorgate/razzle-plugins/actions/workflows/main.yml/badge.svg?branch=master
