@@ -5,7 +5,7 @@
 
 # Thorgate's collection of utility packages for Single-page applications
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/thorgate/tg-spa-utils.svg)](https://greenkeeper.io/)
+[![Known Vulnerabilities](https://snyk.io/test/github/thorgate/tg-spa-utils/badge.svg)](https://snyk.io/test/github/thorgate/tg-spa-utils)
 
 This is combination of utility packages used at [Thorgate](https://thorgate.eu).
 
