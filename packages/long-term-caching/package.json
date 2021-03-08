@@ -1,36 +1,10 @@
 {
-  "name": "razzle-plugin-long-term-caching",
-  "version": "1.0.0-beta.0",
-  "private": false,
-  "description": "Razzle plugin to add runtime and vendors chunks",
-  "main": "src/index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/thorgate/tg-spa-utils.git"
-  },
-  "keywords": [
-    "razzle",
-    "plugin",
-    "long-term caching"
-  ],
-  "author": "Thorgate <hi@thorgate.eu>",
-  "contributors": [
-    "Jörgen Ader <jorgen.ader@gmail.com> (https://github.com/metsavaht)"
-  ],
-  "bugs": {
-    "url": "https://github.com/thorgate/tg-spa-utils/issues"
-  },
-  "homepage": "https://github.com/thorgate/tg-spa-utils/tree/master/packages/long-term-caching#README.md",
-  "license": "MIT",
-  "peerDependencies": {
-    "razzle": ">=3.3.0 <4"
-  },
-  "files": [
-    "src"
-  ],
+  "name": "old-razzle-plugin-long-term-caching",
+  "private": true,
+  "version": "1.0.0-beta.3",
   "scripts": {
-    "clean": "echo Nothing to clean",
+    "clean": "echo Nothing to build",
     "build": "echo Nothing to build",
-    "lint": "eslint src -c ../../.eslintrc.js --ext js"
+    "lint": "echo Nothing to build"
   }
 }
