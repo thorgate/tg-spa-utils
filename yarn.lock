@@ -12540,6 +12540,16 @@ razzle-plugin-eslint@^3.3.0:
     eslint-plugin-jsx-a11y "^6.2.3"
     eslint-plugin-react "^7.19.0"
 
+razzle-plugin-long-term-caching@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/razzle-plugin-long-term-caching/-/razzle-plugin-long-term-caching-1.0.0.tgz#329f62d60e83120dc49d4286592f07baf9dc22fe"
+  integrity sha512-NboU8kMW5HDQiP9e3LKvzC9T/j6lctWq8akvV2DMU9vODVDZE06yPSaDNbaEt4uFOrdWToQITzj740ObmFaiBQ==
+
+razzle-plugin-modify-eslint-loader-config@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/razzle-plugin-modify-eslint-loader-config/-/razzle-plugin-modify-eslint-loader-config-1.0.0.tgz#23ea74b956afc9bfd30cdc34e9678c58ae230e87"
+  integrity sha512-G5i+lKPZSC3YPOmIjoXD+pXmtKrwgmP+L+UCFbooh0jhzSFBWjizyJIv1oMIeUUHarKBDY2eoOcnTcY0djBMww==
+
 razzle-plugin-scss@^3.3.0:
   version "3.3.13"
   resolved "https://registry.yarnpkg.com/razzle-plugin-scss/-/razzle-plugin-scss-3.3.13.tgz#04bfd731c764d9ae77afa4615fda29863928b2bc"

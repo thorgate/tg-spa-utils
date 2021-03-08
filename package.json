@@ -86,7 +86,6 @@
     "testAll": "yarn test:coverage && yarn test:examples",
     "test:examples": "lerna --scope example-* exec -- yarn test --coverage",
     "test:coverage": "yarn test --coverage --maxWorkers=2",
-    "precoveralls": "yarn test:coverage --no-cache",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "check-packages": "yarn clean && yarn build && yarn test && yarn lint",
     "bump-version": "lerna --ignore=examples/* version --exact",
