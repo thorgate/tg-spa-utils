@@ -1,12 +1,11 @@
-import { FetchAction } from '@thorgate/spa-entities';
+import { createFetchAction } from '@thorgate/spa-entities';
 import { hasRenderPropFn } from '@thorgate/spa-is';
 import {
-    KwargsType,
     paginationSelectors,
     PaginationState,
 } from '@thorgate/spa-pagination-reducer';
 import { ReactElement, useCallback } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 export interface PaginationOptions {
     hasNext: boolean;
@@ -18,33 +17,47 @@ export interface PaginationOptions {
 
 export interface PaginationProps {
     name: string;
-    trigger: FetchAction<string, any>;
+    trigger: ReturnType<typeof createFetchAction>;
     render: (params: PaginationOptions) => ReactElement;
 }
 
-interface StateProps {
-    hasNext: boolean;
-    nextKwargs: KwargsType;
-    currentKwargs: KwargsType;
-    hasPrev: boolean;
-    prevKwargs: KwargsType;
-}
+export const Pagination = (props: PaginationProps) => {
+    const selectPagination = useCallback(
+        (state: PaginationState) => ({
+            hasNext: paginationSelectors.selectHasNext(state, props.name),
+            nextKwargs: paginationSelectors.selectNextKwargs(state, props.name),
+            currentKwargs: paginationSelectors.selectCurrentKwargs(
+                state,
+                props.name
+            ),
+            prevKwargs: paginationSelectors.selectPrevKwargs(state, props.name),
+            hasPrev: paginationSelectors.selectHasPrev(state, props.name),
+        }),
+        [props.name]
+    );
 
-const PaginationBase = (props: PaginationProps & StateProps) => {
+    const {
+        hasNext,
+        nextKwargs,
+        currentKwargs,
+        hasPrev,
+        prevKwargs,
+    } = useSelector(selectPagination);
+
     const loadNext = useCallback(() => {
-        props.trigger({ query: props.nextKwargs });
-    }, [props.nextKwargs, props.trigger]);
+        props.trigger({ query: nextKwargs });
+    }, [nextKwargs, props.trigger]);
     const reload = useCallback(() => {
-        props.trigger({ query: props.currentKwargs });
-    }, [props.currentKwargs, props.trigger]);
+        props.trigger({ query: currentKwargs });
+    }, [currentKwargs, props.trigger]);
     const loadPrev = useCallback(() => {
-        props.trigger({ query: props.prevKwargs });
-    }, [props.prevKwargs, props.trigger]);
+        props.trigger({ query: prevKwargs });
+    }, [prevKwargs, props.trigger]);
 
     if (hasRenderPropFn(props)) {
         return props.render({
-            hasNext: props.hasNext,
-            hasPrev: props.hasPrev,
+            hasNext,
+            hasPrev,
             loadNext,
             reload,
             loadPrev,
@@ -58,19 +71,3 @@ const PaginationBase = (props: PaginationProps & StateProps) => {
 
     return null;
 };
-
-const mapStateToProps = <T extends PaginationState>(
-    state: T,
-    ownProps: PaginationProps
-) => ({
-    hasNext: paginationSelectors.selectHasNext(state, ownProps.name),
-    nextKwargs: paginationSelectors.selectNextKwargs(state, ownProps.name),
-    currentKwargs: paginationSelectors.selectCurrentKwargs(
-        state,
-        ownProps.name
-    ),
-    prevKwargs: paginationSelectors.selectPrevKwargs(state, ownProps.name),
-    hasPrev: paginationSelectors.selectHasPrev(state, ownProps.name),
-});
-
-export const Pagination = connect(mapStateToProps)(PaginationBase);

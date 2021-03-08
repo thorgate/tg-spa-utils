@@ -91,7 +91,7 @@ export function createSchemaSelector<RType = any>(
             result = [];
         } else {
             result = denormalize(
-                selectedIds.filter(id => !archived.includes(id)),
+                selectedIds.filter((id) => !archived.includes(id)),
                 [entitySchema],
                 entities
             ) as RType[];

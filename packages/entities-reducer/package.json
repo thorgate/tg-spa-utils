@@ -31,10 +31,10 @@
     "normalizr": "^3.3.0"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.5.0",
     "@thorgate/spa-is": "1.0.0-beta.0",
     "immer": "^8.0.1",
-    "lru-cache": "^5.1.1",
-    "typesafe-actions": "^4.4.2"
+    "lru-cache": "^5.1.1"
   },
   "scripts": {
     "clean": "rimraf ./lib",

@@ -25,11 +25,11 @@ const configureApiRoutes = () => {
         strict: true,
     });
 
-    router.get('/items', ctx => {
+    router.get('/items', (ctx) => {
         ctx.status = 200;
         ctx.body = Object.values(items);
     });
-    router.post('/items', ctx => {
+    router.post('/items', (ctx) => {
         const pk = uuid.v4();
 
         const { name } = ctx.request.body;
@@ -42,7 +42,7 @@ const configureApiRoutes = () => {
         ctx.status = 201;
         ctx.body = items[pk];
     });
-    router.get('/items/:id', ctx => {
+    router.get('/items/:id', (ctx) => {
         const { pk } = ctx.params;
 
         if (!items[pk]) {
@@ -53,7 +53,7 @@ const configureApiRoutes = () => {
             ctx.body = items[pk];
         }
     });
-    router.patch('/items/:id', ctx => {
+    router.patch('/items/:id', (ctx) => {
         const { pk } = ctx.params;
         const { name } = ctx.request.body;
 

@@ -1,10 +1,11 @@
+import { createAction } from '@reduxjs/toolkit';
 import {
-    createResourceAction,
     ResourceActionPayload,
+    TypeConstant,
 } from '@thorgate/create-resource-saga';
 import { Kwargs, OptionalMap } from '@thorgate/spa-is';
 
-import { FormsResource, SaveMeta } from './types';
+import { SaveMeta } from './types';
 
 export const setStatusNoop = (_0: any) => null;
 export const setErrorsNoop = (_0: any) => null;
@@ -22,17 +23,16 @@ export const setSubmittingNoop = (_0: boolean) => null;
  * @param defaultMeta - Optional object similar to formikActions for error handling, in case formik cannot be used
  */
 export const createSaveAction = <
-    T extends string,
+    T extends TypeConstant,
     Values,
-    KW extends Kwargs<KW> = {}
+    KW extends Kwargs<KW> = Record<string, string | undefined>
 >(
     type: T,
     defaultMeta: OptionalMap<SaveMeta<Values>> = {}
 ) =>
-    createResourceAction(
-        FormsResource,
+    createAction(
         type,
-        resolve => (
+        (
             payload: ResourceActionPayload<KW, Values>,
             meta: OptionalMap<SaveMeta<Values>> = {}
         ) => {
@@ -42,13 +42,16 @@ export const createSaveAction = <
                 );
             }
 
-            return resolve(payload, {
-                setStatus: setStatusNoop,
-                setErrors: setErrorsNoop,
-                setSubmitting: setSubmittingNoop,
-                ...defaultMeta,
-                ...meta,
-            });
+            return {
+                payload,
+                meta: {
+                    setStatus: setStatusNoop,
+                    setErrors: setErrorsNoop,
+                    setSubmitting: setSubmittingNoop,
+                    ...defaultMeta,
+                    ...meta,
+                },
+            };
         }
     );
 

@@ -1,6 +1,5 @@
-import { combineReducers } from 'redux';
+import { createAction, createReducer } from '@reduxjs/toolkit';
 import { Query } from 'tg-resources';
-import { ActionType, createAction, getType } from 'typesafe-actions';
 
 export type KwargsType = Query | null | undefined;
 
@@ -13,29 +12,37 @@ interface HasState {
 }
 
 // TODO: Should we use setEntitiesMetaData instead of separate reducer?
+// Maybe in future major version.
 export const paginationActions = {
     resetPagination: createAction(
         '@@tg-spa/pagination/RESET',
-        resolve => (name: string) => resolve({ name })
+        (name: string) => ({ payload: { name } })
     ),
     setNextKwargs: createAction(
         '@@tg-spa/pagination/SET_NEXT_KWARGS',
-        resolve => (name: string, kwargs: KwargsType = null) =>
-            resolve({ name, kwargs })
+        (name: string, kwargs: KwargsType = null) => ({
+            payload: { name, kwargs },
+        })
     ),
     setCurrentKwargs: createAction(
         '@@tg-spa/pagination/SET_CURRENT_KWARGS',
-        resolve => (name: string, kwargs: KwargsType = null) =>
-            resolve({ name, kwargs })
+        (name: string, kwargs: KwargsType = null) => ({
+            payload: { name, kwargs },
+        })
     ),
     setPrevKwargs: createAction(
         '@@tg-spa/pagination/SET_PREV_KWARGS',
-        resolve => (name: string, kwargs: KwargsType = null) =>
-            resolve({ name, kwargs })
+        (name: string, kwargs: KwargsType = null) => ({
+            payload: { name, kwargs },
+        })
     ),
 };
 
-export type PaginationActions = ActionType<typeof paginationActions>;
+export type PaginationActions =
+    | ReturnType<typeof paginationActions.resetPagination>
+    | ReturnType<typeof paginationActions.setNextKwargs>
+    | ReturnType<typeof paginationActions.setCurrentKwargs>
+    | ReturnType<typeof paginationActions.setPrevKwargs>;
 
 export interface PaginationStateObject {
     nextKwargs: KwargsState;
@@ -49,131 +56,54 @@ export interface PaginationState {
     pagination: PaginationStateObject;
 }
 
-const initialState = {
+const initialState: PaginationStateObject = {
+    prevKwargs: {},
+    currentKwargs: {},
+    nextKwargs: {},
+    hasNext: {},
+    hasPrev: {},
+};
+
+export const paginationReducer = createReducer(initialState, (builder) => {
+    builder
+        .addCase(paginationActions.setNextKwargs, (state, action) => {
+            state.nextKwargs[action.payload.name] = action.payload.kwargs;
+            state.hasNext[action.payload.name] = action.payload.kwargs
+                ? !!Object.keys(action.payload.kwargs).length
+                : false;
+        })
+        .addCase(paginationActions.setCurrentKwargs, (state, action) => {
+            state.currentKwargs[action.payload.name] = action.payload.kwargs;
+        })
+        .addCase(paginationActions.setNextKwargs, (state, action) => {
+            state.prevKwargs[action.payload.name] = action.payload.kwargs;
+            state.hasPrev[action.payload.name] = action.payload.kwargs
+                ? !!Object.keys(action.payload.kwargs).length
+                : false;
+        })
+        .addCase(paginationActions.resetPagination, (state, action) => {
+            if (state.nextKwargs[action.payload.name]) {
+                delete state.nextKwargs[action.payload.name];
+            }
+            if (state.currentKwargs[action.payload.name]) {
+                delete state.currentKwargs[action.payload.name];
+            }
+            if (state.prevKwargs[action.payload.name]) {
+                delete state.prevKwargs[action.payload.name];
+            }
+        })
+        .addDefaultCase((_0, _1) => {
+            return undefined;
+        });
+});
+
+const defaultState = {
     prevKwargs: null,
     currentKwargs: null,
     nextKwargs: null,
     hasNext: false,
     hasPrev: false,
 };
-
-function nextKwargsReducer(state: KwargsState = {}, action: PaginationActions) {
-    switch (action.type) {
-        case getType(paginationActions.resetPagination): {
-            const newState = { ...state };
-            delete newState[action.payload.name];
-            return newState;
-        }
-
-        case getType(paginationActions.setNextKwargs):
-            return {
-                ...state,
-
-                [action.payload.name]: action.payload.kwargs,
-            };
-
-        default:
-            return state;
-    }
-}
-
-function currentKwargsReducer(
-    state: KwargsState = {},
-    action: PaginationActions
-) {
-    switch (action.type) {
-        case getType(paginationActions.resetPagination): {
-            const newState = { ...state };
-            delete newState[action.payload.name];
-            return newState;
-        }
-
-        case getType(paginationActions.setCurrentKwargs):
-            return {
-                ...state,
-
-                [action.payload.name]: action.payload.kwargs,
-            };
-
-        default:
-            return state;
-    }
-}
-
-function prevKwargsReducer(state: KwargsState = {}, action: PaginationActions) {
-    switch (action.type) {
-        case getType(paginationActions.resetPagination): {
-            const newState = { ...state };
-            delete newState[action.payload.name];
-            return newState;
-        }
-
-        case getType(paginationActions.setPrevKwargs):
-            return {
-                ...state,
-
-                [action.payload.name]: action.payload.kwargs,
-            };
-
-        default:
-            return state;
-    }
-}
-
-function hasNextReducer(state: HasState = {}, action: PaginationActions) {
-    switch (action.type) {
-        case getType(paginationActions.resetPagination): {
-            const newState = { ...state };
-            delete newState[action.payload.name];
-            return newState;
-        }
-
-        case getType(paginationActions.setNextKwargs):
-            return {
-                ...state,
-
-                [action.payload.name]: action.payload.kwargs
-                    ? !!Object.keys(action.payload.kwargs).length
-                    : false,
-            };
-
-        default:
-            return state;
-    }
-}
-
-function hasPrevReducer(state: HasState = {}, action: PaginationActions) {
-    switch (action.type) {
-        case getType(paginationActions.resetPagination): {
-            const newState = { ...state };
-            delete newState[action.payload.name];
-            return newState;
-        }
-
-        case getType(paginationActions.setPrevKwargs):
-            return {
-                ...state,
-
-                [action.payload.name]: action.payload.kwargs
-                    ? !!Object.keys(action.payload.kwargs).length
-                    : false,
-            };
-
-        default:
-            return state;
-    }
-}
-
-export const paginationReducer = combineReducers<
-    PaginationStateObject,
-    PaginationActions
->({
-    nextKwargs: nextKwargsReducer,
-    currentKwargs: currentKwargsReducer,
-    prevKwargs: prevKwargsReducer,
-    hasNext: hasNextReducer,
-    hasPrev: hasPrevReducer,
-});
 
 export const paginationSelectors = {
     /**
@@ -182,7 +112,7 @@ export const paginationSelectors = {
      * @param name
      */
     selectNextKwargs: <T extends PaginationState>(state: T, name: string) =>
-        state.pagination.nextKwargs[name] || initialState.nextKwargs,
+        state.pagination.nextKwargs[name] || defaultState.nextKwargs,
 
     /**
      * Select current page kwargs for name. Useful for reloading the data.
@@ -190,7 +120,7 @@ export const paginationSelectors = {
      * @param name
      */
     selectCurrentKwargs: <T extends PaginationState>(state: T, name: string) =>
-        state.pagination.currentKwargs[name] || initialState.currentKwargs,
+        state.pagination.currentKwargs[name] || defaultState.currentKwargs,
 
     /**
      * Select previous page kwargs for name.
@@ -198,7 +128,7 @@ export const paginationSelectors = {
      * @param name
      */
     selectPrevKwargs: <T extends PaginationState>(state: T, name: string) =>
-        state.pagination.prevKwargs[name] || initialState.prevKwargs,
+        state.pagination.prevKwargs[name] || defaultState.prevKwargs,
 
     /**
      * Select if named pagination has next page.
@@ -206,7 +136,7 @@ export const paginationSelectors = {
      * @param name
      */
     selectHasNext: <T extends PaginationState>(state: T, name: string) =>
-        state.pagination.hasNext[name] || initialState.hasNext,
+        state.pagination.hasNext[name] || defaultState.hasNext,
 
     /**
      * Select if named pagination has prev page.
@@ -214,5 +144,5 @@ export const paginationSelectors = {
      * @param name
      */
     selectHasPrev: <T extends PaginationState>(state: T, name: string) =>
-        state.pagination.hasPrev[name] || initialState.hasPrev,
+        state.pagination.hasPrev[name] || defaultState.hasPrev,
 };

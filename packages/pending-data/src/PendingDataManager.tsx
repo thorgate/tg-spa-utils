@@ -5,7 +5,7 @@ import React, {
     Fragment,
     ReactNode,
 } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Route, RouteComponentProps, withRouter } from 'react-router';
 import { LoadingBar } from 'tg-loading-bar';
 
@@ -20,20 +20,18 @@ export interface PendingDataManagerProps {
 
 interface PendingDataManagerInternalProps
     extends PendingDataManagerProps,
-        RouteComponentProps {
-    loading: boolean;
-    loadingKey: string | undefined;
-}
+        RouteComponentProps {}
+
+const selectLoadingState = (state: LoadingState) =>
+    ({
+        loadingKey: getLoadedView(state),
+        loading: isLoading(state),
+    } as const);
 
 const PendingDataManagerBase = (props: PendingDataManagerInternalProps) => {
-    const {
-        location,
-        loadingKey,
-        children,
-        loading,
-        disabled,
-        loadingBarStyle,
-    } = props;
+    const { location, children, disabled, loadingBarStyle } = props;
+
+    const { loadingKey, loading } = useSelector(selectLoadingState);
 
     const storedLocation = usePendingLocation(location, loadingKey, disabled);
     const isViewPending =
@@ -56,11 +54,6 @@ const PendingDataManagerBase = (props: PendingDataManagerInternalProps) => {
     );
 };
 
-const mapStateToProps = <T extends LoadingState>(state: T) => ({
-    loadingKey: getLoadedView(state),
-    loading: isLoading(state),
-});
-
 export const PendingDataManager: ComponentClass<PendingDataManagerProps> = withRouter(
-    connect(mapStateToProps)(PendingDataManagerBase)
+    PendingDataManagerBase
 );

@@ -14,7 +14,9 @@ import {
     SagaTaskWithArgs,
 } from './types';
 
-const mapSaga = <Params extends Kwargs<Params> = {}>(
+const mapSaga = <
+    Params extends Kwargs<Params> = Record<string, string | undefined>
+>(
     sagaToMap: SagaTaskType<Params>,
     routeMatch: MatchWithRoute<Params>
 ): SagaTaskWithArgs<Params> => {
@@ -44,7 +46,9 @@ const mapSaga = <Params extends Kwargs<Params> = {}>(
     throw new Error('Misconfiguration: Route saga task is invalid.');
 };
 
-const reduceSagas = <Params extends Kwargs<Params> = {}>(
+const reduceSagas = <
+    Params extends Kwargs<Params> = Record<string, string | undefined>
+>(
     sagas: SagaRunnerTasks<Params>,
     routeMatch: MatchWithRoute<Params>
 ): MatchedSagas<Params> =>
@@ -52,7 +56,7 @@ const reduceSagas = <Params extends Kwargs<Params> = {}>(
         (result: MatchedSagas<Params>, saga: SagaRunnerTask<Params>) => {
             if (Array.isArray(saga)) {
                 return result.concat(
-                    saga.map(sagaObj => mapSaga(sagaObj, routeMatch))
+                    saga.map((sagaObj) => mapSaga(sagaObj, routeMatch))
                 );
             }
 

@@ -35,10 +35,10 @@
     "redux": "^4.0.1"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.5.0",
     "@thorgate/spa-components": "1.0.0-beta.2",
     "@thorgate/spa-is": "1.0.0-beta.0",
     "tg-named-routes": "1.0.0-beta.2",
-    "typesafe-actions": "^4.4.2",
     "warning": "^4.0.2"
   },
   "scripts": {

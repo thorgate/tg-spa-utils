@@ -19,11 +19,11 @@ export const createLanguageRoutes = (
 ): NamedRouteConfig[] => {
     const res: NamedRouteConfig[] = [];
 
-    routes.forEach(route => {
+    routes.forEach((route) => {
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         const children = createLanguageRoute(defaultLanguage, languages, route);
 
-        children.forEach(item => res.push(item));
+        children.forEach((item) => res.push(item));
     });
 
     return res;
@@ -40,7 +40,9 @@ const createLanguageRoute = (
         route.routes
             ? createLanguageRoutes(
                   defaultLanguage,
-                  lang === null ? languages : languages.filter(x => x === lang),
+                  lang === null
+                      ? languages
+                      : languages.filter((x) => x === lang),
                   route.routes
               )
             : undefined;
@@ -59,7 +61,7 @@ const createLanguageRoute = (
     if (route.path && typeof route.path !== 'string') {
         const { path } = route;
 
-        languages.forEach(language => {
+        languages.forEach((language) => {
             const thePath = path[language] || path[defaultLanguage];
 
             if (!thePath) {
@@ -85,7 +87,7 @@ const createLanguageRoute = (
         route.name !== 'defaultLanguageRedirect' &&
         route.path !== '*'
     ) {
-        languages.forEach(language => {
+        languages.forEach((language) => {
             res.push({
                 ...route,
                 path: typeof route.path === 'string' ? route.path : undefined,

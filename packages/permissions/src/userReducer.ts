@@ -1,4 +1,4 @@
-import { ActionType, createAction, getType } from 'typesafe-actions';
+import { createAction, createReducer } from '@reduxjs/toolkit';
 
 interface UserShape {
     readonly id: number;
@@ -11,16 +11,19 @@ export type User = UserShape | null;
 export const userActions = {
     setUser: createAction(
         '@@tg-spa-permissions/SET_USER',
-        resolve => (user: User, isUserAuthenticated: boolean) =>
-            resolve({
+        (user: User, isUserAuthenticated: boolean) => ({
+            payload: {
                 user,
                 isAuthenticated: isUserAuthenticated,
-            })
+            },
+        })
     ),
     resetUser: createAction('@@tg-spa-permissions/RESET_USER'),
-};
+} as const;
 
-export type UserActions = ActionType<typeof userActions>;
+export type UserActions =
+    | ReturnType<typeof userActions.setUser>
+    | ReturnType<typeof userActions.resetUser>;
 
 export interface UserStateType {
     readonly user: User;
@@ -36,25 +39,19 @@ const initialState: UserStateType = {
     isAuthenticated: false,
 };
 
-export function userReducer(
-    state: UserStateType = initialState,
-    action: UserActions
-): UserStateType {
-    switch (action.type) {
-        case getType(userActions.resetUser):
+export const userReducer = createReducer(initialState, (builder) => {
+    builder
+        .addCase(userActions.setUser, (state, action) => {
+            state.user = action.payload.user;
+            state.isAuthenticated = action.payload.isAuthenticated;
+        })
+        .addCase(userActions.resetUser, () => {
             return initialState;
-
-        case getType(userActions.setUser):
-            return {
-                ...state,
-                user: action.payload.user,
-                isAuthenticated: action.payload.isAuthenticated,
-            };
-
-        default:
-            return state;
-    }
-}
+        })
+        .addDefaultCase((_0, _1) => {
+            return undefined;
+        });
+});
 
 export const getUser = <T extends UserState>(state: T) => state.user.user;
 

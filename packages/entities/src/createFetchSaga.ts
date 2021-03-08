@@ -9,9 +9,8 @@ import {
 } from '@thorgate/spa-entities-reducer';
 import { errorActions } from '@thorgate/spa-errors';
 import { isFunction, Kwargs } from '@thorgate/spa-is';
-import { schema } from 'normalizr';
+import { NormalizedSchema, schema } from 'normalizr';
 import { match } from 'react-router';
-import { SagaIterator } from 'redux-saga';
 import { call, put } from 'redux-saga/effects';
 import { Resource } from 'tg-resources';
 
@@ -19,7 +18,6 @@ import { getFetchSagaConfig } from './configuration';
 import {
     CreateFetchSagaOptions,
     CreateFetchSagaOverrideOptions,
-    EntitiesResourceType,
     FetchActionType,
     FetchMeta,
     FetchSaga,
@@ -36,18 +34,20 @@ import { mergeKeyOptions } from './utils';
  * @param meta
  * @param serialize
  */
-export function* saveResults(
+export function* saveResults<Response = any>(
     key: string,
-    result: any[],
+    result: Response[],
     listSchema: [schema.Entity],
     meta: FetchMeta = {},
     serialize?: SerializeData
-): SagaIterator {
-    const { entities, result: order } = yield call(
+) {
+    const res: NormalizedSchema<any, any> = yield call(
         serialize || getFetchSagaConfig('serializeData'),
         result,
         listSchema
     );
+
+    const { entities, result: order } = res;
     yield put(entitiesActions.setEntities({ entities, key, order }, meta));
 
     return { entities, order };
@@ -61,28 +61,31 @@ export function* saveResults(
  * @param meta
  * @param serialize
  */
-export function* saveResult(
+export function* saveResult<Response = any>(
     key: string,
-    result: any,
+    result: Response,
     detailSchema: schema.Entity,
     meta: FetchMeta = {},
     serialize?: SerializeData
-): SagaIterator {
-    return yield call(
-        saveResults,
+) {
+    const res: NormalizedSchema<any, any> = yield call(
+        { context: null, fn: saveResults },
         key,
         [result],
         [detailSchema],
         { ...meta, preserveOrder: true },
         serialize
     );
+
+    return res;
 }
 
 export function createFetchSaga<
     Klass extends Resource,
-    KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {},
-    Data = any
+    KW extends Kwargs<KW> = Record<string, string | undefined>,
+    Params extends Kwargs<Params> = Record<string, string | undefined>,
+    Data = any,
+    Response = any
 >(
     options: CreateFetchSagaOptions<Klass, KW, Params, Data>
 ): FetchSaga<Klass, KW, Params, Data> {
@@ -119,7 +122,7 @@ export function createFetchSaga<
         } = mergedOptions;
 
         function* saveHook(
-            response: any,
+            response: Response,
             matchObj: match<Params> | null,
             action: FetchActionType<TypeConstant, KW, Data>
         ) {
@@ -145,7 +148,7 @@ export function createFetchSaga<
                 yield call(
                     saveResults,
                     keyValue,
-                    result,
+                    result as any,
                     listSchema,
                     meta,
                     serializeData
@@ -157,14 +160,7 @@ export function createFetchSaga<
             }
         }
 
-        const saga = createResourceSaga<
-            EntitiesResourceType,
-            Klass,
-            KW,
-            Params,
-            Data,
-            FetchMeta
-        >({
+        const saga = createResourceSaga<Klass, KW, Params, Data, FetchMeta>({
             resource,
             method,
             apiHook: apiFetchHook,
@@ -250,7 +246,11 @@ export function createFetchSaga<
                 }
 
                 return function* initialWorker(matchObj: match<Params> | null) {
-                    const action = yield call(initialAction, matchObj);
+                    const action: FetchActionType<
+                        TypeConstant,
+                        KW,
+                        Data
+                    > = yield call(initialAction, matchObj);
                     yield call(fetchSaga, matchObj, action);
                 };
             },

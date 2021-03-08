@@ -1,10 +1,10 @@
-import { SagaIterator, Task } from '@redux-saga/types';
+import { Task } from '@redux-saga/types';
 import { Store } from 'redux';
 import { SagaMiddleware } from 'redux-saga';
 import { call, cancel, fork, take } from 'redux-saga/effects';
 
 export type ReportError = (error: any) => void;
-export type RootSaga = (hot?: boolean) => SagaIterator;
+export type RootSaga = (hot?: boolean) => Iterator<any>;
 
 const CANCEL_SAGAS_HMR = '@@tg-saga-manager/CANCEL_SAGAS_HMR';
 const DEFAULT_RETRIES = 10;
@@ -19,7 +19,7 @@ function* runAbortAbleSaga(
     saga: RootSaga,
     hot = false,
     options?: ReloadOptions
-) {
+): Iterator<any> {
     const maxRetries = (options && options.maxRetries) || DEFAULT_RETRIES;
     let retryCount = 0;
 
@@ -31,10 +31,16 @@ function* runAbortAbleSaga(
     while (retryCount < maxRetries) {
         try {
             if (enableHotReload) {
-                const sagaTask = yield fork(saga, hot || retryCount > 0);
+                const sagaTask: Task | undefined = yield fork(
+                    saga,
+                    hot || retryCount > 0
+                );
 
                 yield take(CANCEL_SAGAS_HMR);
-                yield cancel(sagaTask);
+
+                if (sagaTask) {
+                    yield cancel(sagaTask);
+                }
 
                 // Stop execution
                 break;
@@ -106,7 +112,7 @@ export class SagaHotReloader<S = any> {
             // eslint-disable-next-line no-console
             console.log('Replaced root saga.');
             this._runningTask = this.sagaMiddleWare.run(
-                runAbortAbleSaga,
+                runAbortAbleSaga as any,
                 saga,
                 true,
                 this.options

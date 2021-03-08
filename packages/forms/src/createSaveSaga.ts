@@ -12,7 +12,6 @@ import { formErrorsHandler } from './formErrors';
 import {
     CreateFormSaveSagaOptions,
     CreateFormSaveSagaReconfigureOptions,
-    FormsResourceType,
     SaveActionType,
     SaveMeta,
     SaveSaga,
@@ -21,8 +20,8 @@ import {
 export const createFormSaveSaga = <
     Values,
     Klass extends Resource,
-    KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {}
+    KW extends Kwargs<KW> = Record<string, string | undefined>,
+    Params extends Kwargs<Params> = Record<string, string | undefined>
 >(
     options: CreateFormSaveSagaOptions<Values, Klass, KW, Params>
 ): SaveSaga<Values, Klass, KW, Params> => {
@@ -53,7 +52,6 @@ export const createFormSaveSaga = <
         } = mergedOptions;
 
         const saga = createResourceSaga<
-            FormsResourceType,
             Klass,
             KW,
             Params,

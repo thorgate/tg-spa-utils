@@ -30,16 +30,16 @@
   "peerDependencies": {
     "react": ">=16.8.4",
     "react-dom": ">=16.8.4",
-    "react-redux": "^6.0.0 || ^7.0.0-beta.0",
+    "react-redux": "^7.2.2",
     "react-router": "^4.3.0 || ^5.0.0",
     "redux": "^4.0.1"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.5.0",
     "@thorgate/spa-components": "1.0.0-beta.2",
     "@thorgate/spa-errors": "1.0.0-beta.2",
     "@thorgate/spa-pending-data": "1.0.0-beta.2",
     "tg-named-routes": "1.0.0-beta.2",
-    "typesafe-actions": "^4.4.2",
     "warning": "^4.0.2"
   },
   "scripts": {

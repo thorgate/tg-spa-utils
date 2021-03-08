@@ -18,12 +18,13 @@ export const defaultConnectOptions: ViewDecoratorOptions = {
 
 export const connectView = (options: OptionalMap<ViewDecoratorOptions> = {}) =>
     function decorator<P>(Component: ComponentType<P>) {
-        const WrappedComponent: FC<P> = props => (
+        const WrappedComponent: FC<P> = (props) => (
             <View {...defaultConnectOptions} {...options}>
                 <Component {...props} />
             </View>
         );
-        WrappedComponent.displayName = `connectView(${Component.displayName ||
-            Component.name})`;
+        WrappedComponent.displayName = `connectView(${
+            Component.displayName || Component.name
+        })`;
         return WrappedComponent;
     };

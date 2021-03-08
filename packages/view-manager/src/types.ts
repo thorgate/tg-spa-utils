@@ -14,55 +14,57 @@ type CALL_HISTORY_METHOD_TYPE = typeof CALL_HISTORY_METHOD;
 export const SSR_REDIRECT_ACTION = '@@tg-view-manager/SSR_REDIRECT_ACTION';
 export type SSR_REDIRECT_ACTION_TYPE = typeof SSR_REDIRECT_ACTION;
 
-export interface MatchWithRoute<Params extends Kwargs<Params> = {}>
-    extends match<Params> {
+export interface MatchWithRoute<
+    Params extends Kwargs<Params> = Record<string, string | undefined>
+> extends match<Params> {
     routePattern?: string;
 }
 
-export type SagaTaskArgs<Params extends Kwargs<Params> = {}> = [
-    MatchWithRoute<Params>,
-    ...any[]
-];
+export type SagaTaskArgs<
+    Params extends Kwargs<Params> = Record<string, string | undefined>
+> = [MatchWithRoute<Params>, ...any[]];
 
-export type SagaTask<Params extends Kwargs<Params> = {}> = (
-    match: MatchWithRoute<Params>,
-    ...args: any[]
-) => Iterator<any>;
+export type SagaTask<
+    Params extends Kwargs<Params> = Record<string, string | undefined>
+> = (match: MatchWithRoute<Params>, ...args: any[]) => Iterator<any>;
 
 export type SagaTaskWithArgs<
-    Params extends Kwargs<Params> = {}
+    Params extends Kwargs<Params> = Record<string, string | undefined>
 > = RouteSagaObject<SagaTaskArgs<Params>>;
 
-export type SagaTaskType<Params extends Kwargs<Params> = {}> =
-    | SagaTaskWithArgs<Params>
-    | SagaTask<Params>;
+export type SagaTaskType<
+    Params extends Kwargs<Params> = Record<string, string | undefined>
+> = SagaTaskWithArgs<Params> | SagaTask<Params>;
 
-export type SagaTasks<Params extends Kwargs<Params> = {}> = Array<
-    SagaTaskType<Params>
->;
+export type SagaTasks<
+    Params extends Kwargs<Params> = Record<string, string | undefined>
+> = Array<SagaTaskType<Params>>;
 
-export type SagaRunnerTask<Params extends Kwargs<Params> = {}> = Array<
-    SagaTask<Params> | SagaTaskType<Params>
->;
+export type SagaRunnerTask<
+    Params extends Kwargs<Params> = Record<string, string | undefined>
+> = Array<SagaTask<Params> | SagaTaskType<Params>>;
 
-export type SagaRunnerTasks<Params extends Kwargs<Params> = {}> = Array<
-    SagaRunnerTask<Params>
->;
+export type SagaRunnerTasks<
+    Params extends Kwargs<Params> = Record<string, string | undefined>
+> = Array<SagaRunnerTask<Params>>;
 
-export interface TaskedNamedRouteConfig<Params extends Kwargs<Params> = {}>
-    extends NamedRouteConfig {
+export interface TaskedNamedRouteConfig<
+    Params extends Kwargs<Params> = Record<string, string | undefined>
+> extends NamedRouteConfig {
     initial?: SagaTask<Params> | SagaTaskWithArgs<Params> | SagaTasks<Params>;
     watcher?: SagaTask<Params> | SagaTaskWithArgs<Params> | SagaTasks<Params>;
 }
 
-export interface MatchedNamedRoute<Params extends Kwargs<Params> = {}> {
+export interface MatchedNamedRoute<
+    Params extends Kwargs<Params> = Record<string, string | undefined>
+> {
     route: TaskedNamedRouteConfig<Params>;
     match: MatchWithRoute<Params>;
 }
 
-export type MatchedSagas<Params extends Kwargs<Params> = {}> = Array<
-    SagaTaskWithArgs<Params>
->;
+export type MatchedSagas<
+    Params extends Kwargs<Params> = Record<string, string | undefined>
+> = Array<SagaTaskWithArgs<Params>>;
 
 export interface WatcherTasks {
     [routeName: string]: SagaTaskWithArgs<any>;

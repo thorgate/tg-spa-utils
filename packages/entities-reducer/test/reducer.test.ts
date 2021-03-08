@@ -542,8 +542,8 @@ describe('reducer works', () => {
         const data = generateArticles(5, 5);
 
         const firstId = data[0].id;
-        const commentIds = data[0].comments.map(c => c.id);
-        const withoutFirst = data.filter(d => d.id !== firstId);
+        const commentIds = data[0].comments.map((c) => c.id);
+        const withoutFirst = data.filter((d) => d.id !== firstId);
 
         let normalizedData = normalize(data, [article]);
 
