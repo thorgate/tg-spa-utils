@@ -4,7 +4,7 @@ import { ConfigureStore, configureStore } from '@thorgate/test-store';
 import { delay } from 'redux-saga/effects';
 
 import { createResourceSaga, setBaseConfig } from '../src';
-import { actions, actionTypeNoMeta, resourceType } from './utils';
+import { actions, actionTypeNoMeta } from './utils';
 
 let store: ConfigureStore<any>;
 let resource: SagaResource<DummyResource>;
@@ -139,7 +139,6 @@ describe('createResourceSaga', () => {
                 null,
                 {
                     type: actionTypeNoMeta,
-                    resourceType,
                     payload: actionPayload,
                     meta: undefined,
                 },
@@ -164,7 +163,6 @@ describe('createResourceSaga', () => {
                 null,
                 {
                     type: actionTypeNoMeta,
-                    resourceType,
                     payload: actionPayload,
                     meta: undefined,
                 },
@@ -188,7 +186,6 @@ describe('createResourceSaga', () => {
                 null,
                 {
                     type: actionTypeNoMeta,
-                    resourceType,
                     payload: actionPayload,
                     meta: undefined,
                 },
@@ -217,7 +214,6 @@ describe('createResourceSaga', () => {
                 null,
                 {
                     type: actionTypeNoMeta,
-                    resourceType,
                     payload: actionPayload,
                     meta: undefined,
                 },
@@ -229,7 +225,6 @@ describe('createResourceSaga', () => {
                 null,
                 {
                     type: actionTypeNoMeta,
-                    resourceType,
                     payload: actionPayload,
                     meta: undefined,
                 },
@@ -242,7 +237,6 @@ describe('createResourceSaga', () => {
                 null,
                 {
                     type: actionTypeNoMeta,
-                    resourceType,
                     payload: actionPayload,
                     meta: undefined,
                 },

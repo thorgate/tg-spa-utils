@@ -14,7 +14,7 @@ export const setSubmittingNoop = (_0: boolean) => null;
 /**
  * Action creator matching signature:
  *
- *   (payload, formikActions = {}) => ({ type, resourceType, payload, meta: formikActions })
+ *   (payload, formikActions = {}) => ({ type, payload, meta: formikActions })
  *
  * Uses defaultMeta as defaults in place of what formik would give in action.
  * setStatus must be provided in either defaultMeta or action.
@@ -58,7 +58,7 @@ export const createSaveAction = <
 /**
  * Action creator matching signature:
  *
- *   (payload, formikActions = {}) => ({ type, resourceType, payload, meta: formikActions })
+ *   (payload, formikActions = {}) => ({ type, payload, meta: formikActions })
  *
  * Uses defaultMeta as defaults in place of what formik would give in action.
  * setStatus must be provided in either defaultMeta or action.

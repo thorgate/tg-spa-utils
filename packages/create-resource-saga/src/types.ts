@@ -1,4 +1,4 @@
-import { PayloadAction } from '@reduxjs/toolkit';
+import { PayloadAction, PayloadActionCreator } from '@reduxjs/toolkit';
 import { SagaResource } from '@tg-resources/redux-saga-router';
 import { Kwargs } from '@thorgate/spa-is';
 import { match } from 'react-router';
@@ -30,6 +30,20 @@ export type ResourcePayloadMetaAction<
     Data,
     Meta = undefined
 > = PayloadAction<ResourceActionPayload<KW, Data>, Type, Meta>;
+
+export type ResourceActionCreator<
+    Type extends TypeConstant,
+    KW extends Kwargs<KW>,
+    Data,
+    Meta = undefined
+> = PayloadActionCreator<
+    ResourceActionPayload<KW, Data>,
+    Type,
+    (
+        p?: ResourceActionPayload<KW, Data>,
+        meta?: Meta
+    ) => ResourcePayloadMetaAction<Type, KW, Data, Meta>
+>;
 
 export interface ResourceSagaConfig {
     /**

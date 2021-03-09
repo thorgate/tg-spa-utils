@@ -1,6 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
 import {
     ResourceActionPayload,
+    ResourceActionCreator,
     TypeConstant,
 } from '@thorgate/create-resource-saga';
 import { Kwargs } from '@thorgate/spa-is';
@@ -22,7 +23,7 @@ export const createFetchAction = <
     Data = any
 >(
     type: T
-) =>
+): ResourceActionCreator<T, KW, Data, FetchMeta> =>
     createAction(
         type,
         (

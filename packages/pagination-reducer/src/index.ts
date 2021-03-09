@@ -75,7 +75,7 @@ export const paginationReducer = createReducer(initialState, (builder) => {
         .addCase(paginationActions.setCurrentKwargs, (state, action) => {
             state.currentKwargs[action.payload.name] = action.payload.kwargs;
         })
-        .addCase(paginationActions.setNextKwargs, (state, action) => {
+        .addCase(paginationActions.setPrevKwargs, (state, action) => {
             state.prevKwargs[action.payload.name] = action.payload.kwargs;
             state.hasPrev[action.payload.name] = action.payload.kwargs
                 ? !!Object.keys(action.payload.kwargs).length

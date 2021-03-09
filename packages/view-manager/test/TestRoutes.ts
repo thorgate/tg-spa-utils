@@ -1,5 +1,6 @@
 import { getLoadedView, loadingActions } from '@thorgate/spa-pending-data';
 import { getLocation, push } from 'connected-react-router';
+import { SagaIterator } from 'redux-saga';
 import { delay, put, select, take } from 'redux-saga/effects';
 
 import {
@@ -10,11 +11,13 @@ import {
 } from '../src';
 import { ApiResponseAction, setResponse } from './reducer';
 
-export function* waitLoadingDone() {
+export function* waitLoadingDone(): SagaIterator {
     const location: ReturnType<typeof getLocation> = yield select(getLocation);
-    const loadedView: ReturnType<typeof getLoadedView> = yield select(getLoadedView);
+    const loadedView: ReturnType<typeof getLoadedView> = yield select(
+        getLoadedView
+    );
 
-    if (loadedView === location.key) {
+    if (location && loadedView === location.key) {
         return;
     }
 
@@ -41,7 +44,9 @@ function* dummyRedirectToHome() {
 
 function* dummyInitialIncrementing() {
     yield delay(20);
-    const status: number | undefined = yield select(state => state.data.status);
+    const status: number | undefined = yield select(
+        (state) => state.data.status
+    );
     if (status) {
         yield put(setResponse({ status: status + 1 }));
     } else {

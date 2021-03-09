@@ -6,6 +6,7 @@ export {
     MetaOptions,
     ResourceActionPayload,
     ResourcePayloadMetaAction,
+    ResourceActionCreator,
     ResourceSaga,
     ResourceSagaConfig,
     ResourceSagaOptions,
