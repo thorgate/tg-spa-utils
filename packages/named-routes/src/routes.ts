@@ -6,7 +6,7 @@ import { match } from 'react-router';
 import { RouteConfig, RouteConfigComponentProps } from 'react-router-config';
 
 export interface NamedRouteConfigComponentProps<
-    Params extends { [K in keyof Params]?: string } = {}
+    Params extends { [K in keyof Params]?: string } = Record<string, never>
 > extends RouteConfigComponentProps<Params> {
     route?: NamedRouteConfig;
 }
@@ -17,7 +17,7 @@ interface KwargsObject {
 
 export type Kwargs = KwargsObject | null;
 
-export type Query = null | string | object | any[];
+export type Query = null | string | Record<string, unknown> | any[];
 
 export interface NamedComponentProps {
     name: string;
@@ -31,7 +31,9 @@ export interface NamedRouteConfig extends RouteConfig {
     name?: string;
     path?: string;
     component?:
-        | ComponentType<NamedRouteConfigComponentProps<any> | {}>
+        | ComponentType<
+              NamedRouteConfigComponentProps<any> | Record<string, never>
+          >
         | ComponentType<any>;
     routes?: NamedRouteConfig[];
 
@@ -47,7 +49,7 @@ export interface MatchedNamedRoute<
 
 interface URLCache {
     pattern: string;
-    resolve: (kwargs: object) => string;
+    resolve: (kwargs: Record<string, unknown>) => string;
 }
 
 let urlMapCache: {
@@ -103,7 +105,7 @@ export function buildUrlCache(
         pathName?: string | null
     ) => string
 ) {
-    routeData.forEach(route => {
+    routeData.forEach((route) => {
         route.routeName = (cleanMethod || cleanPathName)(
             separator,
             namespace,

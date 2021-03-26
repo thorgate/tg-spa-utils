@@ -13,9 +13,6 @@ import {
     ResourcePostMethods,
 } from 'tg-resources';
 
-export const FormsResource = '@@thorgate/spa-entities';
-export type FormsResourceType = typeof FormsResource;
-
 export interface StatusMessage {
     message?: string;
 
@@ -59,14 +56,8 @@ export interface SaveMeta<Values>
 export type SaveActionType<
     T extends TypeConstant,
     Values,
-    KW extends Kwargs<KW> = {}
-> = ResourcePayloadMetaAction<
-    FormsResourceType,
-    T,
-    KW,
-    Values,
-    SaveMeta<Values>
->;
+    KW extends Kwargs<KW> = Record<string, string | undefined>
+> = ResourcePayloadMetaAction<T, KW, Values, SaveMeta<Values>>;
 
 export interface FormSagaConfig {
     timeoutMessage: string;
@@ -80,19 +71,11 @@ export interface FormSagaConfig {
 export interface CreateFormSaveSagaOptions<
     Values,
     Klass extends Resource,
-    KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {}
->
-    extends Partial<FormSagaConfig>,
+    KW extends Kwargs<KW> = Record<string, string | undefined>,
+    Params extends Kwargs<Params> = Record<string, string | undefined>
+> extends Partial<FormSagaConfig>,
         Omit<
-            ResourceSagaOptions<
-                FormsResourceType,
-                Klass,
-                KW,
-                Params,
-                Values,
-                SaveMeta<Values>
-            >,
+            ResourceSagaOptions<Klass, KW, Params, Values, SaveMeta<Values>>,
             'apiHook' | 'timeoutMessage' | 'successHook' | 'method'
         > {
     /**
@@ -138,8 +121,8 @@ export interface CreateFormSaveSagaOptions<
 export type CreateFormSaveSagaReconfigureOptions<
     Values,
     Klass extends Resource,
-    KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {}
+    KW extends Kwargs<KW> = Record<string, string | undefined>,
+    Params extends Kwargs<Params> = Record<string, string | undefined>
 > = Partial<
     Omit<CreateFormSaveSagaOptions<Values, Klass, KW, Params>, 'messages'>
 >;
@@ -147,8 +130,8 @@ export type CreateFormSaveSagaReconfigureOptions<
 export interface SaveSaga<
     Values,
     Klass extends Resource,
-    KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {}
+    KW extends Kwargs<KW> = Record<string, string | undefined>,
+    Params extends Kwargs<Params> = Record<string, string | undefined>
 > {
     /**
      * Resource saga to handle sending data to server using formik forms.

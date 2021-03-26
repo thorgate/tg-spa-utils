@@ -13,7 +13,7 @@ export type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
 
 export type XOR<T, U> = (Without<T, U> & U) | (Without<U, T> & T);
 
-export type ThreeWayXOR<P, T, U> = P | T | U extends object
+export type ThreeWayXOR<P, T, U> = P | T | U extends Record<string, unknown>
     ?
           | (Without<P, U> & Without<T, U> & U)
           | (Without<U, T> & Without<P, T> & T)
@@ -28,13 +28,13 @@ export interface RouteSagaObject<U extends any[]> {
 }
 
 type HasRenderProp<T, P> = T extends { render: P } ? T : never;
-export const hasRenderPropFn = <T extends {}, P>(
+export const hasRenderPropFn = <T extends Record<string, any>, P>(
     value: T
 ): value is HasRenderProp<T, P> =>
-    'render' in value && is.function((value as HasRenderProp<T, P>).render);
+    'render' in value && is.function((value as any).render);
 
 type HasChildrenRenderProp<T, P> = T extends { children: P } ? T : never;
-export const hasChildrenRenderPropFn = <T extends {}, P>(
+export const hasChildrenRenderPropFn = <T extends Record<string, any>, P>(
     value: T
 ): value is HasChildrenRenderProp<T, P> =>
     'children' in value &&
@@ -59,14 +59,14 @@ type IsSagaFn<T> = T extends SagaFn ? T : never;
 export const isSaga = <T>(fn: T): fn is IsSagaFn<T> => is.function(fn);
 
 type IsFunction<T> = T extends (...args: any[]) => any ? T : never;
-export const isFunction = <T extends {} | null | undefined>(
+export const isFunction = <T extends unknown>(
     value: T
 ): value is IsFunction<T> => is.function(value);
 
 type IsNumber<T> = T extends number ? T : never;
 export const isNumber = <T>(value: T): value is IsNumber<T> => is.number(value);
 
-type IsObject<T> = T extends object ? T : never;
+type IsObject<T> = T extends Record<string, unknown> ? T : never;
 export const isObject = <T>(value: T): value is IsObject<T> =>
     value && !Array.isArray(value) && typeof value === 'object';
 

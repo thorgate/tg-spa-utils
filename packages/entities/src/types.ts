@@ -1,5 +1,4 @@
 import {
-    ResourceActionPayload,
     ResourcePayloadMetaAction,
     ResourceSagaOptions,
     TypeConstant,
@@ -11,9 +10,6 @@ import { match } from 'react-router';
 import { SagaIterator } from 'redux-saga';
 import { CallEffect } from 'redux-saga/effects';
 import { Resource } from 'tg-resources';
-
-export const EntitiesResource = '@@thorgate/spa-entities';
-export type EntitiesResourceType = typeof EntitiesResource;
 
 export type SerializeData = (
     result: any,
@@ -40,23 +36,9 @@ export interface FetchMeta extends EntitiesMeta {
 
 export type FetchActionType<
     T extends TypeConstant,
-    KW extends Kwargs<KW> = {},
+    KW extends Kwargs<KW> = Record<string, string | undefined>,
     Data = any
-> = ResourcePayloadMetaAction<EntitiesResourceType, T, KW, Data, FetchMeta>;
-
-export interface FetchAction<
-    T extends TypeConstant,
-    KW extends Kwargs<KW> = {},
-    Data = any
-> {
-    (
-        payload?: ResourceActionPayload<KW, Data>,
-        meta?: FetchMeta
-    ): FetchActionType<T, KW, Data>;
-
-    getType?: () => T;
-    getResourceType?: () => EntitiesResourceType;
-}
+> = ResourcePayloadMetaAction<T, KW, Data, FetchMeta>;
 
 export interface FetchSagaConfig {
     serializeData: SerializeData;
@@ -64,20 +46,12 @@ export interface FetchSagaConfig {
 
 export interface CreateFetchSagaOptions<
     Klass extends Resource,
-    KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {},
+    KW extends Kwargs<KW> = Record<string, string | undefined>,
+    Params extends Kwargs<Params> = Record<string, string | undefined>,
     Data = any
->
-    extends Partial<FetchSagaConfig>,
+> extends Partial<FetchSagaConfig>,
         Omit<
-            ResourceSagaOptions<
-                EntitiesResourceType,
-                Klass,
-                KW,
-                Params,
-                Data,
-                FetchMeta
-            >,
+            ResourceSagaOptions<Klass, KW, Params, Data, FetchMeta>,
             'apiHook' | 'timeoutMessage' | 'successHook'
         > {
     /**
@@ -134,8 +108,8 @@ export interface CreateFetchSagaOptions<
 
 export type CreateFetchSagaOverrideOptions<
     Klass extends Resource,
-    KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {},
+    KW extends Kwargs<KW> = Record<string, string | undefined>,
+    Params extends Kwargs<Params> = Record<string, string | undefined>,
     Data = any
 > = Partial<
     Omit<
@@ -146,15 +120,15 @@ export type CreateFetchSagaOverrideOptions<
 
 export type InitialAction<
     T extends TypeConstant,
-    KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {},
+    KW extends Kwargs<KW> = Record<string, string | undefined>,
+    Params extends Kwargs<Params> = Record<string, string | undefined>,
     Data = any
 > = (matchObj: match<Params> | null) => FetchActionType<T, KW, Data>;
 
 export interface FetchSaga<
     Klass extends Resource,
-    KW extends Kwargs<KW> = {},
-    Params extends Kwargs<Params> = {},
+    KW extends Kwargs<KW> = Record<string, string | undefined>,
+    Params extends Kwargs<Params> = Record<string, string | undefined>,
     Data = any
 > {
     /**

@@ -41,7 +41,7 @@ export interface ServerViewManagerContext {
     location?: Location<any>;
 }
 
-interface RunningWatcherTasks {
+interface RunningTasks {
     [routeName: string]: Task;
 }
 
@@ -49,7 +49,9 @@ interface WatcherEffects {
     [routeName: string]: Effect;
 }
 
-const mapToStartArgs = <Params extends Kwargs<Params> = {}>({
+const mapToStartArgs = <
+    Params extends Kwargs<Params> = Record<string, string | undefined>
+>({
     saga,
     args,
 }: SagaTaskWithArgs): ReturnType<typeof spawn> =>
@@ -64,7 +66,7 @@ const mapToStartArgs = <Params extends Kwargs<Params> = {}>({
  * @param watcherTasks New route watcher tasks
  */
 function* manageWatchers(
-    runningWatchers: RunningWatcherTasks,
+    runningWatchers: RunningTasks,
     watcherTasks: WatcherTasks
 ) {
     const newRouteTasks = Object.keys(watcherTasks);
@@ -73,16 +75,16 @@ function* manageWatchers(
     // Create new tasks
     const watchersToStart: WatcherEffects = {};
     newRouteTasks
-        .filter(taskKey => !alreadyRunning.includes(taskKey))
-        .forEach(taskKey => {
+        .filter((taskKey) => !alreadyRunning.includes(taskKey))
+        .forEach((taskKey) => {
             watchersToStart[taskKey] = mapToStartArgs(watcherTasks[taskKey]);
         });
 
     // Start not running tasks again
     // This is to ensure that watcher that have crashed or have finished execution will be started again
     newRouteTasks
-        .filter(taskKey => alreadyRunning.includes(taskKey))
-        .forEach(taskKey => {
+        .filter((taskKey) => alreadyRunning.includes(taskKey))
+        .forEach((taskKey) => {
             if (!runningWatchers[taskKey]) {
                 return;
             }
@@ -94,21 +96,21 @@ function* manageWatchers(
             }
         });
 
-    const started = yield all(watchersToStart);
-    Object.keys(started).forEach(taskKey => {
+    const started: RunningTasks = yield all(watchersToStart);
+    Object.keys(started).forEach((taskKey) => {
         runningWatchers[taskKey] = started[taskKey];
     });
 
     // Stop removed tasks
     const watchersToStop: WatcherEffects = {};
     alreadyRunning
-        .filter(taskKey => !newRouteTasks.includes(taskKey))
-        .forEach(taskKey => {
+        .filter((taskKey) => !newRouteTasks.includes(taskKey))
+        .forEach((taskKey) => {
             watchersToStop[taskKey] = cancel(runningWatchers[taskKey]);
         });
 
-    const stopped = yield all(watchersToStop);
-    Object.keys(stopped).forEach(key => {
+    const stopped: RunningTasks = yield all(watchersToStop);
+    Object.keys(stopped).forEach((key) => {
         delete runningWatchers[key];
     });
 }
@@ -125,7 +127,7 @@ function* ViewManagerWorker(
     routes: NamedRouteConfig[],
     { payload: { location } }: LocationChangeAction,
     options: ViewManagerOptions = {},
-    runningWatchers: RunningWatcherTasks = {},
+    runningWatchers: RunningTasks = {},
     firstRendering = false
 ): SagaIterator {
     try {
@@ -211,13 +213,13 @@ export function* ServerViewManagerWorker(
 
 function* runViewManagerWorker(
     routes: NamedRouteConfig[],
-    runningWatchers: RunningWatcherTasks,
+    runningWatchers: RunningTasks,
     options: ViewManagerOptions
 ) {
     let task: Task | null = null;
 
     while (true) {
-        const action = yield take(LOCATION_CHANGE);
+        const action: LocationChangeAction = yield take(LOCATION_CHANGE);
 
         if (task) {
             yield cancel(task);
@@ -246,7 +248,7 @@ export function* ViewManager(
     routes: NamedRouteConfig[],
     options: ViewManagerOptions = {}
 ): SagaIterator {
-    const runningWatchers: RunningWatcherTasks = {};
+    const runningWatchers: RunningTasks = {};
 
     try {
         yield call(runViewManagerWorker, routes, runningWatchers, options);

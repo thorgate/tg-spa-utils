@@ -4,8 +4,7 @@ import { ConfigureStore, configureStore } from '@thorgate/test-store';
 import { delay } from 'redux-saga/effects';
 
 import { createResourceSaga, setBaseConfig } from '../src';
-import { actions, actionTypeNoMeta, resourceType } from './utils';
-
+import { actions, actionTypeNoMeta } from './utils';
 
 let store: ConfigureStore<any>;
 let resource: SagaResource<DummyResource>;
@@ -22,7 +21,6 @@ beforeEach(() => {
     setBaseConfig('timeoutMs', 3000);
 });
 
-
 describe('createResourceSaga', () => {
     test('wrong action type', async (done) => {
         const saga = createResourceSaga({});
@@ -32,7 +30,9 @@ describe('createResourceSaga', () => {
 
             done(new Error('Expected to fail for in-correct action type'));
         } catch (error) {
-            expect(error.toString()).toEqual('Error: Action (property "type") is missing');
+            expect(error.toString()).toEqual(
+                'Error: Action (property "type") is missing'
+            );
             done();
         }
     });
@@ -41,18 +41,26 @@ describe('createResourceSaga', () => {
         const saga = createResourceSaga({});
 
         try {
-            await store.sagaMiddleware.run(saga, null, actions.noMeta()).toPromise();
+            await store.sagaMiddleware
+                .run(saga, null, actions.noMeta())
+                .toPromise();
 
-            done(new Error('Expected to fail for missing "resource" and "apiHook".'));
+            done(
+                new Error(
+                    'Expected to fail for missing "resource" and "apiHook".'
+                )
+            );
         } catch (error) {
-            expect(error.toString()).toEqual('Error: Misconfiguration: "resource" or "apiHook" is required');
+            expect(error.toString()).toEqual(
+                'Error: Misconfiguration: "resource" or "apiHook" is required'
+            );
             done();
         }
     });
 
     test('request timeout :: default', async (done) => {
         const saga = createResourceSaga({
-            * apiHook() {
+            *apiHook() {
                 yield delay(500);
 
                 done(new Error('Expected Saga to be cancelled via timeout.'));
@@ -61,7 +69,9 @@ describe('createResourceSaga', () => {
         });
 
         try {
-            await store.sagaMiddleware.run(saga, null, actions.noMeta()).toPromise();
+            await store.sagaMiddleware
+                .run(saga, null, actions.noMeta())
+                .toPromise();
 
             done(new Error('Expected Saga to be cancelled via timeout.'));
         } catch (error) {
@@ -72,7 +82,7 @@ describe('createResourceSaga', () => {
 
     test('request timeout :: override', async (done) => {
         const saga = createResourceSaga({
-            * apiHook() {
+            *apiHook() {
                 yield delay(500);
 
                 done(new Error('Expected Saga to be cancelled via timeout.'));
@@ -82,7 +92,9 @@ describe('createResourceSaga', () => {
         });
 
         try {
-            await store.sagaMiddleware.run(saga, null, actions.noMeta()).toPromise();
+            await store.sagaMiddleware
+                .run(saga, null, actions.noMeta())
+                .toPromise();
 
             done(new Error('Expected Saga to be cancelled via timeout.'));
         } catch (error) {
@@ -99,10 +111,15 @@ describe('createResourceSaga', () => {
         expect(saga.getConfiguration().resource).toBe(resource);
 
         // Empty clone keeps original configuration
-        expect(saga.cloneSaga({}).getConfiguration()).toEqual(saga.getConfiguration());
+        expect(saga.cloneSaga({}).getConfiguration()).toEqual(
+            saga.getConfiguration()
+        );
 
         // Clone replaces resource
-        expect(saga.cloneSaga({ resource: resource.resource }).getConfiguration().resource).toBe(resource.resource);
+        expect(
+            saga.cloneSaga({ resource: resource.resource }).getConfiguration()
+                .resource
+        ).toBe(resource.resource);
     });
 
     test('mutateKwargs', async () => {
@@ -113,15 +130,19 @@ describe('createResourceSaga', () => {
             mutateKwargs,
         });
 
-        await store.sagaMiddleware.run(saga, null, actions.noMeta(actionPayload)).toPromise();
+        await store.sagaMiddleware
+            .run(saga, null, actions.noMeta(actionPayload))
+            .toPromise();
 
         expect(mutateKwargs.mock.calls).toEqual([
-            [null, {
-                type: actionTypeNoMeta,
-                resourceType,
-                payload: actionPayload,
-                meta: undefined,
-            }],
+            [
+                null,
+                {
+                    type: actionTypeNoMeta,
+                    payload: actionPayload,
+                    meta: undefined,
+                },
+            ],
         ]);
     });
 
@@ -133,15 +154,19 @@ describe('createResourceSaga', () => {
             mutateQuery,
         });
 
-        await store.sagaMiddleware.run(saga, null, actions.noMeta(actionPayload)).toPromise();
+        await store.sagaMiddleware
+            .run(saga, null, actions.noMeta(actionPayload))
+            .toPromise();
 
         expect(mutateQuery.mock.calls).toEqual([
-            [null, {
-                type: actionTypeNoMeta,
-                resourceType,
-                payload: actionPayload,
-                meta: undefined,
-            }],
+            [
+                null,
+                {
+                    type: actionTypeNoMeta,
+                    payload: actionPayload,
+                    meta: undefined,
+                },
+            ],
         ]);
     });
 
@@ -152,18 +177,21 @@ describe('createResourceSaga', () => {
             apiHook,
         });
 
-        await store.sagaMiddleware.run(saga, null, actions.noMeta(actionPayload)).toPromise();
+        await store.sagaMiddleware
+            .run(saga, null, actions.noMeta(actionPayload))
+            .toPromise();
 
         expect(apiHook.mock.calls).toEqual([
-            [null, {
-                type: actionTypeNoMeta,
-                resourceType,
-                payload: actionPayload,
-                meta: undefined,
-            }],
+            [
+                null,
+                {
+                    type: actionTypeNoMeta,
+                    payload: actionPayload,
+                    meta: undefined,
+                },
+            ],
         ]);
     });
-
 
     test('successHook', async () => {
         const mutateKwargs = jest.fn();
@@ -177,33 +205,42 @@ describe('createResourceSaga', () => {
             successHook,
         });
 
-        await store.sagaMiddleware.run(saga, null, actions.noMeta(actionPayload)).toPromise();
+        await store.sagaMiddleware
+            .run(saga, null, actions.noMeta(actionPayload))
+            .toPromise();
 
         expect(mutateKwargs.mock.calls).toEqual([
-            [null, {
-                type: actionTypeNoMeta,
-                resourceType,
-                payload: actionPayload,
-                meta: undefined,
-            }],
+            [
+                null,
+                {
+                    type: actionTypeNoMeta,
+                    payload: actionPayload,
+                    meta: undefined,
+                },
+            ],
         ]);
 
         expect(mutateQuery.mock.calls).toEqual([
-            [null, {
-                type: actionTypeNoMeta,
-                resourceType,
-                payload: actionPayload,
-                meta: undefined,
-            }],
+            [
+                null,
+                {
+                    type: actionTypeNoMeta,
+                    payload: actionPayload,
+                    meta: undefined,
+                },
+            ],
         ]);
 
         expect(successHook.mock.calls).toEqual([
-            [null, null, {
-                type: actionTypeNoMeta,
-                resourceType,
-                payload: actionPayload,
-                meta: undefined,
-            }],
+            [
+                null,
+                null,
+                {
+                    type: actionTypeNoMeta,
+                    payload: actionPayload,
+                    meta: undefined,
+                },
+            ],
         ]);
     });
 });

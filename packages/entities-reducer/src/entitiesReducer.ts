@@ -1,6 +1,5 @@
+import { createAction, createReducer } from '@reduxjs/toolkit';
 import { isObject } from '@thorgate/spa-is';
-import { produce } from 'immer';
-import { ActionType, createAction, getType } from 'typesafe-actions';
 
 import {
     EntitiesIdsPayload,
@@ -27,50 +26,57 @@ const defaultActionMeta: EntitiesMeta = {
 export const entitiesActions = {
     setEntities: createAction(
         '@@tg-spa-entities/SET_ENTITIES',
-        createHandler => (
-            payload: SetEntitiesPayload,
-            meta: EntitiesMeta = {}
-        ) => createHandler(payload, { ...defaultActionMeta, ...meta })
+        (payload: SetEntitiesPayload, meta: EntitiesMeta = {}) => ({
+            payload,
+            meta: { ...defaultActionMeta, ...meta },
+        })
     ),
 
     setEntitiesStatus: createAction(
         '@@tg-spa-entities/SET_ENTITIES_STATUS',
-        createHandler => (payload: EntitiesStatusPayload) =>
-            createHandler(payload)
+        (payload: EntitiesStatusPayload) => ({ payload })
     ),
 
     setEntitiesMetaData: createAction(
         '@@tg-spa-entities/SET_ENTITIES_META_DATA',
-        createHandler => (
-            payload: EntitiesMetaDataPayload,
-            meta: EntitiesMeta = {}
-        ) => createHandler(payload, { ...defaultActionMeta, ...meta })
+        (payload: EntitiesMetaDataPayload, meta: EntitiesMeta = {}) => ({
+            payload,
+            meta: { ...defaultActionMeta, ...meta },
+        })
     ),
 
     markArchived: createAction(
         '@@tg-spa-entities/MARK_ARCHIVED',
-        createHandler => (payload: EntitiesIdsPayload) => createHandler(payload)
+        (payload: EntitiesIdsPayload) => ({ payload })
     ),
 
     markActive: createAction(
         '@@tg-spa-entities/MARK_ACTIVE',
-        createHandler => (payload: EntitiesIdsPayload) => createHandler(payload)
+        (payload: EntitiesIdsPayload) => ({ payload })
     ),
 
     purgeOrder: createAction(
         '@@tg-spa-entities/PURGE_ORDER',
-        createHandler => (payload: EntityKeyPayload) => createHandler(payload)
+        (payload: EntityKeyPayload) => ({ payload })
     ),
 
     purgeEntities: createAction(
         '@@tg-spa-entities/PURGE_ENTITIES',
-        createHandler => (payload: EntitiesIdsPayload) => createHandler(payload)
+        (payload: EntitiesIdsPayload) => ({ payload })
     ),
 
     clearEntities: createAction('@@tg-spa-entities/CLEAR_ENTITIES'),
 };
 
-export type EntitiesAction = ActionType<typeof entitiesActions>;
+export type EntitiesAction =
+    | ReturnType<typeof entitiesActions.setEntities>
+    | ReturnType<typeof entitiesActions.setEntitiesStatus>
+    | ReturnType<typeof entitiesActions.setEntitiesMetaData>
+    | ReturnType<typeof entitiesActions.markArchived>
+    | ReturnType<typeof entitiesActions.markActive>
+    | ReturnType<typeof entitiesActions.purgeOrder>
+    | ReturnType<typeof entitiesActions.purgeEntities>
+    | ReturnType<typeof entitiesActions.clearEntities>;
 
 const selectEntities = (state: EntitiesState) => state.data;
 const selectEntityType = (state: EntitiesState, key: string) =>
@@ -105,7 +111,7 @@ const initialState: EntitiesState = {
 };
 
 const mutateOrder = <T>(baseOrder: T[] | undefined, order: T[]) => {
-    order.forEach(item => {
+    order.forEach((item) => {
         if (typeof baseOrder === 'undefined') {
             baseOrder = [];
         }
@@ -116,137 +122,121 @@ const mutateOrder = <T>(baseOrder: T[] | undefined, order: T[]) => {
     });
 };
 
-export const entitiesReducer = (
-    state: EntitiesState = initialState,
-    action: EntitiesAction
-) =>
-    produce(state, draft => {
-        switch (action.type) {
-            case getType(entitiesActions.setEntities): {
-                const { meta, payload } = action;
+export const entitiesReducer = createReducer(initialState, (builder) => {
+    builder
+        .addCase(entitiesActions.setEntities, (state, action) => {
+            const { meta, payload } = action;
 
-                // Update order if not preserving previous
-                if ((meta && !meta.preserveOrder) || !meta) {
-                    if (meta && meta.updateOrder) {
-                        const order = Array.isArray(payload.order)
-                            ? payload.order
-                            : [payload.order];
-                        mutateOrder(draft.order[payload.key], order);
-                    } else if (Array.isArray(payload.order)) {
-                        draft.order[payload.key] = payload.order;
-                    } else {
-                        draft.order[payload.key] = [payload.order];
-                    }
+            // Update order if not preserving previous
+            if ((meta && !meta.preserveOrder) || !meta) {
+                if (meta && meta.updateOrder) {
+                    const order = Array.isArray(payload.order)
+                        ? payload.order
+                        : [payload.order];
+                    mutateOrder(state.order[payload.key], order);
+                } else if (Array.isArray(payload.order)) {
+                    state.order[payload.key] = payload.order;
+                } else {
+                    state.order[payload.key] = [payload.order];
                 }
-
-                // Update entities from the payload
-                Object.entries(payload.entities).forEach(([key, entities]) => {
-                    // Overwrite existing entities
-                    if (meta && !meta.preserveExisting) {
-                        draft.data[key] = entities;
-                        return;
-                    }
-
-                    // Go through all payload entities to update or merge in the Draft
-                    Object.entries(entities).forEach(([entityId, entity]) => {
-                        let newEntity = entity;
-
-                        if (meta && meta.mergeEntities) {
-                            const oldEntity = draft.data[key][entityId] || {};
-                            newEntity = { ...oldEntity, ...newEntity };
-                        }
-
-                        if (draft.data[key]) {
-                            draft.data[key][entityId] = newEntity;
-                        } else {
-                            draft.data[key] = {
-                                [entityId]: newEntity,
-                            };
-                        }
-                    });
-                });
-
-                if (meta && meta.clearArchived) {
-                    draft.archived[payload.key] = [];
-                }
-                return;
             }
 
-            case getType(entitiesActions.setEntitiesStatus):
-                draft.status[action.payload.key] = action.payload.status;
-                return;
-
-            case getType(entitiesActions.setEntitiesMetaData): {
-                const { meta, payload } = action;
-
+            // Update entities from the payload
+            Object.entries(payload.entities).forEach(([key, entities]) => {
+                // Overwrite existing entities
                 if (meta && !meta.preserveExisting) {
-                    draft.metaData[payload.key] = payload.metaData;
+                    state.data[key] = entities;
                     return;
                 }
 
-                Object.entries(payload.metaData).forEach(([key, metaData]) => {
-                    let newValue = metaData;
+                // Go through all payload entities to update or merge in the Draft
+                Object.entries(entities).forEach(([entityId, entity]) => {
+                    let newEntity = entity;
 
-                    if (meta && meta.mergeMetadata && isObject(newValue)) {
-                        const oldValue = (draft.metaData[payload.key] || {})[
-                            key
-                        ];
-
-                        if (isObject(oldValue)) {
-                            newValue = { ...oldValue, ...newValue };
-                        }
+                    if (meta && meta.mergeEntities) {
+                        const oldEntity = state.data[key][entityId] || {};
+                        newEntity = { ...oldEntity, ...newEntity };
                     }
 
-                    if (draft.metaData[payload.key]) {
-                        draft.metaData[payload.key][key] = newValue;
+                    if (state.data[key]) {
+                        state.data[key][entityId] = newEntity;
                     } else {
-                        draft.metaData[payload.key] = {
-                            [key]: newValue,
+                        state.data[key] = {
+                            [entityId]: newEntity,
                         };
                     }
                 });
+            });
+
+            if (meta && meta.clearArchived) {
+                state.archived[payload.key] = [];
+            }
+        })
+        .addCase(entitiesActions.setEntitiesStatus, (state, action) => {
+            state.status[action.payload.key] = action.payload.status;
+        })
+        .addCase(entitiesActions.setEntitiesMetaData, (state, action) => {
+            const { meta, payload } = action;
+
+            if (meta && !meta.preserveExisting) {
+                state.metaData[payload.key] = payload.metaData;
                 return;
             }
 
-            case getType(entitiesActions.markArchived):
-                draft.archived[action.payload.key] = action.payload.ids;
-                return;
+            Object.entries(payload.metaData).forEach(([key, metaData]) => {
+                let newValue = metaData;
 
-            case getType(entitiesActions.markActive):
-                draft.archived[action.payload.key] = action.payload.ids;
-                draft.archived[action.payload.key] = selectArchivedEntities(
-                    draft,
-                    action.payload.key
-                ).filter(id => !action.payload.ids.includes(id));
-                return;
+                if (meta && meta.mergeMetadata && isObject(newValue)) {
+                    const oldValue = (state.metaData[payload.key] || {})[key];
 
-            case getType(entitiesActions.purgeEntities): {
-                action.payload.ids.forEach(id => {
-                    if (
-                        draft.data[action.payload.key] &&
-                        draft.data[action.payload.key][id]
-                    ) {
-                        delete draft.data[action.payload.key][id];
+                    if (isObject(oldValue)) {
+                        newValue = { ...oldValue, ...newValue };
                     }
-                });
-                draft.order[action.payload.key] = selectEntityOrder(
-                    draft,
-                    action.payload.key
-                ).filter(id => !action.payload.ids.includes(id));
-                return;
-            }
+                }
 
-            case getType(entitiesActions.purgeOrder):
-                draft.order[action.payload.key] = [];
-                return;
-
-            case getType(entitiesActions.clearEntities):
-                return initialState;
-
-            default:
-                return state;
-        }
-    });
+                if (state.metaData[payload.key]) {
+                    state.metaData[payload.key][key] = newValue;
+                } else {
+                    state.metaData[payload.key] = {
+                        [key]: newValue,
+                    };
+                }
+            });
+        })
+        .addCase(entitiesActions.markArchived, (state, action) => {
+            state.archived[action.payload.key] = action.payload.ids;
+        })
+        .addCase(entitiesActions.markActive, (state, action) => {
+            state.archived[action.payload.key] = action.payload.ids;
+            state.archived[action.payload.key] = selectArchivedEntities(
+                state,
+                action.payload.key
+            ).filter((id) => !action.payload.ids.includes(id));
+        })
+        .addCase(entitiesActions.purgeEntities, (state, action) => {
+            action.payload.ids.forEach((id) => {
+                if (
+                    state.data[action.payload.key] &&
+                    state.data[action.payload.key][id]
+                ) {
+                    delete state.data[action.payload.key][id];
+                }
+            });
+            state.order[action.payload.key] = selectEntityOrder(
+                state,
+                action.payload.key
+            ).filter((id) => !action.payload.ids.includes(id));
+        })
+        .addCase(entitiesActions.purgeOrder, (state, action) => {
+            state.order[action.payload.key] = [];
+        })
+        .addCase(entitiesActions.clearEntities, () => {
+            return initialState;
+        })
+        .addDefaultCase((_0, _1) => {
+            return undefined;
+        });
+});
 
 /**
  * Select entities root state.

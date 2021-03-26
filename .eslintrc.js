@@ -30,10 +30,6 @@ module.exports = {
 
         '@typescript-eslint/no-explicit-any': 'off', // warn
         '@typescript-eslint/explicit-function-return-type': 'off',
-        '@typescript-eslint/camelcase': [
-            'error',
-            { allow: ['non_field_errors'] },
-        ],
         '@typescript-eslint/no-unused-vars': [
             'error',
             { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },

@@ -1,47 +1,33 @@
+import { createAction } from '@reduxjs/toolkit';
 import {
-    createResourceAction,
     ResourceActionPayload,
+    ResourceActionCreator,
     TypeConstant,
 } from '@thorgate/create-resource-saga';
 import { Kwargs } from '@thorgate/spa-is';
 
-import {
-    EntitiesResource,
-    FetchAction,
-    FetchActionType,
-    FetchMeta,
-} from './types';
+import { FetchMeta } from './types';
 
 export { TypeConstant } from '@thorgate/create-resource-saga';
 
 /**
- * Check if `value` is entities action.
- * @param value
- */
-export const isEntitiesAction = (
-    value: any
-): value is FetchActionType<TypeConstant> =>
-    value && value.resourceType === EntitiesResource;
-
-/**
  * Action creator matching signature:
  *
- *   (payload, meta) => ({ type, resourceType, payload, meta })
+ *   (payload, meta) => ({ type, payload, meta })
  *
  * @param type - Action type
  */
 export const createFetchAction = <
     T extends TypeConstant,
-    KW extends Kwargs<KW> = {},
+    KW extends Kwargs<KW> = Record<string, string | undefined>,
     Data = any
 >(
     type: T
-): FetchAction<T, KW, Data> =>
-    createResourceAction(
-        EntitiesResource,
+): ResourceActionCreator<T, KW, Data, FetchMeta> =>
+    createAction(
         type,
-        resolve => (
+        (
             payload: ResourceActionPayload<KW, Data> = {},
             meta: FetchMeta = {}
-        ) => resolve(payload, meta)
+        ) => ({ payload, meta })
     );

@@ -20,11 +20,9 @@ export interface Result<R = any> {
     previous: KwargsType;
 }
 
-export function createPaginationSuccessHook<Params extends Kwargs<Params> = {}>(
-    key: Key,
-    setNextOnly = false,
-    enabled = true
-) {
+export function createPaginationSuccessHook<
+    Params extends Kwargs<Params> = Record<string, string | undefined>
+>(key: Key, setNextOnly = false, enabled = true) {
     function getKeyValue(matchObj: match<Params> | null, meta: FetchMeta) {
         return GetKeyValue(
             key,
@@ -65,5 +63,6 @@ export function createPaginationSuccessHook<Params extends Kwargs<Params> = {}>(
             yield putResolve(paginationActions.setPrevKwargs(name));
         }
     }
+
     return paginationSuccessHook;
 }

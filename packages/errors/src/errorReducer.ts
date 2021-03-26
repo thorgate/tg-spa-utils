@@ -1,4 +1,4 @@
-import { ActionType, createAction, getType } from 'typesafe-actions';
+import { createAction, createReducer } from '@reduxjs/toolkit';
 
 export interface ErrorResponse extends Error {
     statusCode?: number;
@@ -12,45 +12,40 @@ export interface ErrorState {
 }
 
 export const errorActions = {
-    setError: createAction(
-        '@@tg-spa-errors/SET_ERROR',
-        resolve => (error: ErrorType) =>
-            resolve({
-                error: error
-                    ? {
-                          name: error.name,
-                          statusCode: error.statusCode,
-                          message: error.message || error.toString(),
-                          stack:
-                              process.env.NODE_ENV !== 'production'
-                                  ? error.stack
-                                  : undefined,
-                          responseText: error.responseText,
-                      }
-                    : null,
-            })
-    ),
+    setError: createAction('@@tg-spa-errors/SET_ERROR', (error: ErrorType) => ({
+        payload: error
+            ? {
+                  name: error.name,
+                  statusCode: error.statusCode,
+                  message: error.message || error.toString(),
+                  stack:
+                      process.env.NODE_ENV !== 'production'
+                          ? error.stack
+                          : undefined,
+                  responseText: error.responseText,
+              }
+            : null,
+    })),
 
     resetError: createAction('@@tg-spa-errors/RESET_ERROR'),
 };
 
-export type ErrorActions = ActionType<typeof errorActions>;
+export type ErrorActions =
+    | ReturnType<typeof errorActions.setError>
+    | ReturnType<typeof errorActions.resetError>;
 
-export function errorReducer(
-    state: ErrorType = null,
-    action: ErrorActions
-): ErrorType {
-    switch (action.type) {
-        case getType(errorActions.setError):
-            return action.payload.error;
-
-        case getType(errorActions.resetError):
+export const errorReducer = createReducer(null as ErrorType, (builder) => {
+    builder
+        .addCase(errorActions.setError, (_0, action) => {
+            return action.payload;
+        })
+        .addCase(errorActions.resetError, () => {
             return null;
-
-        default:
-            return state;
-    }
-}
+        })
+        .addDefaultCase((_0, _1) => {
+            return undefined;
+        });
+});
 
 export const getError = <T extends ErrorState>(state: T): ErrorType =>
     state.error;

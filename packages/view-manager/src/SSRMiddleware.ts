@@ -7,7 +7,7 @@ import { ConnectedRouterHistoryActions, SSR_REDIRECT_ACTION } from './types';
 export const ssrRedirectMiddleware = <
     S = any,
     D extends Dispatch = Dispatch
->(): Middleware<{}, S, D> => () => next => (
+>(): Middleware<Record<string, unknown>, S, D> => () => (next) => (
     action: AnyAction | ConnectedRouterHistoryActions
 ) => {
     if (action.type === CALL_HISTORY_METHOD) {

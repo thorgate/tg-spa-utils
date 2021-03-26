@@ -48,7 +48,7 @@ export const configureStore = <S = any, A extends Action = AnyAction>(
     >;
 };
 
-export function* watchAndLog(logAction = true, logState = true) {
+export function* watchAndLog<S = any>(logAction = true, logState = true) {
     yield takeEvery('*', function* logger(action: any) {
         if (logAction) {
             // eslint-disable-next-line no-console
@@ -56,7 +56,7 @@ export function* watchAndLog(logAction = true, logState = true) {
         }
 
         if (logState) {
-            const state = yield select();
+            const state: S = yield select();
             // eslint-disable-next-line no-console
             console.log('state after', state);
         }

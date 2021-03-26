@@ -32,12 +32,12 @@
     "tg-resources": "^3.1.3"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.5.0",
     "@thorgate/create-resource-saga": "1.0.0-beta.0",
     "@thorgate/spa-entities-reducer": "1.0.0-beta.0",
     "@thorgate/spa-errors": "1.0.0-beta.2",
     "@thorgate/spa-is": "1.0.0-beta.0",
-    "lru-cache": "^5.1.1",
-    "typesafe-actions": "^4.4.2"
+    "lru-cache": "^5.1.1"
   },
   "devDependencies": {
     "@thorgate/test-data": "1.0.0-beta.0",
@@ -47,6 +47,7 @@
   "scripts": {
     "clean": "rimraf ./lib",
     "lint": "eslint src -c ../../.eslintrc.js --ext ts --ext tsx",
+    "type-check": "dtslint --localTs ../../node_modules/typescript/lib --expectOnly types",
     "build": "rollup -c=../../rollup.config.js",
     "prebuild": "yarn clean && yarn lint"
   }

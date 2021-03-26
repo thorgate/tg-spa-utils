@@ -18,24 +18,16 @@ import {
  * @param options - Options to configure resource saga
  */
 export function createResourceSaga<
-    ResourceType extends TypeConstant,
     Klass extends Resource,
     KW extends Kwargs<KW>,
     Params extends Kwargs<Params>,
     Data = any,
     Meta = undefined
 >(
-    options: ResourceSagaOptions<ResourceType, Klass, KW, Params, Data, Meta>
-): ResourceSaga<ResourceType, Klass, KW, Params, Data, Meta> {
+    options: ResourceSagaOptions<Klass, KW, Params, Data, Meta>
+): ResourceSaga<Klass, KW, Params, Data, Meta> {
     function createCloneableSaga(
-        config: ResourceSagaOptions<
-            ResourceType,
-            Klass,
-            KW,
-            Params,
-            Data,
-            Meta
-        > = {}
+        config: ResourceSagaOptions<Klass, KW, Params, Data, Meta> = {}
     ) {
         const mergedOptions = { ...options, ...config };
 
@@ -53,21 +45,10 @@ export function createResourceSaga<
 
         function* resourceSaga(
             matchObj: match<Params> | null,
-            action: ResourcePayloadMetaAction<
-                ResourceType,
-                TypeConstant,
-                KW,
-                Data,
-                Meta
-            >
+            action: ResourcePayloadMetaAction<TypeConstant, KW, Data, Meta>
         ) {
             // Expect action created with createResourceAction
             validateResourceAction(action.type, 'type', 'Action');
-            validateResourceAction(
-                action.resourceType,
-                'resourceType',
-                'Action'
-            );
 
             const { payload } = action;
 
@@ -125,14 +106,7 @@ export function createResourceSaga<
 
         return Object.assign(resourceSaga, {
             cloneSaga: (
-                override: ResourceSagaOptions<
-                    ResourceType,
-                    Klass,
-                    KW,
-                    Params,
-                    Data,
-                    Meta
-                >
+                override: ResourceSagaOptions<Klass, KW, Params, Data, Meta>
             ) => createCloneableSaga(override),
 
             getConfiguration: () => ({
@@ -144,5 +118,5 @@ export function createResourceSaga<
         });
     }
 
-    return createCloneableSaga();
+    return createCloneableSaga() as ResourceSaga<Klass, KW, Params, Data, Meta>;
 }

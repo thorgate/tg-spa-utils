@@ -1,7 +1,7 @@
+import { PayloadAction, PayloadActionCreator } from '@reduxjs/toolkit';
 import { SagaResource } from '@tg-resources/redux-saga-router';
 import { Kwargs } from '@thorgate/spa-is';
 import { match } from 'react-router';
-import { SagaIterator } from 'redux-saga';
 import { Attachments, Query, Resource, ResourceMethods } from 'tg-resources';
 
 /**
@@ -24,37 +24,26 @@ export interface MetaOptions {
 
 export type TypeConstant = string;
 
-export interface ActionCreator<
-    ResourceType extends TypeConstant,
-    T extends TypeConstant
-> {
-    (...args: any[]): { type: T; resourceType: ResourceType };
-
-    getType?: () => T;
-    getResourceType?: () => ResourceType;
-}
-
-// Based on `typesafe-actions` payload meta actions
-// Resource version adds restriction based on resourceType instead of type
-// This is to support more swappable actions and limit action to specific IO type instead of action type
 export type ResourcePayloadMetaAction<
-    ResourceType extends TypeConstant,
-    T extends TypeConstant,
+    Type extends TypeConstant,
     KW extends Kwargs<KW>,
     Data,
     Meta = undefined
-> = Meta extends undefined
-    ? {
-          type: T;
-          payload: ResourceActionPayload<KW, Data>;
-          resourceType: ResourceType;
-      }
-    : {
-          type: T;
-          payload: ResourceActionPayload<KW, Data>;
-          meta: Meta;
-          resourceType: ResourceType;
-      };
+> = PayloadAction<ResourceActionPayload<KW, Data>, Type, Meta>;
+
+export type ResourceActionCreator<
+    Type extends TypeConstant,
+    KW extends Kwargs<KW>,
+    Data,
+    Meta = undefined
+> = PayloadActionCreator<
+    ResourceActionPayload<KW, Data>,
+    Type,
+    (
+        p?: ResourceActionPayload<KW, Data>,
+        meta?: Meta
+    ) => ResourcePayloadMetaAction<Type, KW, Data, Meta>
+>;
 
 export interface ResourceSagaConfig {
     /**
@@ -70,7 +59,6 @@ export interface ResourceSagaConfig {
 }
 
 export interface ResourceSagaOptions<
-    ResourceType extends TypeConstant,
     Klass extends Resource,
     KW extends Kwargs<KW>,
     Params extends Kwargs<Params>,
@@ -98,14 +86,8 @@ export interface ResourceSagaOptions<
      */
     apiHook?: (
         matchObj: match<Params> | null,
-        action: ResourcePayloadMetaAction<
-            ResourceType,
-            TypeConstant,
-            KW,
-            Data,
-            Meta
-        >
-    ) => any | SagaIterator;
+        action: ResourcePayloadMetaAction<TypeConstant, KW, Data, Meta>
+    ) => any | Iterator<any>;
 
     /**
      * Success handler called when requests succeeds
@@ -117,14 +99,8 @@ export interface ResourceSagaOptions<
     successHook?: (
         result: any,
         matchObj: match<Params> | null,
-        action: ResourcePayloadMetaAction<
-            ResourceType,
-            TypeConstant,
-            KW,
-            Data,
-            Meta
-        >
-    ) => any | SagaIterator;
+        action: ResourcePayloadMetaAction<TypeConstant, KW, Data, Meta>
+    ) => any | Iterator<any>;
 
     /**
      * Mutate kwargs passed to `resource` instance
@@ -134,14 +110,8 @@ export interface ResourceSagaOptions<
      */
     mutateKwargs?: (
         matchObj: match<Params> | null,
-        action: ResourcePayloadMetaAction<
-            ResourceType,
-            TypeConstant,
-            KW,
-            Data,
-            Meta
-        >
-    ) => any | SagaIterator;
+        action: ResourcePayloadMetaAction<TypeConstant, KW, Data, Meta>
+    ) => any | Iterator<any>;
 
     /**
      * Mutate query passed to `resource` instance
@@ -151,21 +121,14 @@ export interface ResourceSagaOptions<
      */
     mutateQuery?: (
         matchObj: match<Params> | null,
-        action: ResourcePayloadMetaAction<
-            ResourceType,
-            TypeConstant,
-            KW,
-            Data,
-            Meta
-        >
-    ) => any | SagaIterator;
+        action: ResourcePayloadMetaAction<TypeConstant, KW, Data, Meta>
+    ) => any | Iterator<any>;
 }
 
 /**
  * Resource processing saga created with `createResourceSaga`
  */
 export interface ResourceSaga<
-    ResourceType extends TypeConstant,
     Klass extends Resource,
     KW extends Kwargs<KW>,
     Params extends Kwargs<Params>,
@@ -180,14 +143,8 @@ export interface ResourceSaga<
      */
     (
         matchObj: match<Params> | null,
-        action: ResourcePayloadMetaAction<
-            ResourceType,
-            TypeConstant,
-            KW,
-            Data,
-            Meta
-        >
-    ): SagaIterator;
+        action: ResourcePayloadMetaAction<TypeConstant, KW, Data, Meta>
+    ): Iterator<any>;
 
     /**
      * Create new processing saga with changed configuration options.
@@ -196,22 +153,8 @@ export interface ResourceSaga<
      * @param override - Configuration overrides to change
      */
     cloneSaga: (
-        override: ResourceSagaOptions<
-            ResourceType,
-            Klass,
-            KW,
-            Params,
-            Data,
-            Meta
-        >
-    ) => ResourceSaga<ResourceType, Klass, KW, Params, Data, Meta>;
+        override: ResourceSagaOptions<Klass, KW, Params, Data, Meta>
+    ) => ResourceSaga<Klass, KW, Params, Data, Meta>;
 
-    getConfiguration: () => ResourceSagaOptions<
-        ResourceType,
-        Klass,
-        KW,
-        Params,
-        Data,
-        Meta
-    >;
+    getConfiguration: () => ResourceSagaOptions<Klass, KW, Params, Data, Meta>;
 }

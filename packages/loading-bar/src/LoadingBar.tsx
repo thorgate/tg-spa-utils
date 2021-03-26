@@ -56,7 +56,7 @@ export class LoadingBar extends Component<LoadingBarProps, LoadingBarState> {
     }
 
     public show = () => {
-        this.setState(prevState => ({
+        this.setState((prevState) => ({
             delayShow: true,
             percent: this.calculateVisiblePercentage(prevState.percent),
         }));

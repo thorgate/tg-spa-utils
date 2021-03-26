@@ -1,21 +1,27 @@
 import { getLoadedView, loadingActions } from '@thorgate/spa-pending-data';
 import { getLocation, push } from 'connected-react-router';
+import { SagaIterator } from 'redux-saga';
 import { delay, put, select, take } from 'redux-saga/effects';
-import { getType } from 'typesafe-actions';
 
-import { MatchWithRoute, takeEveryWithMatch, takeLatestWithMatch, takeLeadingWithMatch } from '../src';
-import { setResponse } from './reducer';
+import {
+    MatchWithRoute,
+    takeEveryWithMatch,
+    takeLatestWithMatch,
+    takeLeadingWithMatch,
+} from '../src';
+import { ApiResponseAction, setResponse } from './reducer';
 
+export function* waitLoadingDone(): SagaIterator {
+    const location: ReturnType<typeof getLocation> = yield select(getLocation);
+    const loadedView: ReturnType<typeof getLoadedView> = yield select(
+        getLoadedView
+    );
 
-export function* waitLoadingDone() {
-    const location = yield select(getLocation);
-    const loadedView = yield select(getLoadedView);
-
-    if (loadedView === location.key) {
+    if (location && loadedView === location.key) {
         return;
     }
 
-    yield take(getType(loadingActions.setLoadedView));
+    yield take(loadingActions.setLoadedView.match);
 }
 
 function* dummyInitialLanding() {
@@ -38,7 +44,9 @@ function* dummyRedirectToHome() {
 
 function* dummyInitialIncrementing() {
     yield delay(20);
-    const status: number | undefined = yield select((state) => state.data.status);
+    const status: number | undefined = yield select(
+        (state) => state.data.status
+    );
     if (status) {
         yield put(setResponse({ status: status + 1 }));
     } else {
@@ -48,7 +56,7 @@ function* dummyInitialIncrementing() {
 
 function* dummyWatcher() {
     while (true) {
-        const action = yield take('API_RESPONSE');
+        const action: ApiResponseAction = yield take('API_RESPONSE');
 
         const { response } = action;
         yield put(setResponse({ status: response.status + 1 }));
@@ -71,33 +79,56 @@ interface TestParams {
 }
 
 function* dummyTestEveryInitial(match: MatchWithRoute<TestParams>) {
-    yield put({ type: 'TEST_CALL_EVERY', status: Number(match.params.id) + 10 });
+    yield put({
+        type: 'TEST_CALL_EVERY',
+        status: Number(match.params.id) + 10,
+    });
 }
 
 function* dummyTestLatestInitial(match: MatchWithRoute<TestParams>) {
-    yield put({ type: 'TEST_CALL_LATEST', status: Number(match.params.id) + 100 });
+    yield put({
+        type: 'TEST_CALL_LATEST',
+        status: Number(match.params.id) + 100,
+    });
 }
 
 function* dummyTestLeadingInitial(match: MatchWithRoute<TestParams>) {
-    yield put({ type: 'TEST_CALL_LEADING', status: Number(match.params.id) + 1000 });
+    yield put({
+        type: 'TEST_CALL_LEADING',
+        status: Number(match.params.id) + 1000,
+    });
 }
 
-function* dummyMatchProviderCallback(match: MatchWithRoute<TestParams>, action: TestAction) {
+function* dummyMatchProviderCallback(
+    match: MatchWithRoute<TestParams>,
+    action: TestAction
+) {
     yield put(setResponse({ status: Number(match.params.id) + action.status }));
 }
 
 function* dummyActionWatcherEvery() {
-    yield takeEveryWithMatch('TEST_CALL_EVERY', '/test-every/:id', dummyMatchProviderCallback);
+    yield takeEveryWithMatch(
+        'TEST_CALL_EVERY',
+        '/test-every/:id',
+        dummyMatchProviderCallback
+    );
 }
 
 function* dummyActionWatcherLatest() {
-    yield takeLatestWithMatch('TEST_CALL_LATEST', '/test-latest/:id', dummyMatchProviderCallback);
+    yield takeLatestWithMatch(
+        'TEST_CALL_LATEST',
+        '/test-latest/:id',
+        dummyMatchProviderCallback
+    );
 }
 
 function* dummyActionWatcherLeading() {
-    yield takeLeadingWithMatch('TEST_CALL_LEADING', '/test-leading/:id', dummyMatchProviderCallback);
+    yield takeLeadingWithMatch(
+        'TEST_CALL_LEADING',
+        '/test-leading/:id',
+        dummyMatchProviderCallback
+    );
 }
-
 
 export const routes = [
     {
@@ -173,6 +204,6 @@ export const routes = [
                 component: () => null,
                 initial: dummyTestLeadingInitial,
             },
-        ]
+        ],
     },
 ];

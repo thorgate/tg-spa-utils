@@ -1,21 +1,24 @@
-import { ActionType, createAction, getType } from 'typesafe-actions';
+import { createAction, createReducer } from '@reduxjs/toolkit';
 
 export const loadingActions = {
     setLoadedView: createAction(
         '@@tg-spa-pending-data/FINISH_LOADING_VIEW',
-        resolve => (key: string | undefined) => resolve(key)
+        (key: string | undefined) => ({ payload: key })
     ),
     startLoadingResource: createAction(
         '@@tg-spa-pending-data/START_LOADING_DATA',
-        resolve => (key: string) => resolve(key)
+        (key: string) => ({ payload: key })
     ),
     finishLoadingResource: createAction(
         '@@tg-spa-pending-data/FINISH_LOADING_DATA',
-        resolve => (key: string) => resolve(key)
+        (key: string) => ({ payload: key })
     ),
-};
+} as const;
 
-export type LoadingActions = ActionType<typeof loadingActions>;
+export type LoadingActions =
+    | typeof loadingActions.setLoadedView
+    | typeof loadingActions.startLoadingResource
+    | typeof loadingActions.finishLoadingResource;
 
 interface DataLoadingState {
     [key: string]: boolean;
@@ -35,43 +38,23 @@ const initialState: LoadingStateType = {
     view: undefined,
 };
 
-export function loadingReducer(
-    state: LoadingStateType = initialState,
-    action: LoadingActions
-): LoadingStateType {
-    switch (action.type) {
-        case getType(loadingActions.setLoadedView):
-            return {
-                ...state,
-                view: action.payload,
-            };
-
-        case getType(loadingActions.startLoadingResource):
-            return {
-                ...state,
-
-                data: {
-                    ...state.data,
-                    [action.payload]: true,
-                },
-            };
-
-        case getType(loadingActions.finishLoadingResource):
-            return {
-                ...state,
-
-                data: Object.keys(state.data)
-                    .filter((key: string) => action.payload !== key)
-                    .reduce((prev: DataLoadingState, current: string) => {
-                        prev[current] = state.data[current];
-                        return prev;
-                    }, {}),
-            };
-
-        default:
-            return state;
-    }
-}
+export const loadingReducer = createReducer(initialState, (builder) => {
+    builder
+        .addCase(loadingActions.setLoadedView, (state, action) => {
+            state.view = action.payload;
+        })
+        .addCase(loadingActions.startLoadingResource, (state, action) => {
+            state.data[action.payload] = true;
+        })
+        .addCase(loadingActions.finishLoadingResource, (state, action) => {
+            if (state.data[action.payload]) {
+                delete state.data[action.payload];
+            }
+        })
+        .addDefaultCase((_0, _1) => {
+            return undefined;
+        });
+});
 
 export const getLoadedView = <T extends LoadingState>(state: T) =>
     state.loading.view;

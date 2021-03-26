@@ -61,10 +61,17 @@ interface ViewBaseSnapshot {
 type ViewSnapshot = ViewBaseSnapshot | null;
 
 function shouldHandleScrollRestoration(): boolean {
+    // Skip if running on server
     if (typeof window === 'undefined') {
         return false;
     }
 
+    // Handle scroll restoration when browser API is missing
+    if (!window?.history?.scrollRestoration) {
+        return true;
+    }
+
+    // Handle scroll restoration when not in `auto` mode
     return (
         window.history &&
         window.history.scrollRestoration &&
@@ -194,7 +201,7 @@ class ViewBase extends Component<ViewInternalProps, never, ViewSnapshot> {
     };
 
     protected renderChildren = () => {
-        const children = React.Children.map(this.props.children, child => {
+        const children = React.Children.map(this.props.children, (child) => {
             return React.cloneElement(child as any, {
                 error: this.props.error,
                 isAuthenticated: this.props.isAuthenticated,

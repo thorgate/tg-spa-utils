@@ -8,7 +8,6 @@
 ```
 import { createFetchAction, createFetchSaga, createSchemaSelector, createDetailSchemaSelector } from '@thorgate/spa-entities';
 import { schema } from 'normalizr';
-import { getType } from 'typesafe-actions';
 
 const article = new schema.Entity('articles');
 
@@ -31,7 +30,7 @@ const initialFetchWorker = fetchSaga.asInitialWorker((match) => fetchAction());
 
 
 function* fetchArticleWatcher() {
-    yield takeLatest(getType(fetchAction), fetchSaga);
+    yield takeLatest(fetchAction.type, fetchSaga);
 }
 ```
 

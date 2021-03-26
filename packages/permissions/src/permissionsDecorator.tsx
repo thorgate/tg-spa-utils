@@ -35,7 +35,7 @@ export const permissionCheck = (
     options: CreateDecoratorOptions = {}
 ) =>
     function decorator<Props>(Component: ComponentType<Props>) {
-        const WrappedComponent: FC<Props> = props => (
+        const WrappedComponent: FC<Props> = (props) => (
             <PermissionCheck
                 permissionCheck={permissionCheckFn}
                 redirectRouteName={options.redirectRouteName}
@@ -46,8 +46,9 @@ export const permissionCheck = (
         );
 
         const baseName = displayName || 'permissionCheck';
-        WrappedComponent.displayName = `${baseName}(${Component.displayName ||
-            Component.name})`;
+        WrappedComponent.displayName = `${baseName}(${
+            Component.displayName || Component.name
+        })`;
         return WrappedComponent;
     };
 

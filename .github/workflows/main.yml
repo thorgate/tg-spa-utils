@@ -26,6 +26,8 @@ jobs:
       - name: Lint tools
         run: yarn lint
       - name: Run tests
+        env:
+            NODE_OPTIONS: --max_old_space_size=4096
         run: yarn testAll
       - name: Coveralls
         uses: coverallsapp/github-action@master
