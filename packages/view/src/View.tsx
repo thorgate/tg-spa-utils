@@ -61,10 +61,17 @@ interface ViewBaseSnapshot {
 type ViewSnapshot = ViewBaseSnapshot | null;
 
 function shouldHandleScrollRestoration(): boolean {
+    // Skip if running on server
     if (typeof window === 'undefined') {
         return false;
     }
 
+    // Handle scroll restoration when browser API is missing
+    if (!window?.history?.scrollRestoration) {
+        return true;
+    }
+
+    // Handle scroll restoration when not in `auto` mode
     return (
         window.history &&
         window.history.scrollRestoration &&
