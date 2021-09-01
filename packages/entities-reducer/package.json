@@ -33,7 +33,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^1.5.0",
     "@thorgate/spa-is": "1.0.0-beta.0",
-    "immer": "^8.0.1",
+    "immer": "^9.0.6",
     "lru-cache": "^5.1.1"
   },
   "scripts": {
