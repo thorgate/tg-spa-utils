@@ -25,8 +25,9 @@ import { NamedRouteConfigComponentProps } from 'tg-named-routes';
 import { SafeStorage } from './Storage';
 import { getSessionStorage, windowPageOffset, windowScroll } from './Window';
 
+// Extend window
 // eslint-disable-next-line no-var
-declare var window: Window | undefined;
+declare var window: (Window & { $spaManualScroll?: boolean }) | undefined;
 
 export interface ViewProvidedProps {
     error: ErrorType;
@@ -63,6 +64,11 @@ type ViewSnapshot = ViewBaseSnapshot | null;
 function shouldHandleScrollRestoration(): boolean {
     // Skip if running on server
     if (typeof window === 'undefined') {
+        return false;
+    }
+
+    // Skip if manual scroll managers are used
+    if (window.$spaManualScroll) {
         return false;
     }
 
