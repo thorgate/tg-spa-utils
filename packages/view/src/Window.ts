@@ -13,9 +13,21 @@ export const getSessionStorage = () =>
 export const getLocalStorage = () =>
     new SafeStorage(typeof window !== 'undefined' ? window.localStorage : null);
 
-export const windowScroll = (x: number, y: number) => {
+export const windowScroll = (
+    x: number,
+    y: number,
+    behavior: 'smooth' | 'auto' | null = 'smooth'
+) => {
     if (typeof window !== 'undefined') {
-        window.scroll(x, y);
+        try {
+            window.scrollTo({
+                behavior: behavior || undefined,
+                left: x,
+                top: y,
+            });
+        } catch (error) {
+            window.scroll(x, y);
+        }
     }
 };
 
