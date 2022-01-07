@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-pagination-reducer",
-  "version": "1.0.0-beta.0",
+  "version": "1.0.0-beta.4",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -26,7 +26,7 @@
   ],
   "dependencies": {
     "@reduxjs/toolkit": "^1.5.0",
-    "@thorgate/spa-is": "1.0.0-beta.0"
+    "@thorgate/spa-is": "1.0.0-beta.4"
   },
   "scripts": {
     "clean": "rimraf ./lib",

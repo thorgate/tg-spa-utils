@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-view-manager",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.4",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -34,10 +34,10 @@
     "redux-saga": "^1.1.1"
   },
   "dependencies": {
-    "@thorgate/spa-errors": "1.0.0-beta.2",
-    "@thorgate/spa-is": "1.0.0-beta.0",
-    "@thorgate/spa-pending-data": "1.0.0-beta.2",
-    "tg-named-routes": "1.0.0-beta.2",
+    "@thorgate/spa-errors": "1.0.0-beta.4",
+    "@thorgate/spa-is": "1.0.0-beta.4",
+    "@thorgate/spa-pending-data": "1.0.0-beta.4",
+    "tg-named-routes": "1.0.0-beta.4",
     "typescript-tuple": "^2.1.1",
     "warning": "^4.0.2"
   },

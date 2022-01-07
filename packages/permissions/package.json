@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-permissions",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.4",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -36,10 +36,10 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.5.0",
-    "@thorgate/spa-components": "1.0.0-beta.2",
-    "@thorgate/spa-errors": "1.0.0-beta.2",
-    "@thorgate/spa-pending-data": "1.0.0-beta.2",
-    "tg-named-routes": "1.0.0-beta.2",
+    "@thorgate/spa-components": "1.0.0-beta.4",
+    "@thorgate/spa-errors": "1.0.0-beta.4",
+    "@thorgate/spa-pending-data": "1.0.0-beta.4",
+    "tg-named-routes": "1.0.0-beta.4",
     "warning": "^4.0.2"
   },
   "scripts": {

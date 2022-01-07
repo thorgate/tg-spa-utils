@@ -1,7 +1,7 @@
 {
   "name": "old-razzle-plugin-modify-eslint-loader-config",
   "private": true,
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "scripts": {
     "clean": "echo Nothing to build",
     "build": "echo Nothing to build",

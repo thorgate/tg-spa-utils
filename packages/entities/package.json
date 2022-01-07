@@ -1,6 +1,6 @@
 {
   "name": "@thorgate/spa-entities",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.4",
   "private": false,
   "publishConfig": {
     "access": "public"
@@ -33,16 +33,16 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.5.0",
-    "@thorgate/create-resource-saga": "1.0.0-beta.0",
-    "@thorgate/spa-entities-reducer": "1.0.0-beta.0",
-    "@thorgate/spa-errors": "1.0.0-beta.2",
-    "@thorgate/spa-is": "1.0.0-beta.0",
+    "@thorgate/create-resource-saga": "1.0.0-beta.4",
+    "@thorgate/spa-entities-reducer": "1.0.0-beta.4",
+    "@thorgate/spa-errors": "1.0.0-beta.4",
+    "@thorgate/spa-is": "1.0.0-beta.4",
     "lru-cache": "^5.1.1"
   },
   "devDependencies": {
     "@thorgate/test-data": "1.0.0-beta.0",
     "@thorgate/test-resource": "1.0.0-beta.0",
-    "@thorgate/test-store": "1.0.0-beta.0"
+    "@thorgate/test-store": "1.0.0-beta.4"
   },
   "scripts": {
     "clean": "rimraf ./lib",

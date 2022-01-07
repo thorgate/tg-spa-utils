@@ -1,6 +1,6 @@
 {
   "name": "example-razzle-app",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.4",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -13,13 +13,13 @@
     "start": "NODE_ENV=production node build/server.js"
   },
   "dependencies": {
-    "@thorgate/spa-components": "1.0.0-beta.2",
-    "@thorgate/spa-errors": "1.0.0-beta.2",
-    "@thorgate/spa-is": "1.0.0-beta.0",
-    "@thorgate/spa-pending-data": "1.0.0-beta.2",
-    "@thorgate/spa-permissions": "1.0.0-beta.2",
-    "@thorgate/spa-view": "1.0.0-beta.2",
-    "@thorgate/spa-view-manager": "1.0.0-beta.2",
+    "@thorgate/spa-components": "1.0.0-beta.4",
+    "@thorgate/spa-errors": "1.0.0-beta.4",
+    "@thorgate/spa-is": "1.0.0-beta.4",
+    "@thorgate/spa-pending-data": "1.0.0-beta.4",
+    "@thorgate/spa-permissions": "1.0.0-beta.4",
+    "@thorgate/spa-view": "1.0.0-beta.4",
+    "@thorgate/spa-view-manager": "1.0.0-beta.4",
     "express": "4.17.1",
     "history": "^4.9.0",
     "identity-obj-proxy": "3.0.0",
@@ -37,8 +37,8 @@
     "react-router-config": "^5.1.1",
     "react-router-dom": "^5.2.0",
     "serialize-javascript": "^3.1.0",
-    "tg-named-routes": "1.0.0-beta.2",
-    "tg-saga-manager": "1.0.0-beta.0"
+    "tg-named-routes": "1.0.0-beta.4",
+    "tg-saga-manager": "1.0.0-beta.4"
   },
   "jest": {
     "moduleNameMapper": {
