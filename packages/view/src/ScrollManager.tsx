@@ -7,7 +7,7 @@ import { getSessionStorage, windowPageOffset, windowScroll } from './Window';
 
 interface Snapshot {
     locationUpdate?: boolean;
-    prevKey: string;
+    prevKey?: string;
 }
 
 type Props = NamedRouteConfigComponentProps;
@@ -105,11 +105,14 @@ class SmartScrollToTopBase extends Component<Props, never, Snapshot> {
         }
     }
 
-    protected rememberScrollPosition(key: string) {
+    protected rememberScrollPosition(key: string | undefined) {
         // Remember scroll position so we can restore if we return to this view via browser history (back/forward btn)
         const [x, y] = windowPageOffset();
 
-        this.sessionStorage.setItem(`View.scrollPositions.${key}`, `${x};${y}`);
+        this.sessionStorage.setItem(
+            `View.scrollPositions.${key || 'root'}`,
+            `${x};${y}`
+        );
     }
 
     render() {
