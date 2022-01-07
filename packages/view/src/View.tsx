@@ -85,6 +85,12 @@ function shouldHandleScrollRestoration(): boolean {
     );
 }
 
+let handleScrollRestoration = shouldHandleScrollRestoration();
+
+export const reloadShouldHandleScrollRestoration = () => {
+    handleScrollRestoration = shouldHandleScrollRestoration();
+};
+
 class ViewBase extends Component<ViewInternalProps, never, ViewSnapshot> {
     public static defaultProps = {
         children: null,
@@ -94,7 +100,6 @@ class ViewBase extends Component<ViewInternalProps, never, ViewSnapshot> {
     };
 
     protected sessionStorage: SafeStorage = getSessionStorage();
-    protected static shouldHandleScrollRestoration = shouldHandleScrollRestoration();
 
     public componentDidMount() {
         this.restoreScrollPosition();
@@ -152,7 +157,7 @@ class ViewBase extends Component<ViewInternalProps, never, ViewSnapshot> {
     }
 
     protected restoreScrollPosition = () => {
-        if (!ViewBase.shouldHandleScrollRestoration) {
+        if (!handleScrollRestoration) {
             return;
         }
 
@@ -193,7 +198,7 @@ class ViewBase extends Component<ViewInternalProps, never, ViewSnapshot> {
     };
 
     protected rememberScrollPosition = () => {
-        if (!ViewBase.shouldHandleScrollRestoration) {
+        if (!handleScrollRestoration) {
             return;
         }
 

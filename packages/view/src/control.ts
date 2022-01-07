@@ -1,3 +1,5 @@
+import { reloadShouldHandleScrollRestoration } from './View';
+
 // Extend window
 // eslint-disable-next-line no-var
 declare var window: (Window & { $spaManualScroll?: boolean }) | undefined;
@@ -15,4 +17,6 @@ export const initSpaScroll = () => {
     if (window?.history) {
         window.history.scrollRestoration = 'manual';
     }
+
+    reloadShouldHandleScrollRestoration();
 };
