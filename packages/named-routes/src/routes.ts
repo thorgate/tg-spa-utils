@@ -29,7 +29,7 @@ export interface NamedComponentProps {
 export interface NamedRouteConfig extends RouteConfig {
     routeName?: string;
     name?: string;
-    path?: string;
+    path?: string | string[] | undefined;
     component?:
         | ComponentType<
               NamedRouteConfigComponentProps<any> | Record<string, never>
@@ -123,10 +123,21 @@ export function buildUrlCache(
         routeNames.push(route.routeName);
 
         if (route.path && route.name) {
-            urlMapCache[route.routeName] = {
-                pattern: route.path,
-                resolve: pathToRegexp.compile(route.path),
-            };
+            // In case the path is an array then it is meant to match multiple different paths.
+            //  In this case we always use the first one from the list.
+            //
+            // see https://github.com/remix-run/react-router/pull/5889
+            if (Array.isArray(route.path)) {
+                urlMapCache[route.routeName] = {
+                    pattern: route.path[0],
+                    resolve: pathToRegexp.compile(route.path[0]),
+                };
+            } else {
+                urlMapCache[route.routeName] = {
+                    pattern: route.path,
+                    resolve: pathToRegexp.compile(route.path),
+                };
+            }
         }
 
         if (route.routes) {
