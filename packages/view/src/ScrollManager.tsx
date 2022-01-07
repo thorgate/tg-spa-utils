@@ -69,7 +69,9 @@ class SmartScrollToTopBase extends Component<Props, never, Snapshot> {
         } = this.props;
 
         const shouldRestore =
-            action === 'POP' || (action === 'PUSH' && state['$restoreScroll']);
+            action === 'POP' ||
+            (action === 'PUSH' &&
+                ((state as unknown) as any)['$restoreScroll']);
 
         // POP means user is going forward or backward in history (e.g. via back and forward buttons)
         //   Lets restore previous scroll position.
