@@ -1,6 +1,6 @@
 {
   "name": "example-razzle-app",
-  "version": "1.0.0-beta.4",
+  "version": "1.0.0-beta.5",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -18,7 +18,7 @@
     "@thorgate/spa-is": "1.0.0-beta.4",
     "@thorgate/spa-pending-data": "1.0.0-beta.4",
     "@thorgate/spa-permissions": "1.0.0-beta.4",
-    "@thorgate/spa-view": "1.0.0-beta.4",
+    "@thorgate/spa-view": "1.0.0-beta.5",
     "@thorgate/spa-view-manager": "1.0.0-beta.4",
     "express": "4.17.1",
     "history": "^4.9.0",
