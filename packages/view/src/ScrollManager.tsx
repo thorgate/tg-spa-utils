@@ -8,6 +8,7 @@ import { getSessionStorage, windowPageOffset, windowScroll } from './Window';
 interface Snapshot {
     locationUpdate?: boolean;
     prevKey?: string;
+    prevPos: number[];
 }
 
 type Props = NamedRouteConfigComponentProps;
@@ -43,6 +44,7 @@ class SmartScrollToTopBase extends Component<Props, never, Snapshot> {
             return {
                 locationUpdate: true,
                 prevKey: prevProps.location.key,
+                prevPos: windowPageOffset(),
             };
         }
 
@@ -51,10 +53,10 @@ class SmartScrollToTopBase extends Component<Props, never, Snapshot> {
 
     public componentDidUpdate(_: never, _1: never, snapshot: Snapshot) {
         if (snapshot !== null) {
-            const { locationUpdate, prevKey } = snapshot;
+            const { locationUpdate, prevKey, prevPos } = snapshot;
 
             if (locationUpdate) {
-                this.rememberScrollPosition(prevKey);
+                this.rememberScrollPosition(prevKey, prevPos);
                 this.restoreScrollPosition();
             }
         }
@@ -79,6 +81,9 @@ class SmartScrollToTopBase extends Component<Props, never, Snapshot> {
             (action === 'PUSH' &&
                 ((state as unknown) as any)?.['$restoreScroll']);
 
+        let x = 0;
+        let y = 0;
+
         // POP means user is going forward or backward in history (e.g. via back and forward buttons)
         //   Lets restore previous scroll position.
         if (shouldRestore) {
@@ -88,8 +93,8 @@ class SmartScrollToTopBase extends Component<Props, never, Snapshot> {
 
             const [posX, posY] = pos.split(';');
 
-            let x = parseInt(posX, 10);
-            let y = parseInt(posY, 10);
+            x = parseInt(posX, 10);
+            y = parseInt(posY, 10);
 
             if (Number.isNaN(x)) {
                 x = 0;
@@ -98,16 +103,18 @@ class SmartScrollToTopBase extends Component<Props, never, Snapshot> {
             if (Number.isNaN(y)) {
                 y = 0;
             }
-
-            windowScroll(x, y);
-        } else {
-            setTimeout(() => windowScroll(0, 0, null), 5);
         }
+
+        // Scroll to the specified position
+        setTimeout(() => windowScroll(x, y, null), 60);
     }
 
-    protected rememberScrollPosition(key: string | undefined) {
+    protected rememberScrollPosition(
+        key: string | undefined,
+        prevPos?: number[]
+    ) {
         // Remember scroll position so we can restore if we return to this view via browser history (back/forward btn)
-        const [x, y] = windowPageOffset();
+        const [x, y] = prevPos || windowPageOffset();
 
         this.sessionStorage.setItem(
             `View.scrollPositions.${key || 'root'}`,
